@@ -16,7 +16,7 @@
 
 \RequirePackage[latin1]{inputenc}
 \RequirePackage[T1]{fontenc}
-\RequirePackage[frenchb]{babel}
+\RequirePackage[french]{babel}
 \RequirePackage{comment}
 
 %\FrenchItemizeSpacingfalse
