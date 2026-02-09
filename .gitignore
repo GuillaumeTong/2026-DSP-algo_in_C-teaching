@@ -23,3 +23,14 @@ TPs/corriges/tp3_exo3
 TPs/corriges/tp4_exo1
 TPs/corriges/tp4_exo2
 TPs/corriges/tp4_exo3
+
+# output PDFs, excluded to avoid increasing the git history size too much
+Cours/cours1/cours_1.pdf
+Cours/cours2/cours_2.pdf
+Cours/cours3/cours_3.pdf
+Cours/cours4/cours_4.pdf
+TPs/Jeu/Jeu.pdf
+TPs/TP1/tp1.pdf
+TPs/TP2/tp2.pdf
+TPs/TP3/tp3.pdf
+TPs/TP4/tp4.pdf
