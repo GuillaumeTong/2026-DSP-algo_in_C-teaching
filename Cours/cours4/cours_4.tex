@@ -1,0 +1,908 @@
+\makeatletter\let\ifGm@compatii\relax\makeatother 
+\documentclass[xcolor=dvipsnames,svgnames, handout=show]{beamer}
+
+\usepackage[frenchb]{babel}
+\usepackage{wasysym}
+\usepackage[makeroom]{cancel}
+
+\usepackage{beamerthemesplit}
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{mathrsfs}
+\usepackage{latexsym}
+\usepackage{graphicx}
+\usepackage{enumerate}
+\usepackage{multirow}
+\usepackage[dvipsnames]{xcolor}
+\definecolor{commentgreen}{RGB}{2,112,10}
+\definecolor{eminence}{RGB}{108,48,130}
+\definecolor{weborange}{RGB}{255,165,0}
+\definecolor{frenchplum}{RGB}{129,20,83}                
+
+%\lstset{language=Java,columns=fullflexible,mathescape=true}
+\usepackage{textcomp}
+
+
+\newcommand{\danger}{
+  \begin{minipage}{0.1\linewidth}
+    \includegraphics[scale=.3]{danger}
+  \end{minipage}
+}
+
+\usepackage{calc}
+\newlength{\lstwiiidth}
+
+\usepackage{tikz,pgf}
+\usetikzlibrary{shapes,arrows,decorations.markings,calc,positioning}
+%\tikzstyle{oval}=[ellipse,thick,inner sep=2pt,minimum height=1.3em,draw=red]
+
+\tikzstyle{every picture}+=[baseline=-.25em,remember picture,>=stealth,thick,line width=.3pt,cap=round,join=round]
+\tikzstyle{annot}=[red,font=\normalfont]
+\tikzset{red>/.style={->,ultra thick,color=red,opacity=.5}}
+\tikzstyle{annottransp}=[annot,opacity=.35]
+\tikzstyle{oval}=[ellipse,minimum height=1ex,draw=red,fill=red]
+\tikzstyle{ovalise}=[annottransp,oval,%
+  xshift={#1/2},%
+  text width={#1/1.35},%
+  minimum height={1em+5pt},%
+]
+\tikzstyle{annotfleche}=[->,annottransp,line width=.05cm,opacity=.5]
+\tikzstyle{Annotfleche}=[->,annottransp,line width=.08cm,opacity=.5]
+
+% #1 is best if given by width("text") where
+% text is the text in the node (where
+% punctuation is replaced by letter for
+% correct width computation)
+\tikzset{bigovalise/.style 2 args={annottransp,oval,very thick,text width={#1/1.3},text height={#2}}}
+
+
+
+
+
+\pgfsetxvec{\pgfpoint{0.5cm}{0cm}}
+\pgfsetyvec{\pgfpoint{0cm}{0.5cm}}
+\makeatletter
+% Stuff for calc compatiability.
+\let\real=\pgfmath@calc@real
+\let\minof=\pgfmath@calc@minof
+\let\maxof=\pgfmath@calc@maxof
+\let\ratio=\pgfmath@calc@ratio
+\let\widthof=\pgfmath@calc@widthof
+\let\heightof=\pgfmath@calc@heightof
+\let\depthof=\pgfmath@calc@depthof
+\makeatother
+
+
+%\pgfarrowsdeclare{:}{:}{}{}
+
+
+\tikzstyle{outil}=[rectangle,draw=black] %,inner sep=2.5mm
+\tikzstyle{autreoutil}=[rectangle,draw=black] %,inner sep=2.5mm
+
+\tikzset{onslide/.code args={<#1>#2}{%
+  \only<#1>{\pgfkeysalso{#2}} % \pgfkeysalso doesn't change the path
+}}
+\tikzset{temporal/.code args={<#1>#2#3#4}{%
+  \temporal<#1>{\pgfkeysalso{#2}}{\pgfkeysalso{#3}}{\pgfkeysalso{#4}} % \pgfkeysalso doesn't change the path
+}}
+
+\tikzstyle{highlight}=[red,ultra thick]
+
+\usepackage{etoolbox}% http://ctan.org/pkg/etoolbox
+\newlength{\cellw}
+\newlength{\cellh}
+\setlength{\cellh}{3ex}
+\setlength{\cellw}{3ex}
+\newcommand{\case}[2][]{
+  \node[rectangle=1pt,draw=black,minimum width=\cellw,minimum height=\cellh] at (#2\cellw,0) {#1};
+}
+\newcommand{\casev}[2][]{
+  \node[rectangle=1pt,draw=black,minimum width=\cellw,minimum height=\cellh] at (0,-#2\cellh) {#1};
+}
+\newcommand{\caseb}[2][]{
+  \node[rectangle=1pt,very thick,draw=black,minimum width=\cellw,minimum height=\cellh] at (#2\cellw,0) {#1};
+}
+
+
+\newcounter{tabcnt}
+\newcommand{\tab}[1]{%
+  \setcounter{tabcnt}{0}
+  \def\nextitem{\def\nextitem{}}% Separator
+  \renewcommand*{\do}[1]{\nextitem\case[##1]{\value{tabcnt}}\stepcounter{tabcnt}}% How to process each item
+    \docsvlist{#1}% Process list
+}
+\newcommand{\tabv}[1]{%
+  \setcounter{tabcnt}{0}
+  \def\nextitem{\def\nextitem{}}% Separator
+  \renewcommand*{\do}[1]{\nextitem\casev[##1]{\value{tabcnt}}\stepcounter{tabcnt}}% How to process each item
+    \docsvlist{#1}% Process list
+}
+
+\newcommand{\tabpict}[1]{%
+  \begin{tikzpicture}
+    \tab{#1}
+  \end{tikzpicture}
+}
+\newcommand{\tabvpict}[1]{%
+  \begin{tikzpicture}
+    \tab{#1}
+  \end{tikzpicture}
+}
+
+\usepackage{amsmath,amssymb}%,stmaryrd
+%\usepackage{colortbl}
+
+\definecolor{colorC}{rgb}{0.95,0.95,.98}
+\definecolor{colorSH}{rgb}{0.95,1,0.95}
+\definecolor{colorV}{rgb}{0.98,1,0.95}
+\definecolor{colorasm}{RGB}{255,250,240}
+\definecolor{kwcolor}{rgb}{0,0,1}
+\definecolor{kindcolor}{rgb}{0.1,0.5,.1}
+%\definecolor{commentcolor}{rgb}{.6,.05,.05}
+\definecolor{commentcolor}{rgb}{.4,.4,.6}
+
+\usepackage{listings,lstasm}
+%\def\lstlanguagefiles{lstasm.sty}
+
+\lstset{language=C}
+\lstset{literate={~}{{\ }}1}
+\lstset{morekeywords={FILE}}
+
+\lstdefinestyle{small}
+{
+  escapeinside={/*@}{@*/},  
+  basicstyle=\tt\small,
+  keywordstyle=\color{kwcolor},
+  commentstyle=\it\ttfamily\color{commentcolor},
+  keywordstyle=[2]\ttfamily\color{kindcolor},
+  %backgroundcolor=\color{colorCoq},
+  showstringspaces=false,
+  flexiblecolumns=false,mathescape=true,
+  rangeprefix=/*-,rangesuffix=-*/,includerangemarker=false,
+}
+
+
+\lstset{style=small}
+
+% Powerful boxing stuff, with a special listing interaction 
+\usepackage[many]{tcolorbox}
+%% Ne marche pas dans un \onslide
+\tcbuselibrary{listings,xparse}% this load listings if not already done
+
+% options abandonnées
+% spartan, frame empty, size=minimal,
+\def\commonlstenvoptions{
+   arc=4pt,outer arc=4pt,
+   boxsep=0pt, % unit (pt,mm) mandatory here
+   boxrule=.1px,
+   left=1mm,right=2mm,top=-2mm,bottom=-2mm,
+   listing only
+}
+
+\def\commonlstinlineoptions{
+  colupper=black,nobeforeafter,tcbox raise base,
+  arc=2pt,outer arc=2pt,
+  boxrule=.1px,
+  boxsep=0pt,left=1.5pt,right=1.5pt,top=3pt,bottom=2.8pt,
+}
+
+
+\newtcblisting{lstlistingC}[1][]
+ { colback=colorC,
+   code={\pgfkeysalsofrom{\commonlstenvoptions}},
+   listing options={ style=small, #1} }
+
+\newtcblisting{lstlistingsh}[1][]
+ { colback=colorSH,
+   code={\pgfkeysalsofrom{\commonlstenvoptions}},
+   listing options={style=small,#1 } }
+
+\newtcblisting{lstlistingv}[1][]
+ { colback=colorV,
+   code={\pgfkeysalsofrom{\commonlstenvoptions}},
+   listing options={style=small, #1} }
+
+
+% La même chose pour lstinputlisting
+\newtcbinputlisting{\lstinputlistingC}[2][]
+ {
+   listing engine=listings,
+   listing file={#2},
+   colback=colorC,
+   code={\pgfkeysalsofrom{\commonlstenvoptions}},
+   listing options={ style=small, #1 } }
+
+% La même chose pour lstinputlisting
+\newtcbinputlisting{\lstinputlistingasm}[2][]
+{
+   listing engine=listings,
+   listing file={#2},
+   colback=colorasm,
+   code={\pgfkeysalsofrom{\commonlstenvoptions}},
+   listing options={
+     style=small,
+     #1
+   },
+ }
+
+
+
+% \lstinlineCv{foo} ou bien \lstinlineCv!foo! etc
+% ATTENTION: si dans un argument de macro ça ne marche pas
+\NewTotalTCBox{\lstinlineCv}{ O{white} v}
+{ colback=colorC,
+  code={\pgfkeysalsofrom{\commonlstinlineoptions}},
+}
+{\lstinline§#2§}
+
+\NewTotalTCBox{\lstinlinesh}{ O{white} v}
+{ colback=colorSH,
+  code={\pgfkeysalsofrom{\commonlstinlineoptions}},
+}
+{\lstinline§#2§}
+
+% Version qui ne peut pas aller dans un argument de macro, on utilse
+% {} comme parenthésage MAIS ATTENTION le code est interprété
+\NewTotalTCBox{\lstinlineC}{ O{white} m}
+{ colback=colorC,
+  code={\pgfkeysalsofrom{\commonlstinlineoptions}},
+}
+{\lstinline§#2§}
+
+\NewTotalTCBox{\lstinlineshh}{ O{white} m}
+{ colback=colorSH,
+  code={\pgfkeysalsofrom{\commonlstinlineoptions}},
+}
+{\lstinline§#2§}
+
+
+\title{Algo/Prog -- DUT 1}
+\date{}
+
+% HACK pour avoir une TOC plus compacte: on recopie ce bout de code et on met vskip0.5 au lieu de vskip1.5 au bon endroit
+\makeatletter
+\def\sectionintoc{}
+\def\beamer@sectionintoc#1#2#3#4#5{%
+\ifnum\c@tocdepth>0%
+\ifnum#4=\beamer@showpartnumber%
+{
+  \beamer@saveanother%
+  \gdef\beamer@todo{}%
+  \beamer@slideinframe=#1\relax%
+  \expandafter\only\beamer@tocsections{\gdef\beamer@todo{%
+      \beamer@tempcount=#5\relax%
+      \advance\beamer@tempcount by\beamer@sectionadjust%
+      \edef\inserttocsectionnumber{\the\beamer@tempcount}%
+      \def\inserttocsection{\hyperlink{Navigation#3}{#2}}%
+      \beamer@tocifnothide{\ifnum\c@section=#1\beamer@toc@cs\else\beamer@toc@os\fi}%
+      {
+        \ifbeamer@pausesections\pause\fi%
+        \ifx\beamer@toc@ooss\beamer@hidetext
+          \vskip0.5em% <==============================ICI
+        \else
+          \vfill
+        \fi
+        {%
+          \hbox{\vbox{%
+              \def\beamer@breakhere{\\}%
+              \beamer@tocact{\ifnum\c@section=#1\beamer@toc@cs\else\beamer@toc@os\fi}    {section in toc}}}%
+         \par%
+        }%
+      }%
+    }
+  }%
+  \beamer@restoreanother%
+  }
+  \beamer@todo%
+  \fi\fi%
+}
+\makeatother
+%\lstset{language=Java,columns=fullflexible,mathescape=true}
+
+\usepackage{multirow}
+
+\usepackage{amsmath}
+\usepackage{euscript}
+\usepackage{array}
+
+\usetheme{Boadilla}
+%\setbeamercolor{normal text}{Dolphin}
+
+\setbeamercolor{background canvas}{parent=normal text}
+
+\title[Passage de paramètres]{Passage de paramètres}
+
+\author[Amélie Lambert]{Amélie Lambert}
+
+\date[Algo - Javascript / USAL 34]{DSP - USAL 34 }
+
+
+
+\begin{document}
+
+\frame{
+
+\titlepage
+}
+
+
+\frame
+{
+ 
+\begin{center} {\huge \textbf{\textcolor{NavyBlue}{Les sous-programmes}}}\end{center}
+}
+
+
+
+\frame
+{
+ \frametitle{Notion de sous-programme}
+
+\begin{itemize}
+\item {\bf \textcolor{NavyBlue}{Problème :}} Lorsqu'un programme est long on ne peut le coder en entier dans la fonction principale.
+\vspace{0.4cm} 
+\item {\bf \textcolor{NavyBlue}{Idée :}} Décomposer le programme en plusieurs sous-programmes plus petits.
+\vspace{0.4cm} 
+\item  On utilise pour cela les \textcolor{NavyBlue}{sous-programmes (procédures ou fonctions)}.
+
+\end{itemize}
+}
+
+\frame
+{
+ \frametitle{Notion de sous-programme}
+
+\begin{itemize}
+
+\item  Un sous-programme possède un nom, des variables, des instructions, un début et une fin. 
+\vspace{0.4cm}
+\item l'exécution d'un sous-programme est invoquée directement dans la fonction \texttt{\textcolor{NavyBlue}{main}}, ou dans un sous-programme invoqué dans le fonction  \texttt{\textcolor{NavyBlue}{main}}. 
+\vspace{0.4cm}
+\item {\bf \textcolor{NavyBlue}{Définition :}}  Un \textcolor{NavyBlue}{sous-programme} est un élément de programme nommé et éventuellement paramétré, que l'on définit afin de pouvoir ensuite l'appeler par son nom en affectant, s'il y a lieu, des valeurs aux paramètres.
+\end{itemize}
+}
+
+
+\frame
+{
+ \frametitle{Les sous-programmes}
+
+
+\begin{itemize}
+\item {\bf \textcolor{NavyBlue}{Les intérêts :}}
+\vspace{0.2cm}
+\begin{itemize}
+\item le gain de place en mémoire pour le code du programme : lorsqu'un sous-programme est appelé plusieurs fois, dans une boucle,
+\vspace{0.2cm}
+\item les notions d'abstraction et de modularité : utiliser un appel de sous-programme permet de d'écrire une application en faisant abstraction (en dissimulant) les détails de la fonction que réalise ce sous-programme.
+\end{itemize}
+\vspace{0.5cm}
+\item {\bf \textcolor{NavyBlue}{Quelques règles :}}
+\vspace{0.2cm}
+\begin{itemize}
+\item Un sous-programme doit être homogène : il doit réaliser une tâche précise, formant un tout.
+\item Il doit être de taille "raisonnable". La compréhension et la gestion du programme en dépend.
+\end{itemize}
+\end{itemize}
+}
+
+
+\begin{frame}[fragile]
+
+ \frametitle{Les sous-programmes}
+
+
+\begin{itemize}
+\item La définition du sous-programme est composée d'une spécification qui indique son nom, ses paramètres (ou arguments) avec leurs caractéristiques (nom, type) et d'un
+corps comprenant éventuellement des déclarations d'objets locaux au sous-programme et les instructions à exécuter.
+\vspace{0.2cm}
+\item Déclaration d'un sous-programme en \texttt{C}:\\
+\vspace{0.3cm}
+
+\texttt{typeRetour nomFonction (typeAr1 arg1, typeAr2 arg2, ...)}\\
+\vspace{0.2cm}
+
+\textcolor{NavyBlue}{Exemple en C :}\\
+
+\begin{lstlisting}
+int perimetre(int largeur, int longueur)
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}
+
+
+\frame
+{
+ 
+\begin{center} {\huge \textbf{\textcolor{NavyBlue}{Les types de sous-programmes}}} \end{center}
+}
+
+
+\frame
+{
+ \frametitle{Types de sous-programmes}
+
+Il existe deux types de sous-programmes :
+\vspace{0.2cm}
+\begin{itemize}
+\item {\bf \textcolor{NavyBlue}{Les procédures :}} sous-programme nommé, ne renvoyant pas de résultat, et modifiant généralement son environnement. 
+
+\vspace{0.2cm}
+\item {\bf \textcolor{NavyBlue}{Les fonctions :}} sous-programme nommé, renvoyant une valeur.
+
+
+\end{itemize}
+
+
+
+}
+
+
+
+
+\begin{frame}[fragile]
+ \frametitle{Les procédures}
+
+
+ {\bf \textcolor{NavyBlue}{Les procédures :}} sous-programme nommé, ne renvoyant pas de résultat, et modifiant généralement son environnement. \\
+
+\vspace{0.2cm}
+
+ {\bf \textcolor{NavyBlue}{Exemple :}}
+ 
+\begin{small}
+\begin{lstlisting}
+#include "inout.h"
+
+void afficher(int i) {
+  EcrireInt(i);
+} 
+
+void main()
+{ 
+  afficher(3);
+}
+\end{lstlisting}
+\end{small}
+\vspace{0.2cm}
+
+\begin{center}
+{\bf \textcolor{NavyBlue}{L'appel d'une procédure constitue une instruction en lui-même}}
+\end{center}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+ \frametitle{Les fonctions}
+
+
+ {\bf \textcolor{NavyBlue}{Les fonctions :}} sous-programme nommé, renvoyant une valeur.\\
+
+\vspace{0.2cm}
+
+ {\bf \textcolor{NavyBlue}{Exemple :}}
+ 
+\begin{small}
+\begin{lstlisting}
+int carre(int n) {
+  return n*n;
+} 
+
+void main()
+{ 
+  int n;
+  n = carre(2);
+  afficher(n);
+}
+\end{lstlisting}
+\end{small}
+\vspace{0.2cm}
+
+
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+ \frametitle{Les fonctions}
+
+
+
+Les fonctions exécutent des instructions et en plus retournent une valeur. \\
+
+\vspace{0.5cm}
+L'appel d'une fonction est remplacé dans le programme appelant par la valeur renvoyée.
+
+\vspace{0.5cm}
+
+\begin{center}
+{\bf \textcolor{NavyBlue}{L'appel d'une fonction représente une valeur qui doit être utilisée à l'intérieur d'une instruction.}}
+\end{center}
+
+\end{frame}
+
+
+\frame
+{
+ 
+\begin{center} {\huge \textbf{\textcolor{NavyBlue}{Appel de sous-programme}}} \end{center}
+}
+
+
+\begin{frame}[fragile]
+
+ \frametitle{Appel de sous-programmes}
+\begin{tabular}{|p{5.2cm}|p{5.5cm}}
+\cline{1-1}
+\begin{minipage}{5cm}
+\begin{lstlisting}
+void afficher(int e) {
+  ecrireInt(e);
+} 
+\end{lstlisting}
+\end{minipage}
+&  \begin{minipage}{5.5cm} 
+La procédure \texttt{\textcolor{NavyBlue}{afficher}} affiche l'entier \texttt{e} qui lui est passé en paramètre.
+\end{minipage}
+\\\cline{1-1}
+\begin{minipage}{5cm}
+\begin{lstlisting}
+int nb_max=10;
+
+void main()
+{ 
+  int i;
+  for (i=0;i<nb_max;i++)
+    afficher(i);
+}
+\end{lstlisting}
+\end{minipage}
+&\begin{minipage}{5.5cm} 
+La fonction principale \texttt{\textcolor{NavyBlue}{main}} appelle la procédure \texttt{\textcolor{NavyBlue}{afficher}} 10 fois, pour les valeurs successives \texttt{0, 1, 2, $\ldots$, 9}. 
+\end{minipage}
+\\\cline{1-1}
+\end{tabular}
+ 
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+ \frametitle{Appel sous-programmes}
+La procédure \texttt{afficher} est appelée 10 fois dans la boucle du programme principal : 
+%\vspace{-1.7cm}
+\begin{center}
+\includegraphics[width=12cm]{../images/appel_sous_prog.pdf} 
+\end{center}
+
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+
+ \frametitle{Appel sous-programmes en cascade}
+Un sous-programme peut lui-même appeler un autre sous programme.\\
+A chaque fin de sous-programme, on revient à l'exécution de l'instruction suivante dans le programme appelant.
+\vspace{-1.7cm}
+\begin{center}
+\includegraphics[width=13cm]{../images/appel_sous_prog3.png} 
+\end{center}
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+
+ \frametitle{Communication entre programme appellant et sous-programmes}
+Les données et les résultats d'un sous-programme proviennent d'une communication entre le programme appelant et le sous-programme. \\
+\vspace{0.3cm}
+
+3 modes de communication sont possibles : \\
+\begin{itemize}
+\item l'utilisation de variables communes à l'appelant et à l'appelé : \\
+ce sont les {\bf \textcolor{NavyBlue}{variables globales}}.
+\vspace{0.2cm}
+\item {\bf \textcolor{NavyBlue}{le passage de paramètres}}, pour les procédures et les fonctions
+\vspace{0.2cm}
+\item {\bf \textcolor{NavyBlue}{la valeur de retour}} pour les fonctions
+\end{itemize}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+
+ \frametitle{Les variables locales ou globales}
+L'endroit où est déclaré une variable est très important car il détermine dans quel(s) sous-
+programme(s) elle va pouvoir être utilisée. \\
+\vspace{0.4cm}
+\begin{itemize}
+\item {\bf \textcolor{NavyBlue}{Une variable locale}} est déclaré dans un sous-programme et n'est utilisable que dans le
+sous-programme où elle a été déclarée.
+\vspace{0.4cm}
+
+\item {\bf \textcolor{NavyBlue}{Une variable globale }} est déclarée à l'extérieur du programme principal et des sous-programmes : elle
+ est commune à l'ensemble des sous-programmes et du programme principal et est utilisable partout.
+\end{itemize}
+
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+
+ \frametitle{Les variables locales ou globales}
+Chaque procédure qui est appellée possède son propre espace d'adressage : 
+
+\begin{center}
+\includegraphics[width=11cm]{../images/appel_sous_prog2.pdf} 
+\end{center}
+
+\end{frame}
+
+
+
+\frame
+{
+ 
+\begin{center} {\huge \textbf{\textcolor{NavyBlue}{Passage de paramètre}}} \end{center}
+}
+
+
+\begin{frame}[fragile]
+
+ \frametitle{Appel d'un sous-programme et passage de paramètre} 
+L'appel d'un sous-programme se fait en mentionnant son nom, suivi des
+paramètres effectifs figurant entre parenthèses et séparés par des virgules.\\
+\vspace{0.5cm}
+
+Il existe deux mécanismes importants de substitution entre paramètres
+effectifs et paramètres formels :\\
+\begin{itemize}
+\item le passage \textbf{\textcolor{NavyBlue}{par valeurs,}}
+\item le passage \textbf{\textcolor{NavyBlue}{par référence.}}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+
+ \frametitle{Le passage de paramètre par valeur}
+La valeur du paramètre effectif est recopiée dans le paramètre formel à
+l'entrée du sous-programme. Le sous-programme travaille sur une copie du
+paramètre effectif. Celui-ci n'est pas modifié à l'issue du sous-programme. 
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+
+ \frametitle{Le passage de paramètre par valeur : Exemple}
+\begin{tabular}{|p{7.2cm}|p{4cm}}
+\cline{1-1}
+\begin{minipage}{7cm}
+
+ 
+\begin{scriptsize}
+\begin{lstlisting}
+void echanger(int x, int y){
+  int temp;
+  temp=x;
+  x=y; 
+  y=temp;
+}
+\end{lstlisting}
+\end{scriptsize}
+\end{minipage}
+&  \begin{minipage}{4cm} 
+\begin{scriptsize}
+La procédure \texttt{\textcolor{NavyBlue}{echanger}} échange l'entier \texttt{\textcolor{NavyBlue}{x}} et l'entier \texttt{\textcolor{NavyBlue}{y}} qui lui sont passé en paramètre.
+\end{scriptsize}
+\end{minipage}
+\\\cline{1-1}
+\begin{minipage}{7cm}
+\begin{scriptsize}
+\begin{lstlisting}
+void main( ){ 
+int a=3;
+int b=5;
+ecrireString("avant a=");
+ecrireInt(a); ecrireString("b=");
+ecrireInt(b);
+echanger(a,b);
+ecrireString("avant a=");
+ecrireInt(a); ecrireString("b=");
+ecrireInt(b);
+}
+\end{lstlisting}
+\end{scriptsize}
+
+\end{minipage}
+&\begin{minipage}{4cm} 
+\begin{scriptsize}
+La fonction principale \texttt{\textcolor{NavyBlue}{main}} appelle la procédure \texttt{\textcolor{NavyBlue}{echanger}} sur les entiers \texttt{\textcolor{NavyBlue}{x}} et \texttt{\textcolor{NavyBlue}{y}}.
+\end{scriptsize}
+\end{minipage}
+\\\cline{1-1}
+\end{tabular}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+ \frametitle{Le passage de paramètre par valeur : Exemple}
+Le résultat de l'exécution du programme est l'affichage suivant : \\
+
+ \texttt{\textcolor{NavyBlue}{avant échange, a = 3, b= 5}}\\
+ \texttt{\textcolor{NavyBlue}{après échange, a = 3, b= 5}}\\
+\vspace{0.7cm}
+
+ L'appel à la procédure \texttt{\textcolor{NavyBlue}{echanger(a,b)}} est un appel par valeur, les paramètres formels  \texttt{\textcolor{NavyBlue}{x}} et  \texttt{\textcolor{NavyBlue}{y}} sont remplacés par  \texttt{\textcolor{NavyBlue}{a=3}} et  \texttt{\textcolor{NavyBlue}{b=5}}, elle reçoit des copies des paramètres \texttt{\textcolor{NavyBlue}{a}} et \texttt{\textcolor{NavyBlue}{b}}.\\
+
+\vspace{0.3cm}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+
+ \frametitle{Le passage de paramètre par valeur : Exemple}
+L'état  de la mémoire avant le début de l'exécution du programme :
+
+\begin{center}
+\includegraphics[width=11cm]{../images/passage_valeur_n1.pdf} 
+\end{center}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+
+ \frametitle{Le passage de paramètre par valeur : Exemple}
+On commence par exécuter les instructions de la fonction \texttt{\textcolor{NavyBlue}{main}} :
+
+\begin{center}
+\includegraphics[width=11cm]{../images/passage_valeur_n2.pdf} 
+\end{center}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+ \frametitle{Le passage de paramètre par valeur : Exemple}
+On exécute la procédure \texttt{\textcolor{NavyBlue}{echanger}} :
+
+\begin{center}
+\includegraphics[width=11cm]{../images/passage_valeur_n3.pdf} 
+\end{center}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+ \frametitle{Le passage de paramètre par valeur : Exemple}
+Après l'exécution de la procédure \texttt{\textcolor{NavyBlue}{echanger}} :
+
+\begin{center}
+\includegraphics[width=11cm]{../images/passage_valeur_n4.pdf} 
+\end{center}
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+
+ \frametitle{Le passage de paramètre par référence}
+
+
+ \textbf{\textcolor{NavyBlue}{Définition :}} une variable de type référence est une variable dans laquelle est stockée une adresse. \\
+\vspace{0.7cm}
+
+L'adresse du paramètre effectif est communiquée au sous-programme qui travaille alors directement sur la variable passée en paramètre et non sur une copie locale. Le
+sous-programme peut alors modifier la valeur d'une variable du programme qui l'a appelé.\\
+\vspace{0.7cm}
+Lorsqu'un tableau est passé en paramètre, c'est sa référence qui est en fait passée (i.e. son adresse), le tableau d'origine et celui vu par la procédure occupent donc le même espace mémoire.
+\end{frame}
+
+
+\begin{frame}[fragile]
+
+ \frametitle{Le passage de paramètre par référence : Exemple}
+
+La procédure \texttt{\textcolor{NavyBlue}{echangerTab}} échange les élements des d'indices \texttt{\textcolor{NavyBlue}{i}} et \texttt{\textcolor{NavyBlue}{j}} du tableau \texttt{\textcolor{NavyBlue}{t}} qui lui sont passé en paramètre.
+ 
+\begin{lstlisting}
+echangerTab(int t[], int i, int j) {
+  int temp;
+  temp = t[i];
+  t[i]=t[j];
+  t[j]=temp;
+}
+\end{lstlisting}
+La fonction principale \texttt{\textcolor{NavyBlue}{main}} appelle la procédure \texttt{\textcolor{NavyBlue}{echangerTab}} sur le tableau \texttt{\textcolor{NavyBlue}{t}} et les indices \texttt{\textcolor{NavyBlue}{1}} et \texttt{\textcolor{NavyBlue}{3}}.
+\begin{lstlisting}
+void main( ) {
+  int t[]= {3, 4, 24};
+  ecrireString("avant tab=");
+  ecrireInt(t[0]); ecrireInt(t[1]); ecrireInt(t[2]);
+  echangerTab(tab,1,2);
+  ecrireString("avant tab=");
+  ecrireInt(t[0]); ecrireInt(t[1]); ecrireInt(t[2]);
+}
+\end{lstlisting}
+
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+ \frametitle{Le passage de paramètre par reférence : Exemple}
+Le résultat de l'exécution du programme est l'affichage suivant : \\
+
+ \texttt{\textcolor{NavyBlue}{avant tab=3,4,24}}\\
+ \texttt{\textcolor{NavyBlue}{apres tab=3,24,4}}\\
+\vspace{0.2cm}
+
+ L'appel à la procédure \texttt{\textcolor{NavyBlue}{echangerTab(tab,1,2)}} est un appel par valeur, mais la valeur de tab est sa référence, les paramètres formels \texttt{\textcolor{NavyBlue}{t}},  \texttt{\textcolor{NavyBlue}{i}} et  \texttt{\textcolor{NavyBlue}{j}} sont remplacés par \texttt{\textcolor{NavyBlue}{ref t}},  \texttt{\textcolor{NavyBlue}{i=1}} et  \texttt{\textcolor{NavyBlue}{j=4}}, elle reçoit des copies de ces paramètres.\\
+
+\vspace{0.3cm}
+\end{frame}
+
+
+\begin{frame}[fragile]
+
+ \frametitle{Le passage de paramètre par référence : Exemple}
+L'état  de la mémoire avant le début de l'exécution du programme :
+
+\begin{center}
+\includegraphics[width=10cm]{../images/passage_ref_n1.pdf} 
+\end{center}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+
+ \frametitle{Le passage de paramètre par référence : Exemple}
+On commence par exécuter les instructions de la fonction \texttt{\textcolor{NavyBlue}{main}} :
+
+\begin{center}
+\includegraphics[width=10cm]{../images/passage_ref_n2.pdf} 
+\end{center}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+ \frametitle{Le passage de paramètre par référence : Exemple}
+On exécute la procédure \texttt{\textcolor{NavyBlue}{echangerTab}} :
+
+\begin{center}
+\includegraphics[width=10cm]{../images/passage_ref_n3.pdf} 
+\end{center}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+ \frametitle{Le passage de paramètre par référence : Exemple}
+Après l'exécution de la procédure \texttt{\textcolor{NavyBlue}{echangerTab}} :
+
+\begin{center}
+\includegraphics[width=10cm]{../images/passage_ref_n4.pdf} 
+\end{center}
+
+\end{frame}
+
+
+\end{document}

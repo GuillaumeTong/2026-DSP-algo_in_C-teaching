@@ -1,0 +1,84 @@
+#include"inout.h"
+#include<time.h>
+#include<string.h>
+#include<stdlib.h>
+#define BOOL int
+#define TRUE 1
+#define FALSE 0
+
+
+
+int nbOccurence(char t[], int a[], char c){
+  int i;
+  int nb_occ=0;
+  for (i=0; i<strlen(t);i++)
+    if (t[i]==c)
+      {
+	nb_occ++;
+	a[i]=1;
+      }
+  return nb_occ;
+}
+
+
+void affichageMotACherche(char t[], int a[]) {
+  int i,j;
+  for (i=0; i<strlen(t);i++)
+    {
+      if (a[i]==0)
+	ecrireChar('-');
+      else
+	ecrireChar(t[i]);
+    }
+   ecrireChar('\n');
+}
+
+
+int main() {
+  int nbMots;
+  int nombre_aleatoire = 0;
+  srand(time(NULL)); // initialisation de rand
+  char **mot = lireFichierParMots("dico_pendu.txt",&nbMots);
+  printf("mot 0 : %s\n",mot[0]);
+  printf("mot 1 : %s\n",mot[99957]); /* le dernier */
+  nombre_aleatoire = rand()%99958; /* entre 0 et 99957 */
+  // Plus generalement pour tirer dans l'intervale [a,b[ (b exclu
+  // donc) on fait:
+  // nombre_aleatoire = rand()%(99958-a)+a; /* entre a et b-1 */
+  printf("mot %d : %s\n",nombre_aleatoire,mot[nombre_aleatoire]); /* le dernier */
+  // Voilà le mot est choisi vous pouvez programmer le pendu ci-dessous.
+  
+  int nb_coups=0;  // nombres de coups joues
+  int nb_lettres = strlen(mot[nombre_aleatoire]); // nombre de lettres a trouver
+  int estTrouve [nb_lettres];  // tableau 
+  int i;
+  for (i=0;i<nb_lettres;i++)
+    {
+      estTrouve[i]=0;
+    }
+  char lettre;
+  BOOL jouer = TRUE;
+  
+  int nb = 0;
+  affichageMotACherche(mot[nombre_aleatoire],estTrouve); 
+  while (jouer)
+    {
+      nb_coups++;
+      ecrireString ("\nQuelles lettre proposez vous?\n");
+      lettre = lireChar();
+      nb = nbOccurence(mot[nombre_aleatoire],estTrouve,lettre);
+      if (nb > 0)
+	{
+	  nb_lettres = nb_lettres  -nb;
+	}
+      if (nb_lettres ==0)
+	{
+	  ecrireString ("\n Bravo ! Vous avez gagne en ");
+	  ecrireInt(nb_coups);
+	  ecrireString (" coups\n");
+	  jouer = FALSE;
+	}
+      affichageMotACherche(mot[nombre_aleatoire],estTrouve); 
+  
+}
+}

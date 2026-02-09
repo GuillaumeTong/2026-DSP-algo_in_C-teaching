@@ -1,0 +1,345 @@
+\documentclass{../enonce}
+\usepackage{enumerate}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{array,multirow,colortbl}
+\usepackage{calc}
+
+
+\usepackage{etoolbox}% http://ctan.org/pkg/etoolbox
+\newlength{\cellw}
+\newlength{\cellh}
+\setlength{\cellh}{3ex}
+\setlength{\cellw}{3ex}
+\newcommand{\case}[2][]{
+  \node[rectangle=1pt,draw=black,minimum width=\cellw,minimum height=\cellh] at (#2\cellw,0) {#1};
+}
+\newcommand{\casev}[2][]{
+  \node[rectangle=1pt,draw=black,minimum width=\cellw,minimum height=\cellh] at (0,-#2\cellh) {#1};
+}
+\newcommand{\caseb}[2][]{
+  \node[rectangle=1pt,very thick,draw=black,minimum width=\cellw,minimum height=\cellh] at (#2\cellw,0) {#1};
+}
+
+
+\newcounter{tabcnt}
+\newcommand{\tab}[1]{%
+  \setcounter{tabcnt}{0}
+  \def\nextitem{\def\nextitem{}}% Separator
+  \renewcommand*{\do}[1]{\nextitem\case[##1]{\value{tabcnt}}\stepcounter{tabcnt}}% How to process each item
+    \docsvlist{#1}% Process list
+}
+\newcommand{\tabv}[1]{%
+  \setcounter{tabcnt}{0}
+  \def\nextitem{\def\nextitem{}}% Separator
+  \renewcommand*{\do}[1]{\nextitem\casev[##1]{\value{tabcnt}}\stepcounter{tabcnt}}% How to process each item
+    \docsvlist{#1}% Process list
+}
+
+\newcommand{\tabpict}[1]{%
+  \begin{tikzpicture}
+    \tab{#1}
+  \end{tikzpicture}
+}
+\newcommand{\tabvpict}[1]{%
+  \begin{tikzpicture}
+    \tab{#1}
+  \end{tikzpicture}
+}
+
+\lstset{language=C}
+\lstset{%
+  %escapeinside={(*@}{@*)},%
+  %morecomment=*[n][\it\ttfamily]{/\\*\\*}{\\*/},% reconnaît mots-clés, commentaires...
+  %moredelim=[is][\it]{/*}{*/},% éviter keyword style in comment
+  flexiblecolumns=false,%
+  %mathescape=true,%
+  basicstyle=\tt\small,%
+  keywordstyle=\bf\ttfamily,%
+  commentstyle=\it\ttfamily,%
+  frame=tblr,% top + bottom
+  morekeywords={String},%
+  rangeprefix=/*@,rangesuffix=@*/,%
+  includerangemarker=true,% false Plante avec l'utf8
+  % backgroundcolor=\color{grey2},%
+  % Astuce pour masquer qd meme les range:
+  literate={/*@debutexo1@*/}{{\ }}1{/*@finexo1@*/}{{\ }}1{/*@debutexo2@*/}{{\ }}1{/*@finexo2@*/}{{\ }}1%
+  {à}{{\`a}}1{è}{{\`e}}1{ê}{{\^e}}1{é}{{\'e}}1{ù}{{\`u}}1{ç}{{\,c}}1{î}{{\^i}}1{À}{{\`A}}1{È}{{\`E}}1{Ê}{{\^E}}1{É}{{\'E}}1{Ù}{{\`U}}1{Ç}{{\,C}}1{Î}{{\^I}}1,%
+  showstringspaces=false,%
+}
+\usepackage{tikz,pgf}
+
+\usetikzlibrary{shapes,arrows,decorations.markings,calc,positioning}
+\tikzstyle{oval}=[ellipse,thick,inner sep=2pt,minimum height=1.3em,draw=red]
+\pgfsetxvec{\pgfpoint{0.5cm}{0cm}}
+\pgfsetyvec{\pgfpoint{0cm}{0.5cm}}
+\tikzset{
+  red>/.style={->,ultra thick,color=red}
+}
+
+
+
+
+% latex2html
+%\usepackage{html,makeidx,color}
+
+%\let\emph\relax % there's no \RedeclareTextFontCommand
+%\DeclareTextFontCommand{\emph}{\it}
+\renewcommand{\emph}[1]{{\it #1}}
+
+\usepackage[colorlinks,urlcolor=blue,linkcolor=blue]{hyperref}
+
+
+
+\title{Mini-projet : le jeu du morpion}
+\author{Algo et JavaScript}
+\date{}
+
+
+\begin{document}
+%\excludecomment{correction}
+
+\noindent~
+\begin{minipage}{9cm}
+CNAM\\
+DSP Informatique - Réseau de la Réussite Vincent Merle
+%IFIPS Informatique 1ère année
+\end{minipage}
+%\hfill Année 2018--2019 ~
+
+%\title{IUT-L1 - USAL22}
+%\author{Les Exceptions}
+
+\vspace{1mm}
+
+\noindent ~\hrulefill~
+
+\vspace{2mm}
+
+\noindent
+\begin{minipage}{9cm}
+Algo/JavaScript -- USAL34\\
+%Votre nom :
+\end{minipage}
+
+\bigskip
+
+%\vspace{1cm}
+
+\begin{center}
+\bf {\Large Mini-projet : le jeu du morpion}\\
+%\bf {\Large Interrogation écrite}\\
+%31 mai 2019
+\end{center}
+%\bigskip
+\vspace{0.5cm}
+
+
+\noindent \textbf{Objectifs du mini-projet}
+ 
+Programmer le jeu du morpion à deux joueurs, où les joueurs tapent leurs coups alternativement.sur un clavier unique.
+
+\bigskip
+
+Le but du jeu du Morpion est d'aligner avant son adversaire 3 symboles identiques horizontalement, verticalement ou en diagonale. Chaque joueur a donc son propre symbole, généralement une croix pour l'un et un rond pour l'autre. Une partie typique devrait ressembler à l'écran à ceci :
+
+\begin{center}
+  \begin{minipage}{.75\linewidth}
+\begin{verbatim}
+___
+___
+___
+
+Joueur1? 5
+___
+_x_
+___
+
+Joueur 2? 1
+o__
+_x_
+___
+
+Joueur 1? 7
+o__
+_x_
+x__
+
+Joueur 2? 3
+o_o
+_x_
+x__
+
+...
+\end{verbatim}
+  \end{minipage}
+\end{center}
+Plus précisément:
+\begin{enumerate}
+\item Avant chaque coup le programme affiche la grille: 3 lignes de 3
+  caractères: \lstinline!'_'! pour la case vide, \lstinline!'x'! pour
+  un case cochée par le joueur 1, et \lstinline!'o'! pour une case
+  cochée par le joueur 2.
+\item Ensuite le programme affiche le nom du joueur qui doit jouer (le joueur 1 commence) et
+  lit le coup au clavier: un entier entre 1 et 9.
+\item Si le coup est invalide pour une raison quelconque le coup n'est
+  pas exécuté et c'est au encore au même joueur de jouer (retour à l'étape 1.).
+\item Si le coup est valide et que la partie n'est pas finie le coup
+  est exécuté (une case est cochée) et c'est au joueur suivant de
+  jouer (retour à l'étape 1.).
+\item Si le coup est autorisé et gagnant le programme s'arrêter
+  (\lstinline!exit(0);!) avec un message indiquant quel joueur a
+  gagné.
+\end{enumerate}
+
+\bigskip
+
+\noindent \textbf{La grille du morpion en mémoire}\\
+Le \href{https://cedric.cnam.fr/~lamberta/enseignements/DSP/C/sources/morpion.c}{squelette} de programme fourni est basé sur l'idée suivante: l'état du morpion se résume à l'état des 9 cases de la grille. À tout moment
+chaque case est dans l'un des 3 états suivants: vide, cochée \verb|x| ou
+cochée \verb|o|.
+
+\medskip
+
+Pour représenter en mémoire la grille et les trois états possibles de chaque case on utilisera  un tableau de caractères de \verb|9| cases \lstinline!grille[0]!\dots\lstinline!grille[8]! de type \lstinline!char! déclaré dans la fonction \lstinline!main!. 
+\begin{lstlisting}
+int main() {
+  char grille [] = {'_','_','_','_','_','_','_','_','_'};
+\end{lstlisting}
+Ce tableau représente les cases de la grille du morpion: \lstinline!grille[0]! représente la case 1, \lstinline!grille[1]! la case 2, et plus généralement la case \lstinline!i! est représentée par \lstinline!grille[i-1]!.
+
+\medskip
+
+\emph{Votre programme doit faire en sorte} qu'à tout moment le caractère contenu dans chaque variable correspond à l'état de la case correspondante (\lstinline!'_'! si la case est vide, \lstinline!'x'! si elle a été cochée par le joueur 1 et \lstinline!'o'! si par le joueur 2). De cette façon pour afficher la grille il suffit d'afficher le contenu des variables, pour savoir l'état de la case i il suffit de regarder le contenu de la variable \lstinline!grille[i-1]!.
+
+\bigskip
+
+\noindent \textbf{Traduction position dans la grill (x,y) $\Rightarrow$ position dans le tableau (i)}\\
+  \setlength{\cellw}{2.7em}
+  \setlength{\cellh}{1.5em}
+  Considérons la grille 4x4 (\texttt{larg=4}) suivante, numérotée pour
+  l'utilisateur (à partir de 1) et la case (4,3) (4$^e$ colonne, 3$^e$
+  ligne):\medskip
+
+  \begin{tabular}{cc|c|c|c|c|}
+   & \multicolumn{1}{c}{} & \multicolumn{1}{c}{\scriptsize 1}
+    & \multicolumn{1}{c}{\scriptsize 2}
+    & \multicolumn{1}{c}{\scriptsize 3} & \multicolumn{1}{c}{\scriptsize 4}\\\cline{3-6}
+    \cline{3-6}
+    \multirow{3}{*}{\rotatebox[origin=c]{90}{
+    \makebox[\totalheightof{
+    \begin{tabular}{|l|}
+      \hline '\_'\\\hline
+      'x'\\\hline
+    \end{tabular}}]
+    {$\overbrace{\makebox[\totalheightof{
+    \begin{tabular}{|l|}
+      \hline '\_'\\\hline
+      ''x\\\hline
+    \end{tabular}}]{}
+    }^{\rotatebox[origin=c]{-90}{\textnormal{\parbox{2cm}{\centering 2 lignes complètes}}}}$}}}
+ & \scriptsize 1 & '\_' & 'x'& '\_'& 'o'\\\cline{3-6}
+ & \scriptsize 2 & 'x' & 'o'& '\_'& '\_'\\\cline{3-6}
+ & \scriptsize 3 & '\_' & 'x'& '\_'&  \cellcolor{blue!25}'o'\\\cline{3-6}
+ & \scriptsize 4 & 'x' & 'o'& '\_'& '\_'\\\cline{3-6}
+  \end{tabular}\medskip
+
+  Cette grille est représentée en mémoire par un tableau à 16 cases:\medskip
+
+  \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+    \multicolumn{1}{c}{\scriptsize 0} & \multicolumn{1}{c}{\scriptsize 1} &
+    \multicolumn{1}{c}{\scriptsize 2} & \multicolumn{1}{c}{\scriptsize 3} &
+    \multicolumn{1}{c}{\scriptsize 4} & \multicolumn{1}{c}{\scriptsize 5} &
+    \multicolumn{1}{c}{\scriptsize 6} & \multicolumn{1}{c}{\scriptsize 7} &
+    \multicolumn{1}{c}{\scriptsize 8} & \multicolumn{1}{c}{\scriptsize 9} &
+    \multicolumn{1}{c}{\scriptsize 10} & \multicolumn{1}{c}{\scriptsize 11} &
+    \multicolumn{1}{c}{\scriptsize 12} & \multicolumn{1}{c}{\scriptsize 13} &
+    \multicolumn{1}{c}{\scriptsize 14} & \multicolumn{1}{c}{\scriptsize 15} \\\hline
+    \_ & 'x' & '\_' & 'o' & 'x' & 'o' & '\_' & '\_' & '\_' & 'x' & '\_' & \cellcolor{blue!25}'o' & 'x' & 'o' & '\_' & '\_' \\\hline
+  \end{tabular}\medskip
+  
+  la 4$^e$ case de la 3$^e$ ligne se situe dans le tableau à la case
+  $(2 \times \mathtt{larg} + 3)$. Plus généralement la case $(n,m)$
+  (colonne $n$ , ligne $m$) se situe à la case
+  $(n-1)\times \mathtt{larg} + m-1$.
+
+\medskip
+
+
+
+
+Petite précision: vous pouvez écrire des fonctions qui prennent le
+tableau en paramètre (à la place de
+\lstinline!c1!\dots\lstinline!c9!). \emph{GROS AVANTAGE: vos fonctions
+  peuvent modifier le contenu des cases du tableau passé en paramètre}
+(en réalité c'est l'adresse du tableau qui est envoyé à la fonction).
+On peut donc imaginer une nouvelle fonction:
+\begin{lstlisting}
+void setCase(int i, char val, int[] g) {
+  grille[i] = val;
+}
+\end{lstlisting}
+telle que \lstinline!setCase(casecochee-1,'x',grille)! met le
+caractère \lstinline!'x'! dans la case numéro \lstinline!casecochee-1!
+du tableau \lstinline!grille!. Attention: les numéros de case
+commencent à 0.
+
+  
+
+
+Le squelette fourni contient plusieurs fonctions et procédures que vous devez compléter puis utiliser dans le \lstinline!main!. N'hésitez
+pas à ajouter des fonctions supplémentaires si vous en avez le besoin.
+
+\begin{itemize}
+  \item \lstinline!BOOL ligneIdentique(char grille[], int ligne)! qui renvoie \verb|TRUE| si la \verb|ligne| du tableau \verb|grille| est identique.
+\item \lstinline!BOOL colonneIdentique(char grille[], int col)! qui renvoie \verb|TRUE| si la \verb|col| du tableau \verb|grille| est identique.
+\item \lstinline!BOOL diag1Identique(char grille[])! qui renvoie \verb|TRUE| si la diagonale majeure du tableau  \verb|grille| est identique.
+  \item \lstinline!BOOL diag2Identique(char grille[])! qui renvoie \verb|TRUE| si la diagonale mineure du tableau  \verb|grille| est identique.
+  \item \lstinline!BOOL testGagne(char grille[])! qui renvoie \verb|TRUE| si le tableau \verb|grille| est une position gagnante.
+    \item \lstinline!void afficheGrille(char grille[])! qui affiche les neufs caracteres du tableau \verb|grille|  comme une grille dans le terminal: 3 lignes de 3 caracteres. 
+\end{itemize}
+
+\bigskip
+
+
+Le déroulement du jeu est à programmer dans la boucle \lstinline!while! de la fonction \verb|main|, dont les étapes sont les suivantes :
+\begin{enumerate}[1)]
+\item Afficher la grille
+\item Lire un entier au clavier
+\item Redemander la case jusqu'a obtenir une case existantes et vide.
+\item Maintenant on peut jouer
+\item Si coup gagnant mettre a jour pasGagne  (testGagne peut etre utile ici)
+\item Si toutes les cases ont été jouées mettre a jour caseLibres
+\item Changer de joueur
+\end{enumerate}
+
+\bigskip
+
+\noindent \textbf{Bonus}\\
+\begin{enumerate}[1.]
+\item Définissez une fonction \lstinline!lireCoupMorpion! de lecture d'un entier au clavier qui redemande un coup tant que celui-ci est invalide. Quels arguments doit prendre cette fonction? Que doit-elle retourner?
+Pour redemander la lecture vous pouvez soit utiliser une boucle \lstinline!while! (voir ci-dessous) soit simplement rappeler la fonction \lstinline!lireCoupMorpion!.
+\item Il s'agit maintenant de faire évoluer votre code (dans le \lstinline!main! et dans \lstinline!afficheGrille!) pour supporter plusieurs tailles de grille. La taille de la grille sera fixée avant de compiler en modifiant la valeur d'une variable (\lstinline!largeurGrille! voir ci-dessous) au début du main.
+\begin{enumerate}
+\item Changez la déclaration du tableau \lstinline!t! de la manière   suivante (il se peut que l'option \lstinline!-std=c99! soit nécessaire):
+\begin{lstlisting}
+  const int largeurGrille = 4;
+  char t[largeurGrille*largeurGrille];
+\end{lstlisting}
+  L'idée est que pour changer de taille de grille il vous suffit de
+  modifier le \og \lstinline!4!\fg{} ci-dessous par une autre taille
+  pour que tout marche correctement. Il n'est pas demandé de
+  programmer le test de victoire (mais vous pouvez essayé si tout le
+  reste est fini).
+\item Reprogrammez l'initialisation de la grille (toutes les cases
+  mises à \lstinline!'_'!) pour qu'elle s'adapte à la largeur
+  \lstinline!largeurGrille!.
+\item Ajouter un argument \lstinline!int larg! aux procédures et fonctions de votre code. Cet argument représente le nombre de  lignes (et de colonnes) de la grille. Adaptez votre code à ce nouveau paramètre.
+
+ 
+\end{enumerate}
+\end{enumerate}
+
+%\begin{correction} \lstinputlisting{../corriges/morpion.c}  \end{correction}
+
+\end{document}

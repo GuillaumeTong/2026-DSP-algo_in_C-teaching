@@ -1,0 +1,1390 @@
+\makeatletter\let\ifGm@compatii\relax\makeatother 
+\documentclass[xcolor=dvipsnames,svgnames, handout=show]{beamer}
+
+\usepackage[frenchb]{babel}
+\usepackage{wasysym}
+\usepackage[makeroom]{cancel}
+
+\usepackage{beamerthemesplit}
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{mathrsfs}
+\usepackage{latexsym}
+\usepackage{graphicx}
+\usepackage{enumerate}
+\usepackage{multirow}
+\usepackage[dvipsnames]{xcolor}
+\definecolor{commentgreen}{RGB}{2,112,10}
+\definecolor{eminence}{RGB}{108,48,130}
+\definecolor{weborange}{RGB}{255,165,0}
+\definecolor{frenchplum}{RGB}{129,20,83}                
+
+%\lstset{language=Java,columns=fullflexible,mathescape=true}
+\usepackage{textcomp}
+
+
+\newcommand{\danger}{
+  \begin{minipage}{0.1\linewidth}
+    \includegraphics[scale=.3]{danger}
+  \end{minipage}
+}
+
+\usepackage{calc}
+\newlength{\lstwiiidth}
+
+\usepackage{tikz,pgf}
+\usetikzlibrary{shapes,arrows,decorations.markings,calc,positioning}
+%\tikzstyle{oval}=[ellipse,thick,inner sep=2pt,minimum height=1.3em,draw=red]
+
+\tikzstyle{every picture}+=[baseline=-.25em,remember picture,>=stealth,thick,line width=.3pt,cap=round,join=round]
+\tikzstyle{annot}=[red,font=\normalfont]
+\tikzset{red>/.style={->,ultra thick,color=red,opacity=.5}}
+\tikzstyle{annottransp}=[annot,opacity=.35]
+\tikzstyle{oval}=[ellipse,minimum height=1ex,draw=red,fill=red]
+\tikzstyle{ovalise}=[annottransp,oval,%
+  xshift={#1/2},%
+  text width={#1/1.35},%
+  minimum height={1em+5pt},%
+]
+\tikzstyle{annotfleche}=[->,annottransp,line width=.05cm,opacity=.5]
+\tikzstyle{Annotfleche}=[->,annottransp,line width=.08cm,opacity=.5]
+
+% #1 is best if given by width("text") where
+% text is the text in the node (where
+% punctuation is replaced by letter for
+% correct width computation)
+\tikzset{bigovalise/.style 2 args={annottransp,oval,very thick,text width={#1/1.3},text height={#2}}}
+
+
+
+
+
+\pgfsetxvec{\pgfpoint{0.5cm}{0cm}}
+\pgfsetyvec{\pgfpoint{0cm}{0.5cm}}
+\makeatletter
+% Stuff for calc compatiability.
+\let\real=\pgfmath@calc@real
+\let\minof=\pgfmath@calc@minof
+\let\maxof=\pgfmath@calc@maxof
+\let\ratio=\pgfmath@calc@ratio
+\let\widthof=\pgfmath@calc@widthof
+\let\heightof=\pgfmath@calc@heightof
+\let\depthof=\pgfmath@calc@depthof
+\makeatother
+
+
+%\pgfarrowsdeclare{:}{:}{}{}
+
+
+\tikzstyle{outil}=[rectangle,draw=black] %,inner sep=2.5mm
+\tikzstyle{autreoutil}=[rectangle,draw=black] %,inner sep=2.5mm
+
+\tikzset{onslide/.code args={<#1>#2}{%
+  \only<#1>{\pgfkeysalso{#2}} % \pgfkeysalso doesn't change the path
+}}
+\tikzset{temporal/.code args={<#1>#2#3#4}{%
+  \temporal<#1>{\pgfkeysalso{#2}}{\pgfkeysalso{#3}}{\pgfkeysalso{#4}} % \pgfkeysalso doesn't change the path
+}}
+
+\tikzstyle{highlight}=[red,ultra thick]
+
+\usepackage{etoolbox}% http://ctan.org/pkg/etoolbox
+\newlength{\cellw}
+\newlength{\cellh}
+\setlength{\cellh}{3ex}
+\setlength{\cellw}{3ex}
+\newcommand{\case}[2][]{
+  \node[rectangle=1pt,draw=black,minimum width=\cellw,minimum height=\cellh] at (#2\cellw,0) {#1};
+}
+\newcommand{\casev}[2][]{
+  \node[rectangle=1pt,draw=black,minimum width=\cellw,minimum height=\cellh] at (0,-#2\cellh) {#1};
+}
+\newcommand{\caseb}[2][]{
+  \node[rectangle=1pt,very thick,draw=black,minimum width=\cellw,minimum height=\cellh] at (#2\cellw,0) {#1};
+}
+
+
+\newcounter{tabcnt}
+\newcommand{\tab}[1]{%
+  \setcounter{tabcnt}{0}
+  \def\nextitem{\def\nextitem{}}% Separator
+  \renewcommand*{\do}[1]{\nextitem\case[##1]{\value{tabcnt}}\stepcounter{tabcnt}}% How to process each item
+    \docsvlist{#1}% Process list
+}
+\newcommand{\tabv}[1]{%
+  \setcounter{tabcnt}{0}
+  \def\nextitem{\def\nextitem{}}% Separator
+  \renewcommand*{\do}[1]{\nextitem\casev[##1]{\value{tabcnt}}\stepcounter{tabcnt}}% How to process each item
+    \docsvlist{#1}% Process list
+}
+
+\newcommand{\tabpict}[1]{%
+  \begin{tikzpicture}
+    \tab{#1}
+  \end{tikzpicture}
+}
+\newcommand{\tabvpict}[1]{%
+  \begin{tikzpicture}
+    \tab{#1}
+  \end{tikzpicture}
+}
+
+\usepackage{amsmath,amssymb}%,stmaryrd
+%\usepackage{colortbl}
+
+\definecolor{colorC}{rgb}{0.95,0.95,.98}
+\definecolor{colorSH}{rgb}{0.95,1,0.95}
+\definecolor{colorV}{rgb}{0.98,1,0.95}
+\definecolor{colorasm}{RGB}{255,250,240}
+\definecolor{kwcolor}{rgb}{0,0,1}
+\definecolor{kindcolor}{rgb}{0.1,0.5,.1}
+%\definecolor{commentcolor}{rgb}{.6,.05,.05}
+\definecolor{commentcolor}{rgb}{.4,.4,.6}
+
+\usepackage{listings,lstasm}
+%\def\lstlanguagefiles{lstasm.sty}
+
+\lstset{language=C}
+\lstset{literate={~}{{\ }}1}
+\lstset{morekeywords={FILE}}
+
+\lstdefinestyle{small}
+{
+  escapeinside={/*@}{@*/},  
+  basicstyle=\tt\small,
+  keywordstyle=\color{kwcolor},
+  commentstyle=\it\ttfamily\color{commentcolor},
+  keywordstyle=[2]\ttfamily\color{kindcolor},
+  %backgroundcolor=\color{colorCoq},
+  showstringspaces=false,
+  flexiblecolumns=false,mathescape=true,
+  rangeprefix=/*-,rangesuffix=-*/,includerangemarker=false,
+}
+
+
+\lstset{style=small}
+
+% Powerful boxing stuff, with a special listing interaction 
+\usepackage[many]{tcolorbox}
+%% Ne marche pas dans un \onslide
+\tcbuselibrary{listings,xparse}% this load listings if not already done
+
+% options abandonnées
+% spartan, frame empty, size=minimal,
+\def\commonlstenvoptions{
+   arc=4pt,outer arc=4pt,
+   boxsep=0pt, % unit (pt,mm) mandatory here
+   boxrule=.1px,
+   left=1mm,right=2mm,top=-2mm,bottom=-2mm,
+   listing only
+}
+
+\def\commonlstinlineoptions{
+  colupper=black,nobeforeafter,tcbox raise base,
+  arc=2pt,outer arc=2pt,
+  boxrule=.1px,
+  boxsep=0pt,left=1.5pt,right=1.5pt,top=3pt,bottom=2.8pt,
+}
+
+
+\newtcblisting{lstlistingC}[1][]
+ { colback=colorC,
+   code={\pgfkeysalsofrom{\commonlstenvoptions}},
+   listing options={ style=small, #1} }
+
+\newtcblisting{lstlistingsh}[1][]
+ { colback=colorSH,
+   code={\pgfkeysalsofrom{\commonlstenvoptions}},
+   listing options={style=small,#1 } }
+
+\newtcblisting{lstlistingv}[1][]
+ { colback=colorV,
+   code={\pgfkeysalsofrom{\commonlstenvoptions}},
+   listing options={style=small, #1} }
+
+
+% La même chose pour lstinputlisting
+\newtcbinputlisting{\lstinputlistingC}[2][]
+ {
+   listing engine=listings,
+   listing file={#2},
+   colback=colorC,
+   code={\pgfkeysalsofrom{\commonlstenvoptions}},
+   listing options={ style=small, #1 } }
+
+% La même chose pour lstinputlisting
+\newtcbinputlisting{\lstinputlistingasm}[2][]
+{
+   listing engine=listings,
+   listing file={#2},
+   colback=colorasm,
+   code={\pgfkeysalsofrom{\commonlstenvoptions}},
+   listing options={
+     style=small,
+     #1
+   },
+ }
+
+
+
+% \lstinlineCv{foo} ou bien \lstinlineCv!foo! etc
+% ATTENTION: si dans un argument de macro ça ne marche pas
+\NewTotalTCBox{\lstinlineCv}{ O{white} v}
+{ colback=colorC,
+  code={\pgfkeysalsofrom{\commonlstinlineoptions}},
+}
+{\lstinline§#2§}
+
+\NewTotalTCBox{\lstinlinesh}{ O{white} v}
+{ colback=colorSH,
+  code={\pgfkeysalsofrom{\commonlstinlineoptions}},
+}
+{\lstinline§#2§}
+
+% Version qui ne peut pas aller dans un argument de macro, on utilse
+% {} comme parenthésage MAIS ATTENTION le code est interprété
+\NewTotalTCBox{\lstinlineC}{ O{white} m}
+{ colback=colorC,
+  code={\pgfkeysalsofrom{\commonlstinlineoptions}},
+}
+{\lstinline§#2§}
+
+\NewTotalTCBox{\lstinlineshh}{ O{white} m}
+{ colback=colorSH,
+  code={\pgfkeysalsofrom{\commonlstinlineoptions}},
+}
+{\lstinline§#2§}
+
+
+\title{Algo/Prog -- DUT 1}
+\date{}
+
+% HACK pour avoir une TOC plus compacte: on recopie ce bout de code et on met vskip0.5 au lieu de vskip1.5 au bon endroit
+\makeatletter
+\def\sectionintoc{}
+\def\beamer@sectionintoc#1#2#3#4#5{%
+\ifnum\c@tocdepth>0%
+\ifnum#4=\beamer@showpartnumber%
+{
+  \beamer@saveanother%
+  \gdef\beamer@todo{}%
+  \beamer@slideinframe=#1\relax%
+  \expandafter\only\beamer@tocsections{\gdef\beamer@todo{%
+      \beamer@tempcount=#5\relax%
+      \advance\beamer@tempcount by\beamer@sectionadjust%
+      \edef\inserttocsectionnumber{\the\beamer@tempcount}%
+      \def\inserttocsection{\hyperlink{Navigation#3}{#2}}%
+      \beamer@tocifnothide{\ifnum\c@section=#1\beamer@toc@cs\else\beamer@toc@os\fi}%
+      {
+        \ifbeamer@pausesections\pause\fi%
+        \ifx\beamer@toc@ooss\beamer@hidetext
+          \vskip0.5em% <==============================ICI
+        \else
+          \vfill
+        \fi
+        {%
+          \hbox{\vbox{%
+              \def\beamer@breakhere{\\}%
+              \beamer@tocact{\ifnum\c@section=#1\beamer@toc@cs\else\beamer@toc@os\fi}    {section in toc}}}%
+         \par%
+        }%
+      }%
+    }
+  }%
+  \beamer@restoreanother%
+  }
+  \beamer@todo%
+  \fi\fi%
+}
+\makeatother
+%\lstset{language=Java,columns=fullflexible,mathescape=true}
+
+\usepackage{multirow}
+
+\usepackage{amsmath}
+\usepackage{euscript}
+\usepackage{array}
+
+\usetheme{Boadilla}
+%\setbeamercolor{normal text}{Dolphin}
+
+\setbeamercolor{background canvas}{parent=normal text}
+
+\title[Tableaux]{Les boucles et les tableaux}
+
+\author[A. Lambert/P. Courtieu]{A. Lambert/P. Courtieu}
+
+\date[Algo - Javascript / USAL 34]{DSP - USAL 34 }
+
+
+
+\begin{document}
+
+\frame{
+
+\titlepage
+}
+
+\frame
+{
+ 
+
+\begin{center} {\huge \textbf{\textcolor{NavyBlue}{Les instructions complexes (boucles)}}}\end{center}
+}
+
+
+
+
+\begin{frame}[fragile]\frametitle{La boucle \texttt{while}}
+
+Nous avons vu qu'un programme est une \textcolor{NavyBlue}{séquence d'instruction}, avec la possibilité de tester des conditions  (\lstinlineCv!if!).\\
+
+\vspace{0.3cm}
+
+ Comment \textcolor{NavyBlue}{répéter (\textit{itérer})} un traitement plusieurs fois, sachant que ?
+ \vspace{0.2cm}
+  \begin{itemize}
+  
+  \item le nombre d'itérations varie d'une exécution à l'autre?
+   \vspace{0.2cm}
+     \item quand arrêter les itérations?
+    \begin{itemize}
+    \item[] Quand le calcul répétitif est fini = lorsqu'une condition devient fausse.
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+
+\subsection{while}
+
+\begin{frame}[fragile]\frametitle{Flot des instructions}
+  \begin{center}
+    \begin{minipage}{.7\linewidth}    
+  \begin{tikzpicture}[x=1cm,y=1cm,remember picture,inner sep=2mm]
+    %\node(coinhg) at (0,+5cm){};
+    %\node(coinbg) at (0cm,-9cm){};
+    %\node(coinhd) at (+3cm,+5cm){};
+    %\node(coinbd) at (-3cm,-5cm){};
+    \path [draw,very thick,->] (0,4) -- ++ (0,-1) node [below](if){\texttt{if(cond)}};
+     \path [draw,very thick,->]
+     (if)
+     -- ++ (-1,-1) node [midway,xshift=-.5cm] (true){\scriptsize true}
+     -- ++ (0,-1) -- ++(1,-1) -- ++ (0,-1);
+    \path [draw,very thick]
+    (if) -- ++ (1,-1)node [midway,xshift=.5cm](false){\scriptsize
+      false}
+    -- ++ (0,-1) -- ++ (-1,-1);%
+    % 
+    \begin{scope}[xshift=5cm]
+      \path [draw,very thick,->] (0,4) -- ++ (0,-1) node [below] (while){\texttt{while(cond)}};
+      \path [draw,very thick,->]
+      (while)
+      -- ++ (-1,-1) node [midway,xshift=-.5cm] (true){\scriptsize true}
+      -- ++ (0,-1)
+      %-- ++ (-.5,-.5)
+      .. controls ++(-1,-.2) and ++(-1,-.2) % Le 2e control est définit relativement au point d'arrivée
+      .. (while.west);
+      \path [draw,very thick,->]
+      (while)
+      -- ++ (1,-1)node [midway,xshift=.5cm](false){\scriptsize false}
+      -- ++ (0,-1) -- ++(-1,-1) -- ++ (0,-1);
+    \end{scope}
+  \end{tikzpicture}
+  \end{minipage}
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{La boucle \texttt{while}}
+  Syntaxe comparable à un \lstinlineCv!if! sans \lstinlineCv!else!:
+ 
+  \begin{center}
+    \begin{minipage}{.5\linewidth}
+      \begin{lstlistingC}[]
+while (cond)/*@\tikz \coordinate (badpv);@*/ {
+  ... // Corps de la boucle
+} 
+\end{lstlistingC}
+\end{minipage}
+\end{center}
+\begin{tikzpicture}[remember picture, overlay]
+  \node<all:2-|handout:1>[xshift=.5ex,ovalise=width("")] (ovalbadpv) at (badpv) {};
+  \node<all:2-|handout:1>[red,below right=9ex and 4ex of ovalbadpv] (annotbadpv) at (badpv) {Surtout pas de point virgule ici!};
+  \draw<all:2|handout:1>[Annotfleche] (annotbadpv) to (ovalbadpv);
+\end{tikzpicture}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Flot des instructions}
+  \begin{center}
+    \begin{tikzpicture}[x=1cm,y=1cm,remember picture,inner sep=2mm,line width=.2cm]
+      \path
+      [onslide=<1>{opacity=0},onslide=<2->{opacity=.45},draw,->,onslide=<2>{opacity=.75,red}]
+      (0,4)
+      -- ++ (0,-1) node
+      [opacity=.75,below,onslide=<4>{red},onslide=<6>{red}](while){\texttt{\bfseries while(cond)$\mathtt{\{}$}};
+      \path [opacity=0,onslide=<3->{opacity=.45},draw,->,onslide=<3>{red},onslide=<5>{red}]
+      (while)
+      -- ++ (-1,-1) node [opacity=0,onslide=<3>{opacity=.75},onslide=<5>{opacity=.75},midway,xshift=-1cm,yshift=.2cm] (true){\scriptsize \texttt{cond}==true}
+      -- ++ (0,-.1) node [opacity=1,right] (foo1) {\scriptsize \texttt{\bfseries printf(...);}}
+      -- ++ (0,-.5) node [right,opacity=1] (foo1) {\scriptsize \texttt{\bfseries x = ...;}}
+      -- ++ (0,-.5) node [right,opacity=1] (foo1) {\scriptsize \texttt{...}}
+      -- ++ (0,-.5) node [right,opacity=1] (foo1) {\scriptsize \texttt{...}}
+      -- ++ (0,-0.5) node[opacity=1,left,below](accd){\color{black}$\mathtt{\}}$}
+      .. controls ++(-1.5,-.3) and ++(-2,-.2) .. (while.west);
+      \path [draw,opacity=0,->,onslide=<7>{opacity=.65,red}]
+      (while.south east)
+      -- ++ (.7,-.5)node [opacity=0,onslide=<7->{opacity=.75},midway,xshift=1cm,yshift=.2cm](false){\scriptsize \texttt{cond}==false}
+      -- ++ (0,-2.5) -- ++(-3,-.5) -- ++ (0,-1);
+    \end{tikzpicture}
+  \end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{La boucle \texttt{for} -- un cas
+    particulier du \texttt{while}}
+\vfill
+  \begin{minipage}{.45\linewidth}
+    \begin{lstlistingC}[]
+int /*@\tikz \coordinate (init1);@*/i = 0;
+while (/*@\tikz \coordinate (cond1);@*/i < a) {
+  ... // Corps de la boucle
+  /*@\tikz \coordinate (incr1);@*/i = i + 1;
+} 
+    \end{lstlistingC}
+  \end{minipage}\hfill
+  \begin{minipage}{.5\linewidth}
+    \begin{lstlistingC}[]
+int i;
+for (/*@\tikz \coordinate (init2);@*/i = 0 ; /*@\tikz \coordinate (cond2);@*/i < a ; /*@\tikz \coordinate (incr2);@*/i = i + 1) {
+  ... // Corps de la boucle
+} 
+    \end{lstlistingC}
+  \end{minipage}\vfill
+ \lstinlineCv!for!{} Réservée aux boucles avec manipulations \emph{simples} d'indices
+
+\begin{tikzpicture}[remember picture, overlay]
+  \node<all:2-|handout:1>[ovalise=width("ixxx0")] (ovalinit1) at (init1) {};
+  \node<all:2-|handout:1>[ovalise=width("ixxx0")] (ovalinit2) at (init2) {};
+  \node<all:3-|handout:1>[ovalise=width("ixxxa")] (ovalcond1) at (cond1) {};
+  \node<all:3-|handout:1>[ovalise=width("ixxxa")] (ovalcond2) at (cond2) {};
+  \node<all:4-|handout:1>[ovalise=width("ixxxixxx1")] (ovalincr1) at (incr1) {};
+  \node<all:4-|handout:1>[ovalise=width("ixxxixxx1")] (ovalincr2) at (incr2) {};
+  \draw<all:2-|handout:1>[Annotfleche,bend left] (ovalinit1) to (ovalinit2);
+  \draw<all:3-|handout:1>[Annotfleche,bend left] (ovalcond1) to (ovalcond2);
+  \draw<all:4-|handout:1>[Annotfleche,bend right] (ovalincr1) to (ovalincr2);
+  \node<all:5-|handout:1>[red,below=9ex of ovalcond2] (belowcond2) {expression!};
+  \node<all:5-|handout:1>[red,above=9ex of ovalcond2] (abovecond2) {instructions!};
+  \draw<all:5-|handout:1>[Annotfleche,opacity=1] (belowcond2) to (ovalcond2);
+  \draw<all:5-|handout:1>[Annotfleche,opacity=1] (abovecond2) to (ovalinit2);
+  \draw<all:5-|handout:1>[Annotfleche,opacity=1] (abovecond2) to (ovalincr2);
+\end{tikzpicture}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]\frametitle{La condition}
+ \lstinlineCv!cond! condition booléenne quelconque (comme pour un \lstinlineCv!if! )\\
+  
+  \vspace{0.3cm}
+  
+  \begin{itemize}
+    \item \lstinlineCv!< > <= ==!... opérateurs de comparaison  numérique. ex: \lstinlineCv!x < 0!
+    \vspace{0.2cm}
+  \item \lstinline+&& || !+... opérateurs booléens ex: %
+    \lstinlineCv!x < 0 || x > 9!
+  \end{itemize}
+  
+  \begin{center}
+    \begin{minipage}{.65\linewidth}
+      \begin{lstlistingC}[]
+while (x < 8 && !(y == f(z)) || u) {
+  ... // Corps de la boucle
+} 
+\end{lstlistingC}
+\end{minipage}
+\end{center}
+\end{frame}
+
+
+\frame
+{
+ 
+
+\begin{center} {\huge \textbf{\textcolor{NavyBlue}{Les tableaux}}}\end{center}
+}
+
+
+
+\frame
+{
+ \frametitle{Notion de tableau}
+\begin{itemize}
+\item Pour pouvoir écrire des programmes un peu plus intéressants, il est nécessaire d'appliquer des traitements à des séquences de données. Une manière classique est de les rassembler dans un \textbf{\textcolor{NavyBlue}{tableau}}.
+\vspace{0.5cm}
+\item Dans l'exemple qui suit, on réunit dans un tableau le nombre d'heures d'ensoleillement de chaque jour de la semaine. 
+\end{itemize}
+\vspace{0.5cm}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|}
+ \hline 
+\texttt{\hspace{0.2cm}4\hspace{0.2cm}} & \texttt{\hspace{0.2cm}8\hspace{0.2cm}} &\texttt{\hspace{0.2cm}2\hspace{0.2cm}} &\texttt{\hspace{0.2cm}6\hspace{0.2cm}} &\texttt{\hspace{0.2cm}9\hspace{0.2cm}} &\texttt{\hspace{0.2cm}3\hspace{0.2cm}} &\texttt{\hspace{0.2cm}1\hspace{0.2cm}} 
+\\ \hline
+\multicolumn{7}{l}{
+\begin{tabular}{ccccccc}
+\hspace{0.1cm}0\hspace{0.2cm} &\hspace{0.1cm}1\hspace{0.2cm}&\hspace{0.4cm}2\hspace{0.2cm}&\hspace{0.4cm}3\hspace{0.2cm}&\hspace{0.4cm}4\hspace{0.2cm}&\hspace{0.4cm}5\hspace{0.3cm}&\hspace{0.4cm}6\hspace{0.2cm} 
+\end{tabular}}
+\end{tabular}
+\end{center}
+\vspace{0.1cm}
+\begin{center}
+Les \textbf{\textcolor{NavyBlue}{indices du tableau}} représentent les jours de la semaine.
+\end{center}
+
+}
+
+
+
+\begin{frame}[fragile]
+ \frametitle{Les tableaux }
+\begin{itemize}
+\item Un \textbf{\textcolor{NavyBlue}{tableau}} est une \textbf{\textcolor{NavyBlue}{structure de données}} qui réunit des valeurs (données) d'un \textbf{\textcolor{NavyBlue}{même type}} (le type \texttt{\textcolor{NavyBlue}{int}} dans l'exemple). 
+
+\vspace{0.2cm}
+\item C'est une suite de cases contiguës repérées (indicées) par des entiers (\texttt{\textcolor{NavyBlue}{int}}), en partant \texttt{\textcolor{NavyBlue}{0}}.
+
+\vspace{0.2cm}
+\item Un tableau constitue une nouvelle valeur qui doit être typée.
+
+\vspace{0.2cm}
+\item Dans l'exemple, le \textbf{\textcolor{NavyBlue}{type}} est \texttt{\textcolor{NavyBlue}{int[]}}, les indices de \texttt{\textcolor{NavyBlue}{0}} à \texttt{\textcolor{NavyBlue}{6}} correspondent  aux jours de la semaine.
+
+\vspace{0.2cm}
+\item On peut alors déclarer une variable (\texttt{uneSemaine}) de ce nouveau type, enregistrer des valeurs dans les cases de ce tableau, et sélectionner une case connaissant son indice (\texttt{uneSemaine[i]} ).
+
+\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}[fragile]\frametitle{Les tableaux en \texttt{C}}
+
+
+  \begin{itemize}
+  \item C'est une variable qui contient \emph{\textcolor{NavyBlue}{plusieurs valeurs}} d'un même  type.
+  \vspace{0.2cm}
+  \item Si il a \texttt{\textcolor{NavyBlue}{n}} valeurs, elles ont  \emph{numérotées de $0$ à $n-1$} \danger
+   \vspace{0.2cm}
+  \item la i$^e$ case d'un tableau \lstinlineCv!t!, (notée
+    \lstinlineCv!t[i]!) = équivalente à une variable.
+     \vspace{0.1cm}
+    \begin{itemize}
+    \item \textcolor{NavyBlue}{Affectation :} \lstinlineCv!t[i] = 12 + f(x);!
+        \vspace{0.1cm}
+    \item \textcolor{NavyBlue}{Utilisation :} \lstinlineCv!x = (t[i] - 1) * u[j];!
+    \end{itemize}
+     \vspace{0.2cm}
+  \item \textcolor{NavyBlue}{Déclaration :}
+    \begin{lstlistingC}[]
+int t [9]; // 9 cases
+int t = {9,8,7,6,5,4,3,2,1}; //9 cases
+\end{lstlistingC}
+\end{itemize}
+\end{frame}
+
+% TODO: décopposer le dérouler d'un parcours de tableau
+
+\begin{frame}[fragile]\frametitle{Parcours d'un tableau}
+    \begin{lstlistingC}[]
+int t [9]; // 9 cases
+int t = {9,8,7,6,5,4,3,2,1}; //9 cases
+int idx = 0;
+while(idx</*@\tikz \coordinate (lgthwhile);@*/9) {
+  t[idx] = 0;
+  idx = idx + 1;
+}
+/*@\tikz \coordinate (afterwhile);@*/
+for(idx=0; idx</*@\tikz \coordinate (lgthfor);@*/9 ; idx = idx + 1){
+  t[idx] = idx;
+}
+/*@\tikz \coordinate (afterfor);@*/
+\end{lstlistingC}
+
+\begin{tikzpicture}[remember picture, overlay]
+  \node<all:2|handout:1>[ovalise=width("9")] (ovallgthfor) at (lgthfor) {};
+  \node<all:2|handout:1>[ovalise=width("9")] (ovallgthwhile) at (lgthwhile) {};
+  \node<all:2|handout:1>[annot,below right=-1ex and 2.5 of ovallgthwhile] (annotlgthwhile){longueur-1 est l'indice de la dernière case};
+  \draw<all:2|handout:1>[Annotfleche] (annotlgthwhile) to (ovallgthwhile);
+  \draw<all:2|handout:1>[Annotfleche] (annotlgthwhile) to (ovallgthfor);
+
+  \node<all:3|handout:1>[annot,above right=-1ex and 6 of afterwhile](annotafterwhile)
+  {
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|}\hline
+      0&0&0&0&0&0&0&0&0\\\hline
+    \end{tabular}
+  };
+  \draw<all:3|handout:1>[Annotfleche] (annotafterwhile) to (afterwhile);
+  \node<all:2|handout:1>[annot,below right=-1ex and 2.5 of ovallgthfor] (annotlgthfor){};
+  \node<all:3|handout:1>[annot,above right=-1ex and 6 of afterfor](annotafterfor)
+  {
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|}\hline
+      0&1&2&3&4&5&6&7&8\\\hline
+    \end{tabular}
+  };
+  \draw<all:3|handout:1>[Annotfleche] (annotafterfor) to (afterfor);
+\end{tikzpicture}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Passer un tableau en paramètre d'une fonction}
+  \textcolor{NavyBlue}{Spécificité du C :}
+  \vspace{0.1cm}
+  \begin{itemize}
+  \item En C: un tableau ne \og connaît\fg pas sa taille.
+    \vspace{0.1cm}
+  \item solution: \og transporter\fg la taille en même temps que le tableau.
+    \vspace{0.1cm}
+  \item argument supplémentaire dans les fonctions:
+  \end{itemize}
+    \vspace{0.2cm}
+  \begin{lstlistingC}[]
+void f (int t[] , int length_t){
+  ...
+}
+
+int main() {
+  int t[7];
+  f(t,7);
+}
+\end{lstlistingC}
+\end{frame}
+
+
+
+\begin{frame}[fragile]\frametitle{Pattern classiques: \og il existe\fg}
+  Déterminer si \emph{il existe} une case \lstinlineCv!i! telle
+  que \lstinlineCv!test(t[i])! vrai.\vfill
+ 
+    \begin{lstlistingC}[]
+int i = 0;
+int /*@\tikz \coordinate (candidat);@*/candidatReponse = /*@\tikz \coordinate (initcandidat);@*/FALSE;
+while(i</*@\tikz \coordinate (lgthwhile);@*/9) {
+  if(test(t[i])) {
+    candidatReponse = TRUE;/*@\tikz \coordinate (bascule);@*/
+  }/*@\tikz \coordinate (pasdeelse);@*/
+  i = i + 1;
+}
+ /*@\tikz \coordinate (fin);@*/
+\end{lstlistingC}
+\begin{tikzpicture}[remember picture, overlay]
+  \node<all:3-|handout:1>[red,right=5ex of bascule] (annotbascule) {basculement (définitif) du booléen};
+  \draw<all:3-|handout:1>[Annotfleche] (annotbascule) to (bascule);
+  \node<all:3-|handout:1>[red,right=25ex of pasdeelse] (annotpasdeelse) {ne pas remettre à false};
+  \draw<all:3-|handout:1>[Annotfleche] (annotpasdeelse) to (pasdeelse);
+  \node<all:2-|handout:1>[ovalise=width("tixiiii")] (ovalinitcandidat) at (initcandidat) {};
+  \node<all:2-|handout:1>[red,above right=-.5ex and 6ex of ovalinitcandidat] (annotinitcandidat) {pour l'instant pas de cases OK};
+  \draw<all:2-|handout:1>[Annotfleche] (annotinitcandidat.west) to (ovalinitcandidat);
+
+  \node<all:2-|handout:1>[ovalise=width("candidatrepons")] (ovalcandidat) at (candidat) {};
+  \node<all:2-|handout:1>[red,above right= 3ex and -5ex of ovalcandidat.north] (annotcandidat) {la réponse \og pour l'instant\fg};
+  \draw<all:2-|handout:1>[Annotfleche] (annotcandidat.south) to (ovalcandidat);
+
+  \node<all:4-|handout:1>[red,right=5ex of fin] (annotfin) {candidatReponse = réponse à la question};
+  \draw<all:4-|handout:1>[Annotfleche] (annotfin.west) to (fin);
+\end{tikzpicture}
+  \begin{itemize}
+  \item<all:5-|handout:1> Remarque: si 0 élément réponse \lstinline!FALSE!
+  \end{itemize}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]\frametitle{Pattern classiques: \og pour tout\fg}
+  déterminer si \emph{toutes} les cases \lstinlineCv!i! telles que un
+  \lstinlineCv!test(t[i])! est vrai.\vfill
+
+  \begin{lstlistingC}[]
+int i = 0;
+int candidatReponse = /*@\tikz \coordinate (initcandidat);@*/TRUE;
+while(i</*@\tikz \coordinate (lgthwhile);@*/9) {
+  if(! test(t[i])) {
+    candidatReponse=FALSE;/*@\tikz \coordinate (bascule);@*/
+  }/*@\tikz \coordinate (pasdeelse);@*/
+  i = i + 1;
+}
+ /*@\tikz \coordinate (fin);@*/
+\end{lstlistingC}
+\begin{tikzpicture}[remember picture, overlay]
+  \node<all:3-|handout:1>[red,right=5ex of bascule] (annotbascule) {basculement (définitif) du booléen};
+  \draw<all:3-|handout:1>[Annotfleche] (annotbascule) to (bascule);
+  \node<all:3-|handout:1>[red,right=25ex of pasdeelse] (annotpasdeelse) {ne pas remettre à true};
+  \draw<all:3-|handout:1>[Annotfleche] (annotpasdeelse) to (pasdeelse);
+  \node<all:2-|handout:1>[ovalise=width("txiii")] (ovalinitcandidat) at (initcandidat) {};
+  \node<all:2-|handout:1>[red,above right=-.5ex and 6ex of ovalinitcandidat] (annotinitcandidat) {pour l'instant toutes les cases OK};
+  \draw<all:2-|handout:1>[Annotfleche] (annotinitcandidat.west) to (ovalinitcandidat);
+  \node<all:4-|handout:1>[red,right=5ex of fin] (annotfin) {candidatReponse = réponse à la question};
+  \draw<all:4-|handout:1>[Annotfleche] (annotfin.west) to (fin);
+\end{tikzpicture}
+  \begin{itemize}
+  \item<all:4-|handout:1> Remarque: si 0 élément réponse \lstinline!TRUE!
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Pattern classiques: \og meilleure case\fg}
+  déterminer \emph{la meilleure} case \lstinlineCv!i! pour
+  \lstinlineCv!compare(t[i],t[j])!\vfill
+
+    \begin{lstlistingC}[]
+int i = 0;
+int candidatReponse = /*@\tikz \coordinate (pas0);@*/t[0];
+while(i</*@\tikz \coordinate (lgthwhile);@*/9) {
+  if(compare(t[i],candidatReponse)) { // t[i] meilleur candidat
+    candidatReponse = t[i];/*@\tikz \coordinate (remplacement);@*/
+  }/*@\tikz \coordinate (pasdeelse);@*/
+  i = i + 1;
+}
+\end{lstlistingC}
+\begin{tikzpicture}[remember picture, overlay]
+  \node<all:3-|handout:1>[red,below right=0ex and 5ex of remplacement] (annotremplacement) {remplacement du candidat};
+  \draw<all:3-|handout:1>[Annotfleche] (annotremplacement.west) to (remplacement);
+  \node<all:2-|handout:1>[ovalise=width("txiii")] (ovalpas0) at (pas0) {};
+  \node<all:2-|handout:1>[red,above right=-.5ex and 6ex of ovalpas0] (annotpas0) {Pour l'instant meilleur candidat (\xcancel{0}, \xcancel{-1})};
+  \draw<all:2-|handout:1>[Annotfleche] (annotpas0.west) to (ovalpas0);
+\end{tikzpicture}
+  \begin{itemize}
+  \item<all:4-|handout:1> Remarque: \emph{pas de sens} si 0 élément
+  \item<all:4-|handout:1> Remarque: \lstinlineCv!i! peut démarrer à 1
+  \end{itemize}
+\end{frame}
+
+% TODO: expliquer le principe (en décomposant) des propriété "existe"
+% et "forall" sur un tableau: le candidat résultat au début doit être
+% correct pour le tableau vide OU pour la première case. Ensuite il
+% doit représenter le résultat "si le tableau s'arrêtait là".
+
+
+\frame
+{
+ 
+\begin{center} {\huge \textbf{\textcolor{NavyBlue}{Retour sur les types}}} \end{center}
+}
+
+
+
+% pas de bool, int.
+% float bof, double 
+\begin{frame}[fragile]\frametitle{Rappel : le typage}
+  \begin{center}
+    \begin{minipage}{.7\linewidth}
+\begin{lstlistingC}
+int x;
+/*@\tikz\coordinate(aff);@*/x = 8;
+... /*@\tikz\coordinate(op);@*/(x + 9) ...;
+... /*@\tikz\coordinate(func);@*/f(x) ...;/*@\hfill@*/ /* int f (int a) */
+\end{lstlistingC}
+    \end{minipage}
+  \end{center}
+  \begin{itemize}
+  \item Chaque variable est déclarée avec son type \texttt{\textcolor{NavyBlue}{T}} (\lstinlineCv!int!, \lstinlineCv!char!, ...)
+  \vspace{0.1cm}
+  \item<2-> \textcolor{NavyBlue}{Affectation: }seulement par une valeur du type  \texttt{\textcolor{NavyBlue}{T}}
+   \vspace{0.1cm}
+  \item<3-> \textcolor{NavyBlue}{Opérateur : }seulement si  \texttt{\textcolor{NavyBlue}{T}} est le bon type
+   \vspace{0.1cm}
+  \item<4-> \textcolor{NavyBlue}{Fonction :} seulement si  \texttt{\textcolor{NavyBlue}{T}} est le bon type
+  
+    \end{itemize}
+     \vspace{0.2cm}
+   $\textcolor{NavyBlue}{\Rightarrow}$ Sécurité, pas d'erreur de type à l'exécution \\
+   
+    \vspace{0.2cm}
+   \textcolor{NavyBlue}{MAIS:} conversion entre type (pratique mais source d'erreurs)
+
+  \begin{tikzpicture}[remember picture, overlay]
+    \small\tt%
+    \node<all:2|handout:1>[ovalise=width("x x 8;")] (ovalaff) at (aff) {};
+    \node<all:3|handout:1>[ovalise=width("(x + 9)")] (ovalop) at (op) {};
+    \node<all:4|handout:1>[ovalise=width("f(x)")] (ovalfunc) at (func) {};
+  \end{tikzpicture}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Coercions implicites (1/4)}
+  \begin{center}
+    \begin{minipage}{.7\linewidth}
+\begin{lstlistingC}
+int x;
+/*@\tikz\coordinate(aff);@*/x = 8.3;
+... /*@\tikz\coordinate(op);@*/(x + 9.2) ...;
+... /*@\tikz\coordinate(func);@*/f(12.5) ...;/*@\hfill@*/ /* int f (int a) */
+\end{lstlistingC}
+    \end{minipage}
+  \end{center}
+  \begin{itemize}
+  \item Entorse aux règles de typage
+  \item Certains types sont convertibles entre eux (\textit{\textcolor{NavyBlue}{coercion}})
+  \item \danger conversion \emph{\textcolor{NavyBlue}{implicite}} malgré perte de précision éventuelle!
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Coercions implicites (2/4)}
+  \begin{center}
+    \begin{minipage}{.7\linewidth}
+\begin{lstlistingC}
+int x;
+/*@\tikz\coordinate(aff);@*/x = 8.3;
+... /*@\tikz\coordinate(op);@*/(x + 9.2) ...;
+... /*@\tikz\coordinate(func);@*/f(12.5) ...;/*@\hfill@*/ /* int f (int a) */
+\end{lstlistingC}
+    \end{minipage}
+  \end{center}
+  
+      \textcolor{NavyBlue}{affectation :} conversion implicite vers le type de la variable \\
+                              \hspace{0.2cm}                    \lstinlineCv!x!$\leftarrow$ 8 $\leftarrow$ 8.3 \\
+
+\vspace{0.2cm}
+        \textcolor{NavyBlue}{opérateur :} conversion des deux arguments vers un même  type, plus grand ou égal aux deux types de départ \\
+                                        
+        \hspace{0.2cm}  \lstinlineCv!x:int! mais \lstinlineCv!9.2:float! donc on traduit  tout vers \lstinlineCv!float! \\
+\vspace{0.2cm}
+       \hspace{0.2cm}    \lstinlineCv!x=8!$\leftarrow$ 8.0 \qquad + 9.2 $\leadsto$ 17.5 \\
+          \vspace{0.2cm}
+       \textcolor{NavyBlue}{fonction: }arguments convertis vers le type attendu par la  fonction
+  
+  \begin{tikzpicture}[remember picture, overlay]
+    \small\tt%
+    \node<all:2|handout:1>[ovalise=width("x x 8.3;")] (ovalaff) at (aff) {};
+    \node<all:3|handout:1>[ovalise=width("(x + 9.2)")] (ovalop) at (op) {};
+    \node<all:4|handout:1>[ovalise=width("f(12.5)")] (ovalfunc) at (func) {};
+  \end{tikzpicture}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Coercions implicites (3/4)}
+  \begin{center}
+    \begin{minipage}{.7\linewidth}
+\begin{lstlistingC}
+int x;
+/*@\tikz\coordinate(op);@*/x = 8.9 + 9.2;
+\end{lstlistingC}
+    \end{minipage}
+  \end{center}
+  \begin{itemize}
+  \item ?
+  \item<2> x $\leftarrow$18
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Coercions implicites (4/4)}
+  \begin{center}
+    \begin{minipage}{.7\linewidth}
+\begin{lstlistingC}
+int x=8;
+double y = 2.3;
+/*@\tikz\coordinate(op);@*/x = x/y;
+\end{lstlistingC}
+    \end{minipage}
+  \end{center}
+  \begin{itemize}
+  \item ?
+  \item<2> x $\leftarrow$3
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Coercions implicites (4/4)}
+  \begin{center}
+    \begin{minipage}{.7\linewidth}
+\begin{lstlistingC}
+int x=8.3;
+double y = 2.3;
+/*@\tikz\coordinate(op);@*/x = x/y;
+\end{lstlistingC}
+    \end{minipage}
+  \end{center}
+  \begin{itemize}
+  \item ?
+  \item<2> x $\leftarrow$3
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Coercion: priorités}
+  \begin{center}
+    \begin{minipage}{.9\linewidth}
+\begin{lstlistingC}
+int n = 8;
+double x = 2.6;
+y = n / 3 + x;
+printf ("n = %d , x = %fd, y = %fd\n",n,x,y);
+\end{lstlistingC}
+    \end{minipage}
+  \end{center}
+  \begin{itemize}
+  \item \texttt{n = 8 , x = 2.600000d, y = 4.600000d}
+  \item \texttt{n / 3} $\leadsto$ $2$  \lstinlineCv!int!
+  \item $2 + 2.6$ $\leadsto$ $4.6$
+  \end{itemize}
+\end{frame}
+
+
+
+\frame
+{
+ 
+\begin{center} {\huge \textbf{\textcolor{NavyBlue}{Représentation des données en mémoire}}} \end{center}
+}
+
+\begin{frame}\frametitle{Donnée vues $\neq$ Données mémoires}
+
+  \begin{itemize}
+  \item Données pensées par l'utilisateur:
+    \begin{itemize}
+    \item entiers, réels
+    \item textes
+    \item \og grille\fg{} du morpion
+    \end{itemize}
+  \vspace{1cm}  
+  \item Données dans la mémoire de l'ordinateur:
+    \begin{itemize}
+    \item des octets
+    \item des octets
+    \item des octets
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+
+
+\begin{frame}[fragile]\frametitle{Représentation Mémoire -- Les nombres}
+
+  \setlength{\cellh}{2ex}
+  \setlength{\cellw}{2ex}
+
+  \begin{tikzpicture}
+    \node (unentier) at (-12.5,3){\only<1>{\color{red}}4832(\texttt{int})};
+    \onslide<all:2|handout:1>{\node (unfloat) at (-12.5,-3){\color{red}22,3(\texttt{float})};}
+    \draw[dashed] (-10.1,7) -- (-10.1,-7);
+    \node at (-8,6) {Mémoire};
+    \node at (-12,6) {Cerveau};
+    \draw (0,0) ellipse (9 and 7);
+    \begin{scope}[xshift=-4.5cm,yshift=4ex]
+      \coordinate (octet1);\tiny\tab{0,0,0,0,0,0,0,0};
+    \end{scope}
+    \begin{scope}[xshift=-1.6cm,yshift=4ex]
+      \tiny\tab{0,0,0,0,0,0,0,0};
+    \end{scope}
+    \begin{scope}[xshift=1.3cm,yshift=4ex]
+      \tiny\tab{0,0,0,1,0,0,1,0};
+    \end{scope}
+    \begin{scope}[xshift=-4.5cm,yshift=1ex]
+      \tiny\tab{1,1,1,0,0,0,0,0};
+    \end{scope}
+    % le flottant:
+    \onslide<all:2| handout:1>{
+      \begin{scope}[xshift=-4.5cm,yshift=-2ex]
+        \coordinate (octet2);\tiny\tab{0,1,0,0,0,0,0,1}
+      \end{scope}
+      \begin{scope}[xshift=-1.6cm,yshift=-2ex]
+        \tiny\tab{1,0,1,1,0,0,1,0}
+      \end{scope}
+      \begin{scope}[xshift=1.3cm,yshift=-2ex]
+        \tiny\tab{0,1,1,0,0,1,1,0}
+      \end{scope}
+      \begin{scope}[xshift=-4.5cm,yshift=-5ex]
+        \tiny\tab{0,1,1,0,0,1,1,0}
+      \end{scope}
+    }
+    % 01000001 10110010 01100110 01100110
+  \end{tikzpicture}
+
+  \begin{tikzpicture}[remember picture,overlay]
+    \onslide<1>{\node[ovalise=55ex,yshift=-1.8ex,xshift=-3ex] (ovaloctet1) at (octet1) {~\\~};}
+    \onslide<all:2|handout:1>{\node[ovalise=55ex,yshift=-1.8ex,xshift=-3ex] (ovaloctet2) at (octet2) {~\\~};}
+  \end{tikzpicture}
+\end{frame}
+
+
+
+
+
+\begin{frame}[fragile]\frametitle{Représentation Mémoire -- Les nombres}
+  \setlength{\cellh}{2ex}
+  \setlength{\cellw}{2ex}
+  \begin{tikzpicture}
+    \node (unentier) at (-12.5,3){\only<1>{\color{red}}4832(\texttt{long})};
+    \onslide<all:2|handout:1>{\node (unfloat) at (-12.5,-3) {\color{red}22,3(\texttt{double})};}
+    \draw[dashed] (-10.1,7) -- (-10.1,-7);
+    \node at (-8,6) {Mémoire};
+    \node at (-12,6) {Cerveau};
+    \draw (0,0) ellipse (9 and 7);
+    \draw (0,0) ellipse (9 and 7);
+    \begin{scope}[xshift=1.3cm,yshift=11ex]
+      \tiny\tab{0,0,0,0,0,0,0,0};
+    \end{scope}
+    \begin{scope}[xshift=-4.5cm,yshift=7ex]
+      \tiny\tab{0,0,0,0,0,0,0,0};
+    \end{scope}
+    \begin{scope}[xshift=-1.6cm,yshift=7ex]
+      \tiny\tab{0,0,0,0,0,0,0,0};
+    \end{scope}
+    \begin{scope}[xshift=1.3cm,yshift=7ex]
+      \tiny\tab{0,0,0,0,0,0,0,0};
+    \end{scope}
+    \begin{scope}[xshift=-4.5cm,yshift=4ex]
+      \coordinate (octet1);\tiny\tab{0,0,0,0,0,0,0,0};
+    \end{scope}
+    \begin{scope}[xshift=-1.6cm,yshift=4ex]
+      \tiny\tab{0,0,0,0,0,0,0,0};
+    \end{scope}
+    \begin{scope}[xshift=1.3cm,yshift=4ex]
+      \tiny\tab{0,0,0,1,0,0,1,0};
+    \end{scope}
+    \begin{scope}[xshift=-4.5cm,yshift=1ex]
+      \tiny\tab{1,1,1,0,0,0,0,0};
+    \end{scope}
+    % le flottant:
+    \onslide<all:2|handout:1>{
+      \begin{scope}[xshift=-4.5cm,yshift=-2ex]
+        \tiny\tab{0,0,0,0,0,0,0,0}
+      \end{scope}
+      \begin{scope}[xshift=-1.6cm,yshift=-2ex]
+        \tiny\tab{0,0,0,0,0,0,0,0}
+      \end{scope}
+      \begin{scope}[xshift=1.1cm,yshift=-2ex]
+        \tiny\tab{0,0,0,0,0,0,0,0}
+      \end{scope}
+      \begin{scope}[xshift=-4.5cm,yshift=-5ex]
+        \coordinate (octet2);\tiny\tab{0,0,0,0,0,0,0,0}
+      \end{scope}
+      \begin{scope}[xshift=-1.6cm,yshift=-5ex]
+        \tiny\tab{0,1,0,0,0,0,0,1}
+      \end{scope}
+      \begin{scope}[xshift=1.3cm,yshift=-5ex]
+        \tiny\tab{1,0,1,1,0,0,1,0}
+      \end{scope}
+      \begin{scope}[xshift=-4.5cm,yshift=-8ex]
+        \tiny\tab{0,1,1,0,0,1,1,0}
+      \end{scope}
+      \begin{scope}[xshift=-1.6cm,yshift=-8ex]
+        \tiny\tab{0,1,1,0,0,1,1,0}
+      \end{scope}
+    }
+  \end{tikzpicture}
+
+  \begin{tikzpicture}[remember picture,overlay]
+    \onslide<1>{\node[ovalise=55ex,yshift=2ex,xshift=-3ex] (ovaloctet1) at (octet1) {~\\~\\~\\~};}
+    \onslide<all:2|handout:1>{\node[ovalise=55ex,xshift=-3ex] (ovaloctet2) at (octet2) {~\\~~\\~};}
+  \end{tikzpicture}
+\end{frame}
+
+
+
+\begin{frame}[fragile]\frametitle{Représentation Mémoire -- Les caractères}
+
+  \setlength{\cellh}{2ex}
+  \setlength{\cellw}{2ex}
+
+  \begin{tikzpicture}
+    \node (unchar) at (-12.5,3){\only<1>{\color{red}}'a'(\texttt{char})};
+    \onslide<2>{\node (unstring) at (-12.8,-3){%
+        \begin{tabular}{c}
+        \only<2>{\color{red}}"abc"\\
+          (\texttt{char*})
+        \end{tabular}%
+      }%
+      ;%
+    }
+    \draw[dashed] (-10.1,7) -- (-10.1,-7);
+    \node at (-8,6) {Mémoire};
+    \node at (-12,6) {Cerveau};
+    \draw (0,0) ellipse (9 and 7);
+    \begin{scope}[xshift=-4cm,yshift=7ex]
+      \coordinate (octet1);\tiny\tab{0,1,1,0,0,0,0,1};
+    \end{scope}
+    \onslide<all:2|handout:1>{
+      \begin{scope}[xshift=-1cm,yshift=7ex]
+        \coordinate (pointer);\tiny\tab{a,b,c,d,e,f,g,h}
+      \end{scope}
+      \begin{scope}[xshift=1.3cm,yshift=-2ex]
+        \tiny\tab{1,1,0,0,0,0,1}\coordinate (chara);
+      \end{scope}
+      \begin{scope}[xshift=-4.5cm,yshift=-5ex]
+        \coordinate (charb);\tiny\tab{0,1,1,0,0,0,1,0}
+      \end{scope}
+      \begin{scope}[xshift=-1.6cm,yshift=-5ex]
+        \coordinate (charc);\tiny\tab{0,1,1,0,0,0,1,1}
+      \end{scope}
+      \begin{scope}[xshift=1.3cm,yshift=-5ex]
+        \coordinate (char0);\tiny\tab{0,0,0,0,0,0,0,0}
+      \end{scope}
+      \onslide<all:2|handout:1>{\node[xshift=1cm,yshift=-.5ex] (addr) {\color{red}\tiny abcdefgh};}
+    }
+  \end{tikzpicture}
+
+  \begin{tikzpicture}[remember picture,overlay]
+    \node[xshift=-3ex] (unchardebut) at (unchar) {~};
+    \node[xshift=6ex] (midoctet1) at (octet1) {~};
+    \onslide<all:1|handout:1>{\draw[red>,opacity=.6,shorten <=1ex] (midoctet1) to [out=90,in=90] (unchardebut);}
+    \onslide<1>{\node[yshift=2ex,xshift=6ex] at (midoctet1) {\color{red}\scriptsize =97(\texttt{int})};}
+    \onslide<all:2|handout:1>{\node[yshift=2ex,xshift=16ex] at (chara.north east) {\color{red}\scriptsize =97(\texttt{int})};}
+    \onslide<all:2|handout:1>{\node[yshift=-2ex,xshift=8ex] at (charb.south) {\color{red}\scriptsize =98(\texttt{int})};}
+    \onslide<all:2|handout:1>{\node[yshift=-2ex,xshift=8ex] at (charc.south) {\color{red}\scriptsize =99(\texttt{int})};}
+    \onslide<all:2|handout:1>{\node[yshift=-2ex,xshift=8ex] at (char0.south) {\color{red}\scriptsize =0(\texttt{int})};}
+    \node[xshift=6ex] at (pointer) (midpointer) {};
+    \onslide<all:2|handout:1>{\node[yshift=2ex] at (midpointer) {\color{red}\scriptsize (\texttt{char*})};}
+    \onslide<all:2|handout:1>{\draw[->,shorten <=1ex,red,dashed] (midpointer) to [out=-90,in=90] (addr);}
+    \node[xshift=-5ex] (unstringrdebut) at (unstring) {~};
+    \onslide<all:2|handout:1>{\draw[red>,opacity=.6,shorten <=1ex] (midpointer) to [out=-110,in=90] (unstringrdebut);}
+  \end{tikzpicture}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Représentation Mémoire --  la grille du morpion (1/2)}
+
+  \setlength{\cellh}{2ex}
+  \setlength{\cellw}{2ex}
+  \newcommand{\xx}{$\times$}
+  \newcommand{\oo}{$\ocircle$}
+  \begin{tikzpicture}
+    \draw[dashed] (-10.1,7) -- (-10.1,-7);
+    \node at (-8,7) {Mémoire};
+    \node at (-12,7) {Cerveau};
+    \draw (0,0) ellipse (9 and 7);
+    \node (unchar) at (-12.5,3){
+      \begin{tabular}{|c|c|c|}\hline
+        \tikz\coordinate(case1);\xx & \tikz\coordinate(case2); & \tikz\coordinate(case3);\oo \\\hline
+       \tikz\coordinate(case4); & \tikz\coordinate(case5);\oo & \tikz\coordinate(case6);\oo \\\hline
+       \tikz\coordinate(case7); & \tikz\coordinate(case8);\xx & \tikz\coordinate(case9);\xx \\\hline
+      \end{tabular}
+    };
+    \begin{scope}[xshift=-4.5cm,yshift=4ex]
+      \coordinate (coche1);\tiny\tab{0,1,1,1,1,0,0,0}; % 120 = 'x'
+    \end{scope}
+    \begin{scope}[xshift=1cm,yshift=-5ex]
+      \coordinate (coche2);\tiny\tab{0,1,0,1,1,1,1,1}; % 95 = '_'
+    \end{scope}
+    \begin{scope}[xshift=-3cm,yshift=8ex]
+      \coordinate (coche3);\tiny\tab{0,1,1,0,1,1,1,1}; % 111 = 'o'
+    \end{scope}
+
+    \only<3->{
+    \begin{scope}[xshift=1.5cm,yshift=11ex]
+      \coordinate (coche4);\tiny\tab{0,1,0,1,1,1,1,1}; % 95 = '_'
+    \end{scope}
+
+    \begin{scope}[xshift=-2cm,yshift=-9ex]
+      \coordinate (coche5);\tiny\tab{0,1,1,0,1,1,1,1}; % 111 = 'o'
+    \end{scope}
+    \begin{scope}[xshift=1.5cm,yshift=1cm]
+      \coordinate (coche6);\tiny\tab{0,1,1,0,1,1,1,1}; % 111 = 'o'
+    \end{scope}
+
+    \begin{scope}[xshift=-2cm,yshift=-3ex]
+      \coordinate (coche7);\tiny\tab{0,1,0,1,1,1,1,1}; % 95 = '_'
+    \end{scope}
+    \begin{scope}[xshift=-2cm,yshift=13ex]
+      \coordinate (coche8);\tiny\tab{0,1,1,1,1,0,0,0}; % 120 = 'x'
+    \end{scope}
+    \begin{scope}[xshift=-1cm,yshift=2ex]
+      \coordinate (coche9);\tiny\tab{0,1,1,1,1,0,0,0}; % 120 = 'x'
+    \end{scope}
+  }
+
+
+  \end{tikzpicture}
+
+  \begin{tikzpicture}[remember picture,overlay]
+    \node[xshift=6ex] (midcoche1) at (coche1) {};
+    {\node[yshift=2ex] at (midcoche1) {\color{red}\scriptsize \texttt{c1='x'=120}};}
+    \node[xshift=6ex] (midcoche2) at (coche2) {};
+    {\node[yshift=2ex] at (midcoche2) {\color{red}\scriptsize \texttt{c2='\_'=95}};}
+    \node[xshift=6ex] (midcoche3) at (coche3) {};
+    {\node[yshift=2ex] at (midcoche3) {\color{red}\scriptsize \texttt{c3='o'=111}};}
+    
+    \only<3->{
+    \node[xshift=6ex] (midcoche4) at (coche4) {};
+    {\node[yshift=2ex] at (midcoche4) {\color{red}\scriptsize \texttt{c4}};}
+    \node[xshift=6ex] (midcoche5) at (coche5) {};
+    {\node[yshift=2ex] at (midcoche5) {\color{red}\scriptsize \texttt{c5}};}
+    \node[xshift=6ex] (midcoche6) at (coche6) {};
+    {\node[yshift=2ex] at (midcoche6) {\color{red}\scriptsize \texttt{c6}};}
+    \node[xshift=6ex] (midcoche7) at (coche7) {};
+    {\node[yshift=2ex] at (midcoche7) {\color{red}\scriptsize \texttt{c7}};}
+    \node[xshift=6ex] (midcoche8) at (coche8) {};
+    {\node[yshift=2ex] at (midcoche8) {\color{red}\scriptsize \texttt{c8}};}
+    \node[xshift=6ex] (midcoche9) at (coche9) {};
+    {\node[yshift=2ex] at (midcoche9) {\color{red}\scriptsize \texttt{c9}};}
+    }
+    %\begin{scope}[transparency group, opacity=0.75]
+    \only<2->{
+      \draw[red>,opacity=.6,shorten <=1ex] (midcoche1) to[bend left = 45]  (case1);
+      \draw[red>,opacity=.6,shorten <=1ex] (midcoche2) to[bend right = 45] (case2);
+      \draw[red>,opacity=.6,shorten <=1ex] (midcoche3) to[bend right = 45] (case3);
+    }
+    \only<4->{
+      \draw[red>,opacity=.6,shorten <=1ex] (midcoche4) to[bend right = 45] (case4);
+      \draw[red>,opacity=.6,shorten <=1ex] (coche5) to[bend left = 45]  (case5);
+      \draw[red>,opacity=.6,shorten <=1ex] (midcoche6) to[bend left = 90]  (case6);
+
+      \draw[red>,opacity=.6,shorten <=1ex] (coche7) to[bend left = 45] (case8);
+      \draw[red>,opacity=.6,shorten <=1ex] (midcoche8) to[bend right = 45]  (case7);
+      \draw[red>,opacity=.6,shorten <=1ex] (coche9) to[bend left = 45]
+      (case9);
+    }
+    %\end{scope}
+  \end{tikzpicture}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Représentation Mémoire -- La grille du morpion (2/2)}
+
+  \setlength{\cellh}{2ex}
+  \setlength{\cellw}{2ex}
+  \newcommand{\xx}{$\times$}
+  \newcommand{\oo}{$\ocircle$}
+  \begin{tikzpicture}
+    \draw[dashed] (-10.1,7) -- (-10.1,-7);
+    \node at (-8,7) {Mémoire};
+    \node at (-12,7) {Cerveau};
+    \draw (0,0) ellipse (9 and 7);
+    \node (unchar) at (-12.5,3){
+      \begin{tabular}{|c|c|c|}\hline
+        \tikz\coordinate(case1);\xx & \tikz\coordinate(case2); & \tikz\coordinate(case3);\oo \\\hline
+       \tikz\coordinate(case4); & \tikz\coordinate(case5);\oo & \tikz\coordinate(case6);\oo \\\hline
+       \tikz\coordinate(case7); & \tikz\coordinate(case8);\xx & \tikz\coordinate(case9);\xx \\\hline
+      \end{tabular}
+    };
+
+    \begin{scope}[xshift=.5cm,yshift=12ex]
+      \coordinate (tab);\tiny\tab{a,b,c,d,e,f,g,h}; % tableau
+    \end{scope}
+
+
+    \begin{scope}[xshift=-4.5cm,yshift=4ex]
+      \coordinate (coche1);\tiny\tab{0,1,1,1,1,0,0,0}; % 120 = 'x'
+    \end{scope}
+    \onslide<all:2|handout:1>{\node[xshift=-4.5cm,yshift=6ex] (addr) {\color{red}\tiny abcdefgh};}
+
+    \begin{scope}[xshift=-1.6cm,yshift=4ex]
+      \coordinate (coche2);\tiny\tab{0,1,0,1,1,1,1,1}; % 95 = '_'
+    \end{scope}
+    \begin{scope}[xshift=1.3cm,yshift=4ex]
+      \coordinate (coche3);\tiny\tab{0,1,1,0,1,1,1,1}; % 111 = 'o'
+    \end{scope}
+
+    \begin{scope}[xshift=-4.5cm,yshift=1ex]
+      \coordinate (coche4);\tiny\tab{0,1,0,1,1,1,1,1}; % 95 = '_'
+    \end{scope}
+
+    \begin{scope}[xshift=-1.6cm,yshift=1ex]
+      \coordinate (coche5);\tiny\tab{0,1,1,0,1,1,1,1}; % 111 = 'o'
+    \end{scope}
+    \begin{scope}[xshift=1.3cm,yshift=1ex]
+      \coordinate (coche6);\tiny\tab{0,1,1,0,1,1,1,1}; % 111 = 'o'
+    \end{scope}
+
+    \begin{scope}[xshift=-4.5cm,yshift=-2ex]
+      \coordinate (coche7);\tiny\tab{0,1,0,1,1,1,1,1}; % 95 = '_'
+    \end{scope}
+    \begin{scope}[xshift=-1.6cm,yshift=-2ex]
+      \coordinate (coche8);\tiny\tab{0,1,1,1,1,0,0,0}; % 120 = 'x'
+    \end{scope}
+    \begin{scope}[xshift=1.3cm,yshift=-2ex]
+      \coordinate (coche9);\tiny\tab{0,1,1,1,1,0,0,0}; % 120 = 'x'
+    \end{scope}
+
+
+  \end{tikzpicture}
+
+  \begin{tikzpicture}[remember picture,overlay]
+    \node[xshift=6ex] (midtab) at (tab) {};
+    {\node[yshift=2ex] at (midtab) {\color{red}\scriptsize \texttt{t (char[])}};}
+
+    \node[xshift=6ex] (midcoche1) at (coche1) {};
+    {\node[yshift=2ex] at (midcoche1) {\color{red}\scriptsize \texttt{t[0]}};}
+    \draw[->,red,dashed,shorten <=2ex] (midtab) to[out=-140,in=75] (addr);
+
+
+    \node[xshift=6ex] (midcoche2) at (coche2) {};
+    {\node[yshift=2ex] at (midcoche2) {\color{red}\scriptsize \texttt{t[1]}};}
+    \node[xshift=6ex] (midcoche3) at (coche3) {};
+    {\node[yshift=2ex] at (midcoche3) {\color{red}\scriptsize \texttt{...}};}
+    
+    \node[xshift=6ex] (midcoche4) at (coche4) {};
+    \node[xshift=6ex] (midcoche5) at (coche5) {};
+    \node[xshift=6ex] (midcoche6) at (coche6) {};
+    \node[xshift=6ex] (midcoche7) at (coche7) {};
+    \node[xshift=6ex] (midcoche8) at (coche8) {};
+    \node[xshift=6ex] (midcoche9) at (coche9) {};
+    {\node[yshift=-2ex] at (midcoche9) {\color{red}\scriptsize \texttt{t[8]}};}
+
+    %\begin{scope}[transparency group, opacity=0.75]
+    \only<2->{
+      \draw[red>,opacity=.6,shorten <=1ex] (midcoche1) to[bend left = 45]  (case1);
+      \draw[red>,opacity=.6,shorten <=1ex] (midcoche2) to[bend right = 45] (case2);
+      \draw[red>,opacity=.6,shorten <=1ex] (midcoche3) to[bend right = 45] (case3);
+      \draw[red>,opacity=.6,shorten <=1ex] (midcoche4) to[bend right = 45] (case4);
+      \draw[red>,opacity=.6,shorten <=1ex] (coche5) to[bend left = 45]  (case5);
+      \draw[red>,opacity=.6,shorten <=1ex] (midcoche6) to[bend left = 90]  (case6);
+
+      \draw[red>,opacity=.6,shorten <=1ex] (coche7) to[bend left = 45] (case8);
+      \draw[red>,opacity=.6,shorten <=1ex] (midcoche8) to[bend right = 45]  (case7);
+      \draw[red>,opacity=.6,shorten <=1ex] (coche9) to[bend left = 45]
+      (case9);
+    }
+    %\end{scope}
+  \end{tikzpicture}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Représentation Mémoire}
+  \begin{itemize}
+  \item \textcolor{NavyBlue}{Ce qui est important:} \\
+  la cohérence entre représentation mémoire et  algorithmes
+  \vspace{0.5cm}
+  
+  \item \textcolor{NavyBlue}{programmer} = choisir une représentation mémoire pertinente \\
+     ~~~~~~~~~~~~~~~~+ concevoir les algorithmes pour la manipuler
+  \end{itemize} 
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Représentation Mémoire}
+  \begin{center}
+    \begin{tabular}[b]{|l|c|c|}\hline
+      Critère de pertinence &\texttt{c1}...\texttt{c9} & \texttt{char t[9]}\\\hline
+      Correcte (fidèle)&  OK &  OK\\\hline
+      Complète (toutes les informations)& OK&  OK\\\hline
+      Pratique (facile à manipuler) &Bof&\tikz \coordinate (pratique);OK\\\hline
+      Efficace (en taille et en calcul)& OK&  OK\\\hline
+    \end{tabular}
+  \end{center}
+  \vfill
+
+  
+    \onslide<2>{
+
+ \textcolor{NavyBlue}{Une seule variable veut dire :}
+ \vspace{0.1cm}
+      \begin{itemize}
+      \item manipulation du numéro de case via
+        l'indice
+        \vspace{0.1cm}
+      \item meilleur passage à l'échelle (30$\times$30...)
+      \vspace{0.1cm}
+      \item futures évolutions (puissance 4, bataille navale etc)
+      \vspace{0.1cm}
+      \item fonctions utiles pour d'autre jeux
+        (\lstinlineC{voisinDroite}, \lstinlineC{voisinHaut},
+        etc)
+      \end{itemize}
+    
+    \begin{tikzpicture}[remember picture,overlay]
+      \onslide{\node[ovalise=width("OK")] (ovalpratique) at (pratique)
+        {};}
+    \end{tikzpicture}
+  }
+
+\end{frame}
+
+
+\end{document}

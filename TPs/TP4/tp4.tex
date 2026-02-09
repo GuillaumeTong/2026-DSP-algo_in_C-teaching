@@ -1,0 +1,472 @@
+\documentclass{../enonce}
+\usepackage{enumerate}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{array,multirow,colortbl}
+\usepackage{calc}
+
+
+\usepackage{etoolbox}% http://ctan.org/pkg/etoolbox
+\newlength{\cellw}
+\newlength{\cellh}
+\setlength{\cellh}{3ex}
+\setlength{\cellw}{3ex}
+\newcommand{\case}[2][]{
+  \node[rectangle=1pt,draw=black,minimum width=\cellw,minimum height=\cellh] at (#2\cellw,0) {#1};
+}
+\newcommand{\casev}[2][]{
+  \node[rectangle=1pt,draw=black,minimum width=\cellw,minimum height=\cellh] at (0,-#2\cellh) {#1};
+}
+\newcommand{\caseb}[2][]{
+  \node[rectangle=1pt,very thick,draw=black,minimum width=\cellw,minimum height=\cellh] at (#2\cellw,0) {#1};
+}
+
+
+\newcounter{tabcnt}
+\newcommand{\tab}[1]{%
+  \setcounter{tabcnt}{0}
+  \def\nextitem{\def\nextitem{}}% Separator
+  \renewcommand*{\do}[1]{\nextitem\case[##1]{\value{tabcnt}}\stepcounter{tabcnt}}% How to process each item
+    \docsvlist{#1}% Process list
+}
+\newcommand{\tabv}[1]{%
+  \setcounter{tabcnt}{0}
+  \def\nextitem{\def\nextitem{}}% Separator
+  \renewcommand*{\do}[1]{\nextitem\casev[##1]{\value{tabcnt}}\stepcounter{tabcnt}}% How to process each item
+    \docsvlist{#1}% Process list
+}
+
+\newcommand{\tabpict}[1]{%
+  \begin{tikzpicture}
+    \tab{#1}
+  \end{tikzpicture}
+}
+\newcommand{\tabvpict}[1]{%
+  \begin{tikzpicture}
+    \tab{#1}
+  \end{tikzpicture}
+}
+
+\lstset{language=C}
+\lstset{%
+  %escapeinside={(*@}{@*)},%
+  %morecomment=*[n][\it\ttfamily]{/\\*\\*}{\\*/},% reconnaît mots-clés, commentaires...
+  %moredelim=[is][\it]{/*}{*/},% éviter keyword style in comment
+  flexiblecolumns=false,%
+  %mathescape=true,%
+  basicstyle=\tt\small,%
+  keywordstyle=\bf\ttfamily,%
+  commentstyle=\it\ttfamily,%
+  frame=tblr,% top + bottom
+  morekeywords={String},%
+  rangeprefix=/*@,rangesuffix=@*/,%
+  includerangemarker=true,% false Plante avec l'utf8
+  % backgroundcolor=\color{grey2},%
+  % Astuce pour masquer qd meme les range:
+  literate={/*@debutexo1@*/}{{\ }}1{/*@finexo1@*/}{{\ }}1{/*@debutexo2@*/}{{\ }}1{/*@finexo2@*/}{{\ }}1%
+  {à}{{\`a}}1{è}{{\`e}}1{ê}{{\^e}}1{é}{{\'e}}1{ù}{{\`u}}1{ç}{{\,c}}1{î}{{\^i}}1{À}{{\`A}}1{È}{{\`E}}1{Ê}{{\^E}}1{É}{{\'E}}1{Ù}{{\`U}}1{Ç}{{\,C}}1{Î}{{\^I}}1,%
+  showstringspaces=false,%
+}
+\usepackage{tikz,pgf}
+
+\usetikzlibrary{shapes,arrows,decorations.markings,calc,positioning}
+\tikzstyle{oval}=[ellipse,thick,inner sep=2pt,minimum height=1.3em,draw=red]
+\pgfsetxvec{\pgfpoint{0.5cm}{0cm}}
+\pgfsetyvec{\pgfpoint{0cm}{0.5cm}}
+\tikzset{
+  red>/.style={->,ultra thick,color=red}
+}
+
+
+
+
+% latex2html
+%\usepackage{html,makeidx,color}
+
+%\let\emph\relax % there's no \RedeclareTextFontCommand
+%\DeclareTextFontCommand{\emph}{\it}
+\renewcommand{\emph}[1]{{\it #1}}
+
+\usepackage[colorlinks,urlcolor=blue,linkcolor=blue]{hyperref}
+
+
+
+\title{TP4 Passage de paramètres et fonctions}
+\author{Algo et JavaScript}
+\date{}
+
+
+\begin{document}
+%\excludecomment{correction}
+
+\noindent~
+\begin{minipage}{9cm}
+CNAM\\
+DSP Informatique - Réseau de la Réussite Vincent Merle
+%IFIPS Informatique 1ère année
+\end{minipage}
+%\hfill Année 2018--2019 ~
+
+%\title{IUT-L1 - USAL22}
+%\author{Les Exceptions}
+
+\vspace{1mm}
+
+\noindent ~\hrulefill~
+
+\vspace{2mm}
+
+\noindent
+\begin{minipage}{9cm}
+Algo/JavaScript -- USAL34\\
+%Votre nom :
+\end{minipage}
+
+\bigskip
+
+%\vspace{1cm}
+
+\begin{center}
+\bf {\Large TP4 Passage de paramètres et fonctions}\\
+%\bf {\Large Interrogation écrite}\\
+%31 mai 2019
+\end{center}
+%\bigskip
+\vspace{0.5cm}
+
+\noindent \textbf{Objectifs du TP}
+ \begin{itemize}
+\item Apprendre à découper un programme en plusieurs fonctions ou procédures.
+ \item Apprendre à manipuler les tableaux de caractères à une dimension
+ \item Apprendre à manipuler les tableaux de caractères à deux dimensions
+    \item Apprendre à utiliser les structures de contrôles itératives (boucles  \texttt{while})
+ \end{itemize}
+\section{Rappels : bibliothèque et compilation}
+La bibliothèque d'entrée-sortie:
+ \href{https://cedric.cnam.fr/~lamberta/enseignements/DSP/C/sources/inout.h}{inout.h} et   \href{https://cedric.cnam.fr/~lamberta/enseignements/DSP/C/sources/inout.c}{inout.c} mettez les dans un répertoire \texttt{tp4}. Pour cela vous pouvez
+faire les commandes suivantes (une seule fois) dans un terminal (menu
+pricipal: \texttt{terminal/Konsole}):
+\begin{lstlisting}{bash,literate={}}
+mkdir tp4
+cd tp4
+wget "https://cedric.cnam.fr/~lamberta/enseignements/DSP/C/sources/inout.h"
+wget "https://cedric.cnam.fr/~lamberta/enseignements/DSP/C/sources/inout.c"
+\end{lstlisting}
+Programmez et tester ces fonctions \emph{une par une} (testez une
+fonction dès que vous pensez qu'elle est finie). Pour tester une
+fonction \lstinline!f! on programme un ou plusieurs appels à cette procédure dans
+une procédure \lstinline!test_f! : on test
+le résultat obtenu par rapport au résultat attendu et on affiche un
+message d'erreur si ils ne sont pas égaux.
+
+
+\begin{exo}[carré magique]~\\
+Un {\em carré magique\/} est une matrice carrée de taille $n\times n$ telle
+que la somme de chaque rangée, de chaque colonne et de chaque diagonale ait
+la même valeur.  Un carré magique est dit {\em normal\/} s'il contient
+chaque entier compris entre 1 et $n^2$ exactement une fois.  Par exemple,
+le tableau suivant est un carré magique normal :
+\[ \left[\begin{array}{ccc}6&7&2\\1&5&9\\8&3&4\end{array}\right] \]
+
+\begin{enumerate}
+
+\item \'Ecrivez deux fonctions \lstinline!int ligne(int t[3][3], int i)! et  \lstinline!int colonne(int t[3][3], int j)! qui retournent la somme de la \verb|i|-ème ligne (resp. de la \verb|j|-ème colonne) du tableau  \verb|t| passé en paramètre.  \'Ecrivez une fonction \verb|main| qui vous permette de tester ces fonctions.
+\item \'Ecrivez deux fonctions \lstinline!int diagonale1(int t[3][3], int i)! et \lstinline!int diagonale2(int t[3][3], int i)! qui retournent la somme de la diagonale majeure (resp. de la diagonale mineure) du tableau passé en paramètre.  \'Ecrivez une fonction \verb|main| qui vous permette de tester ces fonctions.
+\item \'Ecrivez une fonction \lstinline!BOOL magique(int t[3][3])! qui retourne \texttt{TRUE} si le tableau \verb|t| est magique et \texttt{FALSE} sinon.
+\item  \'Ecrivez une fonction \lstinline!BOOL normal(int t[3][3])! qui retourne \texttt{TRUE} si le tableau \verb|t| est normal et \texttt{FALSE} sinon.
+\end{enumerate}
+
+%\begin{correction} \lstinputlisting{../corriges/tp4_exo1.c}  \end{correction}
+\end{exo}
+
+
+
+\section{Les tableaux de chaînes de caractères.}
+
+\noindent\textbf{La fonction de lecture dans un fichier, documentation}\\
+Vous disposez de la fonctions 
+\begin{lstlisting}
+char ** lireFichierParMots(char * nomFicher, int* nombreMots);
+\end{lstlisting}
+Cette fonction se comporte de la manière suivante:
+
+\begin{itemize}
+\item Elle prend en paramètre
+  \begin{itemize}
+  \item un nom de fichier (chaîne de caractère) \lstinline!nomFicher!
+  \item \emph{l'adresse} \lstinline!nombreMots! d'un entier . Vous
+    pouvez lui passer un tableau d'entier de taille 1, ou bien vous
+    pouvez lui passer une variable entière en faisant précéder son nom
+    de l'opérateur \lstinline!&! qui signifie \og adresse de\fg{}.
+  \end{itemize}
+\item Elle effectue deux choses:
+  \begin{itemize}
+  \item Elle retourne un tableau de chaînes de caractères
+    (\lstinline!char **!) qui contient tous les mots contenus dans le
+    fichiers.
+  \item Elle \emph{modifie} l'entier passé en paramètre (plus
+    exactement: dont l'adresse est passé en paramètre) afin qu'il
+    contienne la taille du tableau retourné.
+  \end{itemize}
+\end{itemize}
+
+Autrement dit un appel possible à la fonction pourrait être (en
+utilisant un tableau d'entier de taille 1 pour le deuxième paramètre):
+\begin{lstlisting}
+  int x[1];
+  char ** t = lireFichierParMots("toto.txt",x);
+\end{lstlisting}
+Après cet appel, \lstinline!t! est un tableau contenant tous les mots du fichier \lstinline!"toto.txt"!, et \lstinline!x[0]! contient la taille de ce tableau.
+
+Autre exemple en utilisant l'opérateur \lstinline!&x!, on déclare un
+entier \lstinline!x! cette fois:
+\begin{lstlisting}
+  int x;
+  char ** t = lireFichierParMots("toto.txt",&x);
+\end{lstlisting}
+Après cet appel, \lstinline!t! est un tableau contenant tous les mots
+du fichier \lstinline!"toto.txt"!, et \lstinline!x! contient la taille
+de ce tableau.
+
+Vous pouvez télécharger un exemple de fichier \lstinline!"toto.txt"! avec la commande suivante :
+\begin{lstlisting}[language=bash,basicstyle=\small\tt]
+wget "https://cedric.cnam.fr/~lamberta/enseignements/DSP/C/sources/toto.txt"
+\end{lstlisting}
+\noindent \textbf{Les tableaux de chaînes}\\
+
+
+En mémoire un tableau de chaine de caractère (\lstinline!char **t! ou
+\lstinline!char *t[]!) est un tableau dont chaque case est l'adresse
+d'un tableau de caractères (chacun ayant un dernier caractère
+\lstinline!'\0'!).\bigskip
+
+  \begin{tikzpicture}
+    \setlength{\cellh}{3.5ex}
+    \setlength{\cellw}{8ex}
+    \tab{addr1,addr2,addr3,addr4,addr5,addr6}
+    \coordinate (addr1) at (0\cellw,0);
+    \coordinate (addr2) at (1\cellw,0);
+    \coordinate (addr3) at (2\cellw,0);
+    \coordinate (addr4) at (3\cellw,0);
+    \coordinate (addr5) at (4\cellw,0);
+    \coordinate (addr6) at (5\cellw,0);
+
+    \setlength{\cellw}{6ex}
+    \begin{scope}[xshift=-4.5cm,yshift=-16ex]
+      \coordinate (string1);
+      \small\tt\tab{'L','o','n','g','t','e','m','p','s','\textbackslash{}0'};
+    \end{scope}
+    \begin{scope}[xshift=+4.5cm,yshift=+16ex]
+      \coordinate (string2);
+      \small\tt\tab{'j','e','\textbackslash{}0'};
+    \end{scope}
+    \begin{scope}[xshift=-2cm,yshift=+10ex]
+      \coordinate (string3);
+      \small\tt\tab{'m','e','\textbackslash{}0'};
+    \end{scope}
+    \begin{scope}[xshift=+6cm,yshift=-16ex]
+      \coordinate (string4);
+      \small\tt\tab{'s','u','i','s','\textbackslash{}0'};
+    \end{scope}
+    \begin{scope}[xshift=+8cm,yshift=-7ex]
+      \coordinate (string5);
+      \small\tt\tab{'l','e','v','é','\textbackslash{}0'};
+    \end{scope}
+    \begin{scope}[xshift=+8cm,yshift=+8ex]
+      \coordinate (string6);
+      \small\tt\tab{'t','a','r','d','\textbackslash{}0'};
+    \end{scope}
+    \draw[red>,opacity=.6,shorten <=1ex,shorten >=3ex] (addr1) to [out=-110,in=90] (string1);
+    \draw[red>,opacity=.6,shorten <=1ex,shorten >=3ex] (addr2) to [out=90,in=170] (string2);
+    \draw[red>,opacity=.6,shorten <=1ex,shorten >=3ex] (addr3) to [out=90,in=-90] (string3);
+    \draw[red>,opacity=.6,shorten <=1ex,shorten >=3ex] (addr4) to [out=-90,in=90] (string4);
+    \draw[red>,opacity=.6,shorten <=1ex,shorten >=3ex] (addr5) to [out=-90,in=180] (string5);
+    \draw[red>,opacity=.6,shorten <=1ex,shorten >=3ex] (addr6) to [out=90,in=180] (string6);
+  \end{tikzpicture}
+  \bigskip
+
+
+Pour se simplifier les idées on se le représente bien \og rangé\fg{}\bigskip:
+
+  \begin{tikzpicture}
+    \setlength{\cellh}{3.5ex}
+    \setlength{\cellw}{8ex}
+    \tabv{addr1,addr2,addr3,addr4,addr5,addr6}
+    \coordinate (addr1) at (0,0\cellh);
+    \coordinate (addr2) at (0,-1\cellh);
+    \coordinate (addr3) at (0,-2\cellh);
+    \coordinate (addr4) at (0,-3\cellh);
+    \coordinate (addr5) at (0,-4\cellh);
+    \coordinate (addr6) at (0,-5\cellh);
+
+    \setlength{\cellw}{6ex}
+    \begin{scope}[xshift=+4.5cm,yshift=0\cellh]
+      \coordinate (string1);
+      \small\tt\tab{'L','o','n','g','t','e','m','p','s','\textbackslash{}0'};
+    \end{scope}
+    \begin{scope}[xshift=+4.5cm,yshift=-1\cellh]
+      \coordinate (string2);
+      \small\tt\tab{'j','e','\textbackslash{}0'};
+    \end{scope}
+    \begin{scope}[xshift=4.5cm,yshift=-2\cellh]
+      \coordinate (string3);
+      \small\tt\tab{'m','e','\textbackslash{}0'};
+    \end{scope}
+    \begin{scope}[xshift=4.5cm,yshift=-3\cellh]
+      \coordinate (string4);
+      \small\tt\tab{'s','u','i','s','\textbackslash{}0'};
+    \end{scope}
+    \begin{scope}[xshift=4.5cm,yshift=-4\cellh]
+      \coordinate (string5);
+      \small\tt\tab{'l','e','v','é','\textbackslash{}0'};
+    \end{scope}
+    \begin{scope}[xshift=4.5cm,yshift=-5\cellh]
+      \coordinate (string6);
+      \small\tt\tab{'t','a','r','d','\textbackslash{}0'};
+    \end{scope}
+    \draw[red>,opacity=.6,shorten <=3ex,shorten >=3ex] (addr1) to [out=0,in=180] (string1);
+    \draw[red>,opacity=.6,shorten <=3ex,shorten >=3ex] (addr2) to [out=0,in=180] (string2);
+    \draw[red>,opacity=.6,shorten <=3ex,shorten >=3ex] (addr3) to [out=0,in=180] (string3);
+    \draw[red>,opacity=.6,shorten <=3ex,shorten >=3ex] (addr4) to [out=0,in=180] (string4);
+    \draw[red>,opacity=.6,shorten <=3ex,shorten >=3ex] (addr5) to [out=0,in=180] (string5);
+    \draw[red>,opacity=.6,shorten <=3ex,shorten >=3ex] (addr6) to [out=0,in=180] (string6);
+  \end{tikzpicture}
+  \bigskip
+
+  Pour accéder aux lettres des mots on utilise la même syntaxe que
+  pour les tableaux à double entrée (mais il doit être évident
+  maintenant que ça ne fait pas la même chose):
+
+\begin{lstlisting}
+char c = t[3][1];  // donne le caractère u de "suis"
+\end{lstlisting}
+
+  Cette fois les deux indice doivent être compris comme ceci:
+  \lstinline!t[3]! est un tableau de caractère, on peut donc demander
+  sa case n$^o$1.
+
+
+  \begin{exo}[Manipulation des chaînes de caractères]
+    Implantez les différentes fonctions du \href{https://cedric.cnam.fr/~lamberta/enseignements/DSP/C/sources/tp4_exo2.c}{squelette} fourni sur le site du cours :
+    \begin{enumerate}
+    \item \lstinline!tailleMax(char * t[], int taille)!  qui retourne la taille du plus grand mot du tableau de mot \verb|t|. 
+    \item \lstinline!affichageFiltreNbLettre(char *t[], int taille, int nbLettres)!  qui affiche les mots de \verb|t| dont la longueur est supérieure ou égale à  \verb|nbLettres|.
+    \item \lstinline!affichageFiltreChar(char *t[], int taille, char c)! qui affiche les mots de  \verb|t| en remplaçant toutes les occurrences du caractère \verb|c| par des espaces (' '). Bien entendu il est interdit de modifier les mots du tableau.
+    \item \lstinline!compteLettre(char * t[], int taille , char c)! qui retourne le nombre d'occurrences du caractère \verb|c| dans les mots de  \verb|t|. 
+    \item \lstinline!compteMotContenant(char * t[], int taille, char c)! qui retourne le nombre de chaines contenant le caractère \verb|c| dans le  tableau \verb|t|.
+    \item \lstinline!effaceChar(char *t[], int taille, char c)! qui modifie le tableau \verb|t| en remplaçant toutes les occurrences du caractère \verb|c| par un espace. Testez en affichant le tableau avant et après.
+    \item \lstinline!renverseMots(char *t[], int taille)! qui modifie le tableau \verb|t| en inversant l'ordre des lettres de chaque mots (ex: "levé" devient "ével"). 
+    \end{enumerate}
+Le squelette permet de passer un nom de fichier en paramètre du programme comme ceci (en admettant que vous avez appelé l'exécutable \texttt{tp4}):
+\begin{lstlisting}[language=bash]
+tp4 toto.txt
+\end{lstlisting}
+%\begin{correction} \lstinputlisting{../corriges/tp4_exo2.c}  \end{correction}
+  \end{exo}
+
+
+  \section{La boucle \texttt{while}}
+
+
+Lorsqu'on veut répéter une séquence d'instructions plusieurs fois, on utilise une \emph{boucle}. La boucle \verb|while| ressemble à un \lstinline!if! sans \lstinline!else!:
+
+\begin{lstlisting}
+while (cond) {
+ ... // Corps de la boucle: séquence d'instruction à
+     // effectuer ET À RECOMMENCER TANT QUE cond est vraie
+}
+\end{lstlisting}
+
+Cette instruction s'exécute de la façon suivante:
+\begin{enumerate}
+\item\label{debutwhile} la condition (\lstinline!cond!) est évaluée
+\item Si elle est fause, on sort immédiatement de l'instruction
+  \lstinline!while! (le corps de la boucle n'est pas exécutée)
+\item Si elle est vraie on exécute le corps de la boucle
+\item Puis on revient à l'étape 1. ci-dessus.
+\end{enumerate}
+
+Notez que si le corps de la boucle ne modifie par la valeur de \lstinline!cond! le programme va boucler indéfiniment.
+\bigskip
+
+\noindent \textbf{Exemple:} \\
+Le programme suivant lit au clavier des nombres jusqu'à ce qu'un nombre négatif soit tapé.
+
+\begin{lstlisting}
+int x = 0;
+while(x>=0) {
+  x = lireInt();
+  ecrireString("vous avez tapé: ");
+  ecrireInt(x);
+  ecriresautDeLigne();
+}
+\end{lstlisting}
+
+
+  \begin{exo}[Le jeu du pendu]
+
+En utilisant ce que vous savez sur les chaîne, programmez le jeu du
+pendu.
+
+Le jeu du pendu consiste à deviner un mot (dont on connaît la taille
+au départ) avec le moins de \emph{coups} possible. Une tentative
+consiste à demander si une lettre apparaît dans le mot à deviner. Si
+oui l'arbitre (ici le programme) doit donner toutes les positions
+auxquelles la lettre apparaît. Après chaque \emph{coup} le joueur peut
+proposer un mot. Attention si la proposition est fausse il perd
+instantanément.
+
+Le mot à deviner devra être tiré au hasard dans un fichier
+\lstinline!Liste_mots.txt! obtenu avec cette
+commande:
+
+%wget "https://www.freelang.com/download/misc/liste_francais.zip"
+%http://step.ipgp.fr/images/9/99/Liste_mots.txt
+\begin{lstlisting}[language=bash,basicstyle=\scriptsize\tt]
+wget "https://cedric.cnam.fr/~lamberta/enseignements/DSP/C/sources/dico_pendu.txt"
+\end{lstlisting}
+
+Les mots n'ont pas d'accent et sont en majuscule, pour simplifier le
+jeu se joue donc entièrement en majuscule. Voici un exemple de déroulé
+d'un partie que doit permettre votre programme:
+
+\begin{verbatim}
+------
+Quelles lettre proposez vous?
+E
+E---E-
+Quelles lettre proposez vous?
+L
+E---E-
+Quelles lettre proposez vous?
+p
+e---e-
+Quelles lettre proposez vous?
+M
+E--ME-
+Quelles lettre proposez vous?
+X
+EX-ME-
+Quelles lettre proposez vous?
+N
+EX-MEN
+Quelles lettre proposez vous?
+EXAMEN
+Gagné en 6 coups!
+\end{verbatim}
+Pour programmer le jeu du pendu on utilise dans la fonction \verb|main| un tableau d'entier \verb|estTrouve|, qui a la même taille que le mot cherché et qui contient dans le case  \verb|i|, la valeur \verb|1| si la lettre \verb|i| du mot à trouver a été trouvée et la valeur \verb|0| sinon. Il faudra bien initialiser ce tableau avec des  \verb|0| au début du jeu. \\
+On déclarera également un \verb|BOOL jouer| qui est initialisé à  \verb|TRUE|, et qui sera mis à  \verb|FALSE| quand le joueur aura gagné, pour pouvoir arrêter la partie.\\
+
+
+
+ Implantez les différentes fonctions du \href{https://cedric.cnam.fr/~lamberta/enseignements/DSP/C/sources/pendu.c}{squelette} fourni sur le site du cours :
+    \begin{enumerate}
+    \item \lstinline!int nbOccurence(char t[], int a[], char c)!  qui retourne le nombre d'occurences du caractère \verb|c| du tableau de mot \verb|t|.  Cette fonction met à jour le tableau \verb|a|, qui a la même taille que le  tableau de mot \verb|t| et qui contient dans le case  \verb|i|, la valeur \verb|1| si la lettre \verb|i| du mot à trouver a été trouvée et la valeur \verb|0| sinon. 
+    \item \lstinline!void affichageMotACherche(char t[], int a[])!  qui, en fonction des valeurs du tableau  \verb|a| affiche le mot  \verb|t| : si  \verb|a[i]=1|, elle affiche la lettre de  \verb|t|, sinon le caractère  \verb|-|.
+    \item \lstinline!int main() ! qui contient la suite d'instructions du jeu.
+    \end{enumerate}
+%\begin{correction} \lstinputlisting{../corriges/tp4_exo3.c}  \end{correction}
+  \end{exo}
+  
+
+\end{document}

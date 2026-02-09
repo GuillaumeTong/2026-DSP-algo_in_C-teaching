@@ -1,0 +1,316 @@
+\documentclass{../enonce}
+\usepackage{enumerate}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{array,multirow,colortbl}
+\usepackage{calc}
+
+
+\usepackage{etoolbox}% http://ctan.org/pkg/etoolbox
+\newlength{\cellw}
+\newlength{\cellh}
+\setlength{\cellh}{3ex}
+\setlength{\cellw}{3ex}
+\newcommand{\case}[2][]{
+  \node[rectangle=1pt,draw=black,minimum width=\cellw,minimum height=\cellh] at (#2\cellw,0) {#1};
+}
+\newcommand{\casev}[2][]{
+  \node[rectangle=1pt,draw=black,minimum width=\cellw,minimum height=\cellh] at (0,-#2\cellh) {#1};
+}
+\newcommand{\caseb}[2][]{
+  \node[rectangle=1pt,very thick,draw=black,minimum width=\cellw,minimum height=\cellh] at (#2\cellw,0) {#1};
+}
+
+
+\newcounter{tabcnt}
+\newcommand{\tab}[1]{%
+  \setcounter{tabcnt}{0}
+  \def\nextitem{\def\nextitem{}}% Separator
+  \renewcommand*{\do}[1]{\nextitem\case[##1]{\value{tabcnt}}\stepcounter{tabcnt}}% How to process each item
+    \docsvlist{#1}% Process list
+}
+\newcommand{\tabv}[1]{%
+  \setcounter{tabcnt}{0}
+  \def\nextitem{\def\nextitem{}}% Separator
+  \renewcommand*{\do}[1]{\nextitem\casev[##1]{\value{tabcnt}}\stepcounter{tabcnt}}% How to process each item
+    \docsvlist{#1}% Process list
+}
+
+\newcommand{\tabpict}[1]{%
+  \begin{tikzpicture}
+    \tab{#1}
+  \end{tikzpicture}
+}
+\newcommand{\tabvpict}[1]{%
+  \begin{tikzpicture}
+    \tab{#1}
+  \end{tikzpicture}
+}
+
+\lstset{language=C}
+\lstset{%
+  %escapeinside={(*@}{@*)},%
+  %morecomment=*[n][\it\ttfamily]{/\\*\\*}{\\*/},% reconnaît mots-clés, commentaires...
+  %moredelim=[is][\it]{/*}{*/},% éviter keyword style in comment
+  flexiblecolumns=false,%
+  %mathescape=true,%
+  basicstyle=\tt\small,%
+  keywordstyle=\bf\ttfamily,%
+  commentstyle=\it\ttfamily,%
+  frame=tblr,% top + bottom
+  morekeywords={String},%
+  rangeprefix=/*@,rangesuffix=@*/,%
+  includerangemarker=true,% false Plante avec l'utf8
+  % backgroundcolor=\color{grey2},%
+  % Astuce pour masquer qd meme les range:
+  literate={/*@debutexo1@*/}{{\ }}1{/*@finexo1@*/}{{\ }}1{/*@debutexo2@*/}{{\ }}1{/*@finexo2@*/}{{\ }}1%
+  {à}{{\`a}}1{è}{{\`e}}1{ê}{{\^e}}1{é}{{\'e}}1{ù}{{\`u}}1{ç}{{\,c}}1{î}{{\^i}}1{À}{{\`A}}1{È}{{\`E}}1{Ê}{{\^E}}1{É}{{\'E}}1{Ù}{{\`U}}1{Ç}{{\,C}}1{Î}{{\^I}}1,%
+  showstringspaces=false,%
+}
+\usepackage{tikz,pgf}
+
+\usetikzlibrary{shapes,arrows,decorations.markings,calc,positioning}
+\tikzstyle{oval}=[ellipse,thick,inner sep=2pt,minimum height=1.3em,draw=red]
+\pgfsetxvec{\pgfpoint{0.5cm}{0cm}}
+\pgfsetyvec{\pgfpoint{0cm}{0.5cm}}
+\tikzset{
+  red>/.style={->,ultra thick,color=red}
+}
+
+
+
+
+% latex2html
+%\usepackage{html,makeidx,color}
+
+%\let\emph\relax % there's no \RedeclareTextFontCommand
+%\DeclareTextFontCommand{\emph}{\it}
+\renewcommand{\emph}[1]{{\it #1}}
+
+\usepackage[colorlinks,urlcolor=blue,linkcolor=blue]{hyperref}
+
+
+
+\title{TP3 Les boucles et les tableaux}
+\author{Algo et JavaScript}
+\date{}
+
+
+\begin{document}
+%\excludecomment{correction}
+
+\noindent~
+\begin{minipage}{9cm}
+CNAM\\
+DSP Informatique - Réseau de la Réussite Vincent Merle
+%IFIPS Informatique 1ère année
+\end{minipage}
+%\hfill Année 2018--2019 ~
+
+%\title{IUT-L1 - USAL22}
+%\author{Les Exceptions}
+
+\vspace{1mm}
+
+\noindent ~\hrulefill~
+
+\vspace{2mm}
+
+\noindent
+\begin{minipage}{9cm}
+Algo/JavaScript -- USAL34\\
+%Votre nom :
+\end{minipage}
+
+\bigskip
+
+%\vspace{1cm}
+
+\begin{center}
+\bf {\Large TP3 Les boucles et les tableaux en C}\\
+%\bf {\Large Interrogation écrite}\\
+%31 mai 2019
+\end{center}
+%\bigskip
+\vspace{0.5cm}
+\noindent \textbf{Objectifs du TP}
+ \begin{itemize}
+ \item Apprendre à utiliser les structures de contrôles itératives (boucles  \texttt{for})
+ \item Apprendre à manipuler les tableaux à une dimension
+ \item Apprendre à manipuler les tableaux à deux dimensions 
+ \end{itemize}
+
+
+
+
+\section{Rappels : bibliothèque et compilation}
+
+La bibliothèque d'entrée-sortie:
+\href{http://deptinfo.cnam.fr/~courtiep/inout/inout.h}{inout.h} et
+\href{http://deptinfo.cnam.fr/~courtiep/inout/inout.c}{inout.c} et
+mettez les dans un répertoire \texttt{tp3}. Pour cela vous pouvez
+faire les commandes suivantes (une seule fois) dans un terminal (menu
+pricipal: \texttt{terminal/Konsole}):
+\begin{lstlisting}{bash,literate={}}
+mkdir tp3
+cd tp3
+wget "http://deptinfo.cnam.fr/~courtiep/inout/inout.h"
+wget "http://deptinfo.cnam.fr/~courtiep/inout/inout.c"
+\end{lstlisting}
+
+
+Programmez et tester ces fonctions \emph{une par une} (testez une
+fonction dès que vous pensez qu'elle est finie). Pour tester une
+fonction \lstinline!f! on programme un ou plusieurs appels à cette procédure dans
+une procédure \lstinline!test_f! : on teste
+le résultat obtenu par rapport au résultat attendu et on affiche un
+message d'erreur si ils ne sont pas égaux.
+
+\section{Les boucles et les tableaux à 1 dimension}
+\begin{exo}[Les fonctions itératives]~\\
+\begin{enumerate}
+\item Écrivez une procédure \lstinline!void carre(int n)! qui
+  affiche \lstinline!n! lignes de largeur \lstinline!n!, remplies de caractères \lstinline!'*'!.
+
+  Par exemple, \lstinline!carre(4);! doit afficher:
+\begin{verbatim}
+****
+****
+****
+****
+\end{verbatim}
+
+  Testez cette fonction dans une procédure \lstinline!void~testCarre()! qui demande à l'utilisateur la largeur qu'il désire (et qui passe la réponse en paramètre à la procédure \lstinline!carre!.
+\item Écrivez une procédure \lstinline!void triangle(int n)! qui
+  affiche un triangle (pointe vers le haut) composé de caractère
+  \lstinline!'*'!. Testez la de la même manière que \lstinline!carre!.
+
+  Par exemple, \lstinline!triangle(4);! doit afficher:
+\begin{verbatim}
+*
+**
+***
+****
+\end{verbatim}
+\item Écrivez une procédure \lstinline!void triangleInverse(int n)!
+  qui affiche un triangle pointe vers le bas composé de caractère
+  \lstinline!'*'!. Testez.
+
+  Par exemple, \lstinline!triangleInverse(4);! doit afficher:
+\begin{verbatim}
+****
+***
+**
+*
+\end{verbatim}
+\item Écrivez une procédure \lstinline!void triangleInverse2(int n)!
+  qui affiche un triangle pointe vers le bas composé de caractère
+  \lstinline!'*'! mais dont l'angle droit est à droite. Testez.
+
+  Par exemple, \lstinline!triangleInverse(4);! doit afficher:
+\begin{verbatim}
+****
+ ***
+  **
+   *
+\end{verbatim}
+  
+\end{enumerate}
+%\begin{correction}  \lstinputlisting{../corriges/tp3_exo1.c}   \end{correction}
+\end{exo}
+
+\begin{exo}[Fonction manipulant un tableau à une dimension]~\\
+
+Programmez les fonctions et procédures ci-dessous. Elles nécessitent des boucles pour parcourir les tableaux.
+
+\begin{enumerate}
+\item \lstinline!void affiche(int t[], int n)! qui affiche les éléments  du tableau \texttt{T} de taille \texttt{n}
+
+\item \lstinline!BOOL estPresent(int t[], int n, int x)! qui teste si un entier \texttt{x} est dans le tableau \texttt{T} de taille \texttt{n}
+\item \lstinline!int nombreOccurence(int t[], int n, int x)! qui retourne le nombre d'occurrences de l'entier \texttt{x} dans le tableau \texttt{T} de taille \texttt{n}
+ \item \lstinline!int minimum(int t[], int n)! qui retourne la plus petite valeur du tableau \texttt{T} de taille \texttt{n}
+  \item \lstinline!int maximum(int t[], int n)! qui retourne la plus grande valeur du tableau \texttt{T} de taille \texttt{n}
+ \item \lstinline!double moyenne(int t[], int n)! qui retourne la moyenne des valeurs du tableau \texttt{T} de taille \texttt{n}
+ \item \lstinline!BOOL estTrie(int t[], int n)! qui teste si le tableau \texttt{T} de taille \texttt{n} est trié.
+ \item \lstinline!void decalage(int t[], int n)! qui décale les valeurs du tableau \texttt{T} de taille \texttt{n}. Si le tableau \texttt{T = \{1,2,3,4\}}, la procédure le modifie en  \texttt{T = \{2,3,4,1\}}.
+
+\end{enumerate}
+
+%\begin{correction}  \lstinputlisting{../corriges/tp3_exo2.c}   \end{correction}
+\end{exo}
+
+
+\section{Fonctions manipulant un tableau à double entrées}
+
+
+En C (contrairement à Java par exemple), les tableaux à entrées multiples sont en fait des tableaux simples en mémoire. Par exemple le tableau \lstinline!t1! déclaré comme ceci:
+\begin{lstlisting}
+  int t1 [n][m];
+\end{lstlisting}
+sera en fait alloué en mémoire exactement comme le tableau \lstinline!t2! déclaré comme cela:
+\begin{lstlisting}
+  int t2 [n*m];
+\end{lstlisting}
+En revanche on n'accède pas aux cases de la même manière. Pour accéder aux cases de \lstinline!t1! il faut donner deux indices. Par exemple pour accéder à la treizième case on écrit:
+\begin{lstlisting}
+  t2[1][2]
+\end{lstlisting}
+qui est transformé par le compilateur en:
+\begin{lstlisting}
+  t2[1*m+2]
+\end{lstlisting}
+c'est-à-dire \lstinline!t2[12]! qui correspond bien à la 13$^e$ case de
+\lstinline!t!.
+
+\bigskip
+
+\emph{Le tableau est donc \og découpé\fg{} en tranche de m  cases}. En général, on décide que le tableau à double entrée représente donc une matrice : chaque \og tranche\fg{} représente une \og ligne\fg{}. Pour accéder à la j$^e$ case de la i$^e$ ligne on écrit \lstinline!t2[i][j]!, autrement dit le premier indice
+représente le numéro de la ligne et le deuxième le numéro de la colonne.
+
+\bigskip
+Attention en C, lorsqu'on transmet un tableau à plusieurs dimensions en paramètre d'une fonction (ou procédure)on fait comme pour les tableaux à une dimension, sauf que \textit{seule la dimension la plus à gauche peut être omise dans le prototype de la fonction.}
+
+
+\begin{exo}[Fonctions manipulant un tableau à 2 dimensions]~\\
+Programmez et testez les fonctions et procédures ci-dessous.
+
+\begin{enumerate}
+\item \lstinline!void affiche(int t[][3], int nblignes)!  Affichage du tableau \lstinline!t! de taille
+  $3\times$\lstinline!nblignes!. Par exemple:
+\begin{verbatim}
+1 2 3 
+4 5 6 
+7 8 9 
+\end{verbatim}
+\item \lstinline!void affichenTranspose(int t[][3], int nblignes)!
+  Affichage du tableau \lstinline!t! de taille   $3\times$\lstinline!nblignes! en renversant les lignes et les
+  colonnes.
+\item \lstinline!void afficheDiagonale(int t[][3], int nblignes)!  Affichage de la diagonale (haut gauche vers bas droit) du tableau \lstinline!t! de taille $3\times$\lstinline!nblignes!.
+\item \lstinline!void afficheDiagonale2(int t[][3], int nblignes)!  Affichage de la diagonale (haut droit vers bas gauche) du tableau  \lstinline!t! de taille $3\times$\lstinline!nblignes!.
+\item
+  \lstinline!void affichecolonne(int t[][3], int nblignes, int ncol)!
+  Affichage de la colonne \lstinline!col! du tableau \lstinline!t! de
+  taille $3\times$\lstinline!nblignes!.
+\item \lstinline!BOOL estPresent(int t[][3],int nblignes, int x)! qui teste si un entier \texttt{x} est dans le tableau \texttt{T} de taille $3\times$\lstinline!nblignes!.
+  les deux diagonales et les deux colonnes du milieu du tableau de
+  taille $3\times$\lstinline!nblignes!.
+\item
+  \lstinline!BOOL testColonneZeros(int t[][3], int nblignes, int ncol)!
+  qui retourne \lstinline!TRUE! si la colonne \lstinline!ncol! du
+  tableau \lstinline!t! est composée uniquement de zéros.Testez cette
+  fonction dans un \lstinline!if! de la forme:
+
+  \lstinline!if (testColonneZeros(t,5,2)) { ... ] else { ... }!
+
+    Remarque: la fonction \lstinline!testColonneZeros! doit
+    \emph{retourner} \lstinline!BOOL!, pas l'afficher.
+  \item  \lstinline!int sommeColonne(int t[][3], int nblignes, int ncol)!
+  qui retourne la somme des éléments de la colonne \lstinline!ncol! du
+  tableau \lstinline!t! de taille $3\times$\lstinline!nblignes!.
+\end{enumerate}
+%\begin{correction}  \lstinputlisting{../corriges/tp3_exo3.c}   \end{correction}
+\end{exo}
+
+
+
+\end{document}

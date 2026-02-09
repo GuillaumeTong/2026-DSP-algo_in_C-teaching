@@ -1,0 +1,876 @@
+\documentclass{enonce}
+\usepackage{enumerate}
+\usepackage{listings}
+\usepackage{graphicx}
+\lstset{language=C}
+\lstset{%
+  %escapeinside={(*@}{@*)},%
+  %morecomment=*[n][\it\ttfamily]{/\\*\\*}{\\*/},% reconnaît mots-clés, commentaires...
+  %moredelim=[is][\it]{/*}{*/},% éviter keyword style in comment
+  flexiblecolumns=false,%
+  %mathescape=true,%
+  basicstyle=\tt\small,%
+  keywordstyle=\bf\ttfamily,%
+  commentstyle=\it\ttfamily,%
+  frame=tblr,% top + bottom
+  morekeywords={String},%
+  rangeprefix=/*@,rangesuffix=@*/,%
+  includerangemarker=true,% false Plante avec l'utf8
+  % backgroundcolor=\color{grey2},%
+  % Astuce pour masquer qd meme les range:
+  literate={/*@debutexo1@*/}{{\ }}1{/*@finexo1@*/}{{\ }}1{/*@debutexo2@*/}{{\ }}1{/*@finexo2@*/}{{\ }}1%
+  {à}{{\`a}}1{è}{{\`e}}1{ê}{{\^e}}1{é}{{\'e}}1{ù}{{\`u}}1{ç}{{\,c}}1{î}{{\^i}}1{À}{{\`A}}1{È}{{\`E}}1{Ê}{{\^E}}1{É}{{\'E}}1{Ù}{{\`U}}1{Ç}{{\,C}}1{Î}{{\^I}}1,%
+  showstringspaces=false,%
+}
+ 
+\usepackage[colorlinks,urlcolor=blue,linkcolor=blue]{hyperref}
+\title{TP1 Introduction au langage C}
+\author{Algo et JavaScript}
+\date{}
+
+
+\begin{document}
+\excludecomment{correction}
+
+\noindent~
+\begin{minipage}{9cm}
+CNAM\\
+DSP Informatique - Réseau de la Réussite Vincent Merle
+%IFIPS Informatique 1ère année
+\end{minipage}
+%\hfill Année 2018--2019 ~
+
+%\title{IUT-L1 - USAL22}
+%\author{Les Exceptions}
+
+\vspace{1mm}
+
+\noindent ~\hrulefill~
+
+\vspace{2mm}
+
+\noindent
+\begin{minipage}{9cm}
+Algo/JavaScript -- USAL34\\
+%Votre nom :
+\end{minipage}
+
+\bigskip
+
+%\vspace{1cm}
+
+\begin{center}
+\bf {\Large Exercices de TD}\\
+%\bf {\Large Interrogation écrite}\\
+%31 mai 2019
+\end{center}
+%\bigskip
+
+
+%\bigskip
+
+\vspace{0.5cm}
+\noindent {\large \textbf{1. Conception de programmes}}\\
+
+\vspace{0.2cm}
+
+\noindent Pour écrire un programme il faut suivre les étapes suivantes :
+\begin{enumerate}
+\item Déterminer les Entrées du programme
+\item Déterminer les sorties du programme
+\item Concevoir l'algorithme qui à partir des données produira la sortie
+\item Traduire l'algorithme sous forme d'une fonction \texttt{C}
+\end{enumerate}
+
+Pour chacuns des problèmes suivants détaillez les étapes de conception décrites ci-dessus.
+
+\begin{exo}
+  ~\\
+ 
+Ecrire un programme demandant à l'utilisateur d'entrer son âge, et l'année courante, et qui affiche ensuite à l'écran l'année de sa naissance et le nombre de jours vécus.
+
+  \begin{correction}
+    \begin{lstlisting}
+void main( ){
+  ecrireString("Entrez votre âge\n");
+  int age = lireInt();
+  ecrireString("Entrez l'année\n");
+  int annee = lireInt();
+  int naissance = annee - age;
+  ecrireString("Votre annee de naissance est ");
+  ecrireInt(naissance);
+  ecrireChar('\n');
+  int nb_jour= age*365;
+  ecrireString("Vous avez vécu ");
+  ecrireInt(nb_jours);
+  ecrireChar(' jours\n');
+}
+  \end{lstlisting}
+    \end{correction}
+\end{exo}
+
+\begin{exo}[Moyenne et Somme] ~
+ Écrivez un programme \texttt{Moyenne} qui lit trois notes et
+affiche leur somme et leur moyenne.  
+\begin{correction}
+\begin{lstlisting}
+void main( ) {
+    double sum=0;
+    int nb_int=3; 
+    double temp;
+    ecrireString("Entrez la première note :");
+    temp=lireDouble(); 
+    sum=sum+temp;
+    ecrireString("Entrez la deuxième note :");
+    temp=lireDouble(); 
+    sum=sum+temp;
+    ecrireString("Entrez la troisième note :");
+    temp=lireDouble(); 
+    sum=sum+temp;
+    ecrireString("La somme est :");
+    ecrireInt(sum);
+    ecrireString("La moyenne est :");
+    ecrireInt(sum/nb_int);
+}
+\end{lstlisting}
+\end{correction}
+\end{exo}
+
+\begin{exo}[Cercle] ~\\
+Écrivez un programme \texttt{Cercle} qui demande le rayon d'un
+cercle et affiche son périmètre et sa surface.  Vous pourrez vous
+servir de la constante $\pi$ dont la valeur est une $3.1416$.
+\begin{correction}
+\begin{lstlisting}
+void main() {
+    double rayon;
+    ecrireString("Entrez le rayon du cercle :");
+    rayon=lireDouble(); 
+    ecrireString("Le périmètre est :");
+    ecrireDouble(2*Math.PI*rayon);
+    ecrireString("La surface est :");
+    ecrireDouble(3.1416*(rayon*rayon));
+}
+\end{lstlisting}
+\end{correction}
+\end{exo}
+\begin{exo}[Conversion]~\\
+Écrivez un programme \texttt{Conversion} qui demande une
+température en degrés Celsius et la convertit en degrés Farenheit. On
+rappelle la formule \[ f = \frac{9 c}{5}+32 \] où $f$ est la température en degrés Farenheit et $c$ en degrés Celsius.  (Pensez au type des variables --- ce ne sont pas forcément des entiers.)
+\begin{correction}
+\begin{lstlisting}
+void main( ) {
+   double temp;
+   ecrireString("Entrez la température en degrés Celsius :");
+   temp=lireDouble(); 
+   ecrireString("La température en degré Farenheit est :");
+   ecrireDouble((9*temp)/5 +32);
+}
+\end{lstlisting}
+\end{correction}
+\end{exo}
+
+\begin{exo}[TTC]~\\
+ Écrivez un programme \texttt{TTC} qui à partir d'un prix hors
+taxes et d'un taux de TVA calcule le prix toutes taxes comprises
+correspondant.
+\begin{correction}
+\begin{lstlisting}
+void main( ) {
+   double taux;
+   double prix;
+   ecrireString("Entrez le taux de tva :");
+   taux=lireDouble(); 
+   ecrireString("Entrez le prix :");
+   prix=lireDouble(); 
+   ecrireString("Le prix TTC est :");
+   ecrireDouble(1.196*prix);
+}
+\end{lstlisting}
+\end{correction}
+\end{exo}
+
+\begin{exo}
+  ~\\
+  Ecrire un programme qui permute deux valeurs entières. Ces valeurs seront lues au clavier. Même question pour deux caractères.
+
+  \begin{correction}
+    \begin{lstlisting}
+void main( ){
+  int a = lireInt();
+  int b= lireInt();
+  int temp =a;
+  a = b;
+  b = temp;
+}
+
+void main( ){
+  char a = lireChar();
+  char b= lireChar();
+  char temp =a;
+  a = b;
+  b = temp;
+}
+    \end{lstlisting}
+    \end{correction}
+\end{exo}
+
+\vspace{0.5cm}
+
+\noindent {\large \textbf{2. Evaluation d'expressions}\\
+%\vspace{0.2cm}
+\begin{exo}[Valeur  des expressions et des variables]
+~\\
+Quelle est la valeur des expressions suivantes ?
+\begin{enumerate}
+\item \texttt{53\%7+5*5-3}
+\item \texttt{12+53\%7*(4*3\%2)}\\
+\end{enumerate}
+
+Si \texttt{a=1}, quelles sont les valeurs des expressions booléennes suivantes :
+\begin{enumerate}
+\item \texttt{!(a>0) \&\& (a>0);}
+\item \texttt{(a!=1) == !(a==1);}
+\end{enumerate}
+\begin{correction}
+\begin{enumerate}
+\item \texttt{53\%7+5*5-3} : \textbf{26} 
+\item \texttt{12+53\%7*(4*3\%2)} : \textbf{12 }\end{enumerate}
+\begin{enumerate}
+\item \texttt{!(a>0) \&\& (a>0);} : \textbf{$\neq 0$}
+\item  \texttt{(a!=1) == !(a==1);} : \textbf{1}
+\end{enumerate}
+
+\end{correction}
+\end{exo}
+
+
+\begin{exo}[Evaluation d'expressions booléennes]~\\
+Quelles sont les valeurs des expressions booléennes suivantes ?\\
+\texttt{
+\begin{tabular}{l@{\qquad\qquad\qquad}l}
+10 > 5&5 == 11 - 6\\
+10 == 5&!(30 \% 3 == 0)\\
+5 == 5&0.3 - 0.2 == 0.2 - 0.1
+\end{tabular}
+}
+\end{exo}
+
+
+
+\vspace{0.5cm}
+
+
+\noindent {\large \textbf{2. La conditionnelle}\\
+
+
+
+\begin{exo}[Tarif réduit]
+~\\
+Ecrire un programme qui prend l'âge d'un utilisateur en paramètres et affiche le message "tarif réduit" si il a stricttement moins de 26 ans, et "tarif normal" si il a plus de 26 ans.
+\begin{correction}
+\begin{lstlisting}
+void tarif(int age){
+  if (age <26)
+    ecrireString("Tarif réduit");
+  else
+    ecrireString("Tarif normal");
+}
+\end{lstlisting}
+\end{correction}
+\end{exo}
+
+\begin{exo}
+~\\
+Concevoir le programme qui calcule la note finale d'une unité d'enseignement étant données la note du partiel et celle de
+l'examen et sachant que :
+\begin{itemize}
+\item une note inférieure à 7 à l'examen est éliminatoire
+\item si la note d'examen est supérieure à 7, la note finale est la moyenne des deux notes si elle
+avantage l'étudiant. Sinon, la note finale est la note d'examen.
+\end{itemize}
+\begin{correction}
+\begin{enumerate}
+\item Entrées : la note d'examen \texttt{ne} et celle du partiel \texttt{np}
+\item Sorties : la note finale  \texttt{nf}
+\item Algorithme : 
+\begin{verbatim}
+Si (ne < 7) alors 
+  nf = ne
+Sinon 
+  moy = moyenne de ne et np
+  si (moy > ne) alors 
+    nf = moy
+  sinon 
+    nf = ne
+\end{verbatim}
+\item \texttt{C} :
+\begin{lstlisting}
+double calculNote(double ne, double nf ){
+  double nf,moy;
+  if (ne < 7) {
+    nf = ne;
+  }
+  else { 
+    moy = (ne + np)/2;
+    if (moy > ne){
+      nf = moy;
+    }
+    else {
+     nf = ne;
+    }
+  }
+  return nf;
+}
+\end{lstlisting}
+\end{enumerate}
+\end{correction}
+\end{exo}
+
+
+\begin{exo}
+~\\
+On défini le "type" \texttt{BOOL}, grâce aux entiers, pour modéliser les booléens, où  \texttt{TRUE} est la valeur entière   \texttt{1} et \texttt{FALSE} est la valeur entière   \texttt{0}. 
+\begin{lstlisting}
+#define BOOL int
+#define TRUE 1
+#define FALSE 0
+\end{lstlisting}
+  Concevoir le programme qui teste si un entier appartient à l'intervalle donné par deux nombres entiers.
+\begin{correction}
+
+
+\begin{enumerate}
+\item Entrées : un entier \texttt{e}, un intervalle \texttt{$[a,b]$}
+\item Sorties : un BOOL \texttt{res} 
+\item Algorithme :
+\begin{verbatim}
+ Si (e < a) ou (e > b) alors 
+   appartient = false 
+ sinon 
+   appartient = true
+\end{verbatim}
+\item \texttt{C} :
+\begin{lstlisting}
+BOOL appartient(int e, int a, int b){
+  BOOL res; 
+  if ((e < a) || (e > b)) 
+    res = FALSE;
+  else
+    res = TRUE;   
+  return res;
+}
+\end{lstlisting}
+
+\end{enumerate}
+  
+
+\end{correction}
+\end{exo}
+
+
+
+\begin{exo}
+~\\
+Concevoir le programme qui teste si une année est bissextile. On sait qu'une année divisible par 4 est bissextile sauf si elle
+est divisible par 100, cependant les années divisibles par 400 sont également bissextiles.
+\begin{correction}
+
+\begin{enumerate}
+\item Entrées : une année \texttt{annee}
+\item Sorties : un booléen \texttt{bissextile}
+\item Algorithme : 
+\begin{verbatim}
+si (annee divisible par 4) alors 
+  si (annee divisible par 100) alors 
+    si (annee divisible par 400) alors 
+      bissextile = true
+    sinon 
+      bissextile = FALSE
+  sinon 
+    bissextile = true
+sinon 
+  bissextile = FALSE
+\end{verbatim}
+\item \texttt{C} :
+\begin{lstlisting}
+BOOL bissextile(int annee){
+  BOOL bissextile;
+  if (annee \% 4 == 0){
+    if (annee \% 100){
+      if (annee \% 400)
+        bissextile = TRUE;
+      else 
+        bissextile = FALSE
+    }
+    else 
+      bissextile = TRUE
+  }
+  else
+    bissextile = FALSE
+  return bissextile;    
+}
+\end{lstlisting}
+
+\end{enumerate}
+
+  
+
+\end{correction}
+\end{exo}
+
+
+\begin{exo}
+~\\
+Concevoir le programme qui qui détermine et renvoie le plus grand parmi trois nombres entiers.
+\begin{correction}
+
+\begin{enumerate}
+\item Entrées : 3 entiers \texttt{a},  \texttt{b} et  \texttt{c}.
+\item Sorties : un entier \texttt{max}
+\item Algorithme :
+\begin{verbatim}
+Si (a > b) alors 
+  max = a 
+sinon 
+  max =b
+Si (c > max) alors 
+  max =c
+\end{verbatim}
+\item \texttt{C} :
+\begin{lstlisting}
+int max(int a, int b , int c ){
+  int max;
+  if (a > b)
+    max = a;  
+  else
+    max =b;
+  if (c > max)
+    max =c;
+  return max;
+}
+\end{lstlisting}
+
+\end{enumerate}
+
+  
+
+\end{correction}
+\end{exo}
+
+
+\begin{exo}
+~\\
+ Concevoir le programme calcule la valeur absolue d'un entier.
+\begin{correction}
+\begin{enumerate}
+\item Entrées : un entier \texttt{a}
+\item Sorties : un entier \texttt{absolue}
+\item Algorithme :
+\begin{verbatim}
+si (a<0)
+  absolue = -a
+sinon
+  absolue = a;
+\end{verbatim}
+\item \texttt{C} :
+\begin{lstlisting}
+ int valeurAbsolue(int a){
+  int absolue;
+  if (a<0)
+    absolue = -a;
+  else
+    absolue = a;
+  return absolue;    
+}
+\end{lstlisting}
+
+\end{enumerate}
+
+
+  
+
+\end{correction}
+\end{exo}
+
+\begin{exo}
+~\\
+Concevoir le programme qui, étant donné la date d'un jour, calcule la date du lendemain de ce jour et l'affiche à l'écran.
+\begin{correction}
+\begin{enumerate}
+\item Entrées :
+\item Sorties :
+\item Algorithme :
+\begin{verbatim}
+si ((m est février et que j est 29 ou que j est 28 et que a est bissextile) ou 
+   (m est un mois de 31 jours et j est 31 ) ou
+   (m est un mois de 30 jours et j est 30)) alors
+     nj = 1 
+     si (m est décembre) alors
+       nm = 1
+     sinon
+       nm = m +1
+sinon 
+     nj=j+1
+     nm =m 
+si ( j est 31 et m est décembre) alors
+     na = a +1
+sinon
+     na = a
+\end{verbatim}
+\item \texttt{C} :
+\begin{lstlisting}
+void lendemain(int j, int m, int a){
+  int nj;
+  int nm;
+  int na;
+  if ( ((m ==2) && ((j == 29) || ((j==28) && !bissextile(a))))
+      || (((m==1) || (m==3) || (m == 5) || (m==7) || (m==8) || (m == 10)  || (m == 12)) && (j == 31))
+      || (((m==4) || (m==6) || (m == 9) || (m==11)) && (j == 30)))
+    nj = 1;
+    if (m==12)
+      nm = 1 ;
+    else
+      nm=m+1;
+  else 
+    nj=j+1;
+    nm = m;
+  if ( (j == 31) && (m ==12))
+    na = a +1;
+  else
+  na = a;
+  ecrireString("La date de demain est :'');
+  ecrireInt(nj);
+  ecrirec=Char('/');
+  ecrireInt(nm);
+  ecrirec=Char('/');
+  ecrireInt(na);
+  ecrirec=Char('\n');
+}
+\end{lstlisting}
+
+
+\end{enumerate}
+
+  
+
+\end{correction}
+\end{exo}
+
+
+
+\vspace{0.5cm}
+
+\noindent {\large \textbf{4. Les tableaux et les boucles}}\\
+
+\vspace{0.2cm}
+
+
+\begin{exo}[Vrai ou faux]~
+\begin{enumerate}
+\item Tous les éléments d'un tableau ont le même type
+\item La taille du tableau peut être fixée au moment de sa déclaration
+\item La taille du tableau peut être fixée au moment de sa création
+\item Les instructions suivantes sont-elles valides ? Si non corrigez.
+  \begin{itemize}
+\item \texttt{int i = \{1,2,3\};}
+\item \texttt{double[]  d;}
+\item \texttt{float f[3] ;}
+\item \texttt{char r[] = = \{1,2,3\};}
+\item \texttt{int i[] = (3,4,6,8);}
+\item \texttt{float f[] = \{3.2,4.5,5.6\};}
+\item \texttt{char [] c = \{'a', 'b','c'\};}
+\end{itemize}
+  \end{enumerate}
+\begin{correction}
+  \begin{enumerate}
+    \item Tous les éléments d'un tableau ont le même type : \textbf{vrai}
+\item La taille du tableau peut être fixée au moment de sa déclaration : \textbf{faux}
+\item La taille du tableau peut être fixée au moment de sa création : \textbf{vrai}
+\item Les instructions suivantes sont-elles valides ? Si non corrigez.
+  \begin{itemize}
+  \item \texttt{int i = \{1,2,3\};}\textbf{non}\\
+\texttt{int i[] = \{1,2,3\};} ou \texttt{int i[3] = \{1,2,3\};}
+\item \texttt{double[]  d;}\textbf{non}\\
+  \texttt{double d[]  ;}
+\item \texttt{float f[3] ;}\textbf{oui}
+\item \texttt{char r[] = \{1,2,3\};}\textbf{non}\\
+  \texttt{char r[] =  \{'a', 'b','c'\};}
+\item \texttt{int i[] = (3,4,6,8);}\textbf{non}\\
+  \texttt{int i[] = \{3,4,6,8\};} ou \texttt{int i[4] = \{3,4,6,8\};}
+\item \texttt{float f[] == \{3.2,4.5,5.6\};}\textbf{non}\\
+  \texttt{float f[] = \{3.2,4.5,5.6\};} ou \texttt{float f[3] = \{3.2,4.5,5.6\};}
+\item \texttt{char c  [] = \{'a', 'b','c'\};}\textbf{oui}
+\end{itemize}
+\end{enumerate}
+
+\end{correction}
+\end{exo}
+
+\begin{exo}[Les tableaux]~
+\begin{enumerate}
+\item Déclarer un tableau \texttt{t} de taille 3 de réels simple précision. 
+\item Créer un tableau \texttt{tab} d'entiers de taille 8. 
+\item Déclarer et initialiser un tableau \texttt{x} avec les 5 premières lettres de l'alphabet 
+\item Remplir le tableau \texttt{t} précédent avec 3 valeurs quelconques (en une ligne de code)
+
+\end{enumerate}
+\begin{correction}
+\begin{enumerate}
+\item Déclarer un tableau \texttt{t} de taille 3 de réels simple précision. \\
+\texttt{float t[3];}
+\item Créer un tableau \texttt{tab} d'entiers de taille 8. \\
+\texttt{int tab [8];} 
+\item Déclarer et initialiser un tableau \texttt{x} avec les 5 premières lettres de l'alphabet \\
+\texttt{char x[] = \{'a','b','c','d','e'\};} ou \texttt{char x[5] = \{'a','b','c','d','e'\};} 
+\item Remplir le tableau \texttt{t} précédent avec 3 valeurs quelconques (en une ligne de code)\\
+\texttt{t = new float[]\{5.3f,7.8f,9.0f\};}
+\end{enumerate}
+
+\end{correction}
+\end{exo}
+\begin{exo}[Un programme éronné]~\\
+Corriger les 4 erreurs du programme suivant :
+\begin{small}
+\begin{lstlisting}
+void main( ){
+  float[] t;
+  for(i=0;i<=10;i++)
+      t(i) = i*100;
+}
+\end{lstlisting}
+\end{small}
+\begin{correction}
+\begin{lstlisting}
+void main( ){
+  float t[10];
+  int i;
+  for(i=0;i<10;i++)
+      t[i] = i*100;
+}
+\end{lstlisting}
+
+\end{correction}
+\end{exo}
+
+\begin{exo}[Tableau multidimensionnel]
+~\\
+Un agenda est vu comme un tableau de 52 semaines, chaque semaine étant composée de 7 jours eux mêmes divisés en 8 plages horaires. Chaque plage peut contenir un message sous la forme d'une chaîne de caractères. 
+\begin{enumerate}
+\item Déclarer et construire un tableau représentant un agenda. 
+\item Noter le message "RDV avec Maman" le lundi de la 25ème semaine à la 4ème plage horaire. 
+\item Modifier le tableau de telle manière que le nombre de plages horaires passe à 12 par jour la 36ème semaine. 
+\item Modifier le tableau de telle manière que le nombre de plages horaires passe à 6 le mardi de la 45ème semaine.
+\end{enumerate}
+\begin{correction}
+\begin{enumerate}
+\item Déclarer et construire un tableau représentant un agenda. \\
+\texttt{String[][][] agenda = new String[53][8][9];}
+\item Noter le message "RDV avec Maman" le lundi de la 25ème semaine à la 4ème plage horaire. \\
+\texttt{agenda[25][1][4] = "RDV avec Maman"; }
+\item Modifier le tableau de telle manière que le nombre de plages horaires passe à 12 par jour la 36ème semaine. \\
+\texttt{agenda[36] = new String[8][13]; }
+\item Modifier le tableau de telle manière que le nombre de plages horaires passe à 6 le mardi de la 45ème semaine.\\
+\texttt{agenda[45][2] = new String[7];}
+\end{enumerate}
+
+\end{correction}
+\end{exo}
+
+
+\begin{exo}[Fonctions sur les tableaux]~
+\begin{enumerate}
+\item Ecrire une fonction qui cherche si un élément appartient à un tableau de char. Le caractère
+recherché et le tableau seront les deux paramètres de la fonction.
+
+\item Ecrire une fonction qui compte le nombre d'occurrences d'un caractère dans un tableau, c'est à
+dire le nombre de fois où un élément apparaît dans un tableau de caractères. Le caractère recherché et
+le tableau seront les deux paramètres de la fonction.
+
+\item Ecrire une fonction qui prend deux tableaux de caractères en paramètres et qui teste si tous les
+éléments du premier tableau apparaissent au moins une fois dans le deuxième tableau. Il est possible
+d'utiliser dans le corps de cette fonction la fonction écrite pour la réponse à la question 1.
+
+\end{enumerate}
+\begin{correction}
+\begin{lstlisting}
+BOOL appartient(char elem, char tab[] ){
+  int i;
+  BOOL res = FALSE;
+  for (i = 0; i<tab.length; i++){
+      if (tab[i] == elem){
+      res = TRUE;
+      }
+    }
+    return res;
+}
+
+int nbOccurrences(char elem, char[] tab){
+  int res = 0;
+  int i;
+  for (i = 0; i<tab.length; i++){
+      if (tab[i] == elem){
+        res++;
+      }
+    }
+    return res;
+}
+
+BOOL inclus(char[] t1, char[] t2){
+  BOOL res = TRUE;
+  int i;
+  for (i = 0; i<t1.length; i++){
+      if (!appartient(t1[i],t2)){
+        res = FALSE;
+      }
+    }
+    return res;
+} 
+\end{lstlisting}
+\end{correction}
+\end{exo}
+
+
+\begin{exo}[Les chaînes de caractères]~\\
+  Ecrire une méthode qui prend en paramètres 2 chaines de caractères \texttt{c1} et  \texttt{c2} et leurs tailles ( \texttt{n1} et  \texttt{n2})  et les compare au regard de l'ordre lexicographique (l'ordre du dictionnaire pour les caractères non accentués). Elle doit renvoyer la valeur \texttt{0}, si les chaines sont les mêmes,  \texttt{-1} si \texttt{c1} est avant \texttt{c2}, et \texttt{1} sinon. 
+
+  \begin{correction}
+\begin{lstlisting}
+int compare(char c1[], int n1, char c2[], int n2){
+  int i;
+  int taille_min =n1;
+  if (n2<n1)
+    taille_min =n2;
+  for (i=0; i<taille_min;i++)
+  {
+    if (c1[1] < c2[i])
+      return -1;
+    else {
+      if (c1[1] > c2[i])
+         return 1;
+     }
+  }
+  if (n1 == n2)
+    return 0;
+  if (n1 < n2)
+    return -1;
+  if (n1 > n2)
+    return -1;
+}
+\end{lstlisting}    
+
+\end{correction}
+\end{exo}
+
+\begin{exo}[Sondages - tableaux à 2 dimensions]~\\
+Un institut de sondage veut faire une enquête sur les intentions de vote à un référendum. Il y a trois intentions possibles :
+\begin{itemize}
+ \item voter oui
+ \item  voter non
+ \item  voter blanc ou s'abstenir
+\end{itemize}
+
+L'institut veut distinguer les intentions de vote des hommes et des femmes. Le résultat du sondage sera donné sous la forme d'un tableau de la forme :
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+ & oui& non& abstention \\\hline
+homme & 12& 37& 25\\\hline
+femme & 9& 47&  13\\\hline
+\end{tabular}
+\end{center}
+La représentation en Java d'un tel tableau se fera de la façon suivante :
+\begin{center}
+\begin{tabular}{c|c|c|c|}
+
+& 0 & 1 & 2\\\hline
+0 &  12& 37& 25\\\hline
+1 & 9& 47& 13
+\end{tabular}
+\end{center}
+Ici pour les colonnes, l'indice 0 signifie une intention de vote oui, l'indice 1 signifie non et l'indice 2 signifie l'abstention, et pour les lignes l'indice 0 signifie les hommes et l'indice 1 signifie les femmes.
+
+Ecrivez un programme qui étant donné un tel tableau et qui comporte les fonctions suivantes :
+\begin{enumerate}
+\item une fonction qui calcule le nombre de femmes prises en compte dans l'enquête.
+\item  une fonction qui calcule le nombre total de personnes ayant une intention de vote donnée. Cette
+intention de vote, de même que le tableau, sera un paramètre de la fonction. Elle pourra être donné sous forme de l'indice encodant cette intention.
+\item une fonction qui prédit le résultat du vote. Ce résultat ne prend pas en compte les abstentionnistes. Seuls les votes exprimés sont pris en compte (en France).
+\item  une fonction qui détermine si les hommes et les femmes sont équitablement représentés dans l'enquête.
+\end{enumerate}
+\begin{correction}
+\begin{lstlisting}
+int nbFemmes(int tab[][3]){
+  return tab[1][0] + tab[1][1] +tab[1][2];
+}
+
+int nbPersonnes(int intention, int tab [][3]){
+  return tab[0][intention] + tab[1][intention];
+}
+
+int resultat(int tab[][3]){
+  int oui, non;
+  oui = tab[0][0] + tab[1][0];
+  non = tab[0][1] + tab[1][1];
+  if (oui == non){
+    return 2;
+  }
+  else 
+  if (oui > non){
+    return 0;
+  }
+  else{
+    return 1;
+  }
+}
+  
+BOOL parite(int tab[][3]){
+  int hommes = 0;
+  int femmes = 0;
+  int col;
+  for (col=0; col<3; col++){
+    hommes = hommes + tab[0][col];
+    femmes = femmes + tab[1][col];
+  }
+  return hommes == femmes;
+}
+
+void main( ){
+  int resEnq[2][3] = {{12,37,25},{9,47,13}};
+  int res;
+  
+  ecrireString("Nombre de femmes: ");
+  ecrireInt(nbFemmes(resEnq));
+  ecrireString("Nombre de personnes votant oui: ");
+  ecrireInt(nbPersonnes(0,resEnq));
+  ecrireString("Nombre de personnes s'abstenant: ");
+  ecrireInt(nbPersonnes(2,resEnq));
+  res = resultat(resEnq);
+  if (res == 0){
+    ecrireString("Victoire du oui");
+  }
+  else {
+    if (res == 1){
+      ecrireString("Victoire du non");
+    }
+    else{
+      ecrireString("Egalite du oui et du non");
+    }
+  }
+  if (parite(resEnq)){
+    ecrireString("La parite est respectee");
+  }
+  else{
+    ecrireString("La parite n'est pas respectee");
+  }
+}
+\end{lstlisting}
+\end{correction}
+\end{exo}
+
+
+
+
+
+\end{document}

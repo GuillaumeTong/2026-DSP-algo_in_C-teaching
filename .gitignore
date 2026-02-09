@@ -1,0 +1,24 @@
+# tex intermediary outputs
+*.log
+*.aux
+*.listing
+*.nav
+*.out
+*.snm
+*.toc
+*.vrb
+
+# C object files
+*.o
+# C executables
+TPs/corriges/morpion
+TPs/corriges/tp1
+TPs/corriges/tp2_exo1
+TPs/corriges/tp2_exo3
+TPs/corriges/tp2_exo4
+TPs/corriges/tp3_exo1
+TPs/corriges/tp3_exo2
+TPs/corriges/tp3_exo3
+TPs/corriges/tp4_exo1
+TPs/corriges/tp4_exo2
+TPs/corriges/tp4_exo3

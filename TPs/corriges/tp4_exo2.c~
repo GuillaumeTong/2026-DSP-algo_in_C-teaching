@@ -1,0 +1,134 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include"inout.h"
+#define BOOL int
+#define TRUE 1
+#define FALSE 0
+
+/* Affiche toutes les chaines de caractères du tableau t, de longueur
+   taille. */
+void afficheTousLesLMots(char * t[], int taille){
+  int i;
+  for(i = 0 ; i < taille; i = i + 1) {
+    ecrireString(t[i]); // la ieme case est une chaîne de caractère
+    ecrireString("\n");
+  }
+}
+
+/* IMPORTANT: les chaines de caractères sont des tableaux de
+   caractères (char * ou char[]) dont la dernière case contient le
+   caractère '\0' (qui n'est jamais affichés). Vous pouvez donc
+   accéder au ième élément d'une chaine de caractère s en faisant
+   simplement s[i] à condition que i ne soit pas plus grand que la
+   taille de la chaine-1.
+
+   Pour connaitre la longueur d'une chaine on peut utilise la fonction
+
+   int strlen (char * s)
+
+   qui retourne le nombre de caractères dans la chaine s (hormis le
+   '\0').
+
+   CETTE FONCTION DE LA BIBLIOTHÈQUE STANDARD EST LA SEULE AUTORISÉE,
+   SAUF MENTION CONTRAIRE.
+
+   Pour parcourir une chaine de caractère vous avez donc le choix
+   entre une boucle bornée par la taille de la chaine calculée
+   auparavant avec strlen, ou bien une boucle while(s[i]!='\0').
+*/
+
+/* Retourne la taille du plus grand mot du tableau de mot t. 
+ */
+int tailleMax(char * t[], int taille) {
+  int i;
+  int max=strlen(t[0]);
+  for (i=1; i<taille;i++)
+    if (max < strlen(t[i]))
+      max =strlen(t[i]);
+  return max;
+}
+
+
+/* Affiche les mots de t dont la longueur est supérieure ou égale à
+   nbLettres. */
+void affichageFiltreNbLettre(char *t[], int taille, int nbLettres) {
+  int i;
+  for (i=0; i<taille;i++)
+    if (strlen(t[i])>nbLettres)
+      ecrireString(t[i]);
+}
+
+
+/* Affiche les mots de t en remplaçant toutes les occurrences du
+   caractère c par des espaces (' '). Bien entendu il est interdit de
+   modifier les mots du tableau. */
+void affichageFiltreChar(char *t[], int taille, char c) {
+  int i,j;
+  for (i=0; i<taille;i++)
+    for (j=0;j<strlen(t[i]);j++)
+      if (t[i][j]==c)
+	ecrireChar(" ");
+      else
+	ecrireChar(t[i]);
+}
+
+/* Retourne le nombre c'occurrences du caractère c dans les mots de
+   t. */
+int compteLettre(char * t[], int taille , char c){
+
+}
+
+/* Retourne le nombre de chaines contenant le caractère c dans le
+   tableau t. */
+int compteMotContenant(char * t[], int taille, char c) {
+  return 0; /* À implanter */
+}
+
+/* Modifie le tableau t en remplaçant toutes les occurrences du
+   caractère c par un espace. Testez en affichant le tableau avant et
+   après. */
+void effaceChar(char *t[], int taille, char c) {
+  
+}
+
+/* Modifie le tableau t en inversant l'ordre des lettres de chaque
+   mots (ex: "levé" devient "ével"). */
+void renverseMots(char *t[], int taille) {
+  
+}
+
+
+
+
+
+int main(int argc, char*argv[]){
+  /* Un tableau de chaines de caractères, on déclare un pointeur sur
+     chaine ce qui revient au même. Si on déclarait un tableau on
+     réserverait de la place pour rien puisque */
+  char **tabMots;
+  int i, nbmots = 0;
+  /* Un argument au programme est-il présent? */
+  if (argc<2) {
+    ecrireString("Il manque un argument au programme\n");
+    exit(1);
+  }
+  /* Récupération du nom du fichier dans la variable filename. */
+  char * filename = argv[1];
+  /* Création et remplissage d'un tableau de chaines de caractère
+     contenant tous les mots du fichier. On passe également l'adresse
+     de la variable nbmots afin qu'elle contienne la taille du tableau
+     retourné. */
+  tabMots = lireFichierParMots(filename,&nbmots);
+  ecrireString ("Mots lus:\n");
+  afficheTousLesLMots(tabMots,nbmots);
+  ecrireString ("Nombre de mots: ");
+  ecrireInt(nbmots);
+  ecrireString ("\n");
+
+  // Mettez vos test ci-dessous, nbmots est la taille du tableau
+  // tabMots. Vous pouvez tester le programme en lui passant en
+  // paramètre le nom du fichier texte à lire. ex: tp4 test.txt.
+ 
+
+}

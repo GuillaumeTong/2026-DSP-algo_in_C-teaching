@@ -1,0 +1,114 @@
+#include "inout.h"
+#define BOOL int
+#define TRUE 1
+#define FALSE 0
+
+void affiche(int t[][3], int nblignes){
+  int i,j;
+  for (i=0;i<n;i++)
+    {
+      for (j=0;j<3;j++)
+	ecrireInt(t[i][j]);
+    }
+  ecrireString("\n");
+}
+
+void affichenTranspose(int t[][3], int nblignes){
+  int i,j;
+  for (i=n;i>0;i--)
+    {
+      for (j=3;j>0;j--)
+	ecrireInt(t[i][j]);
+    }
+  ecrireString("\n");
+}
+
+
+
+void afficheDiag(int t[][3], int nblignes){
+  int i;
+  for (i=0;i<n;i++)
+    ecrireInt(t[i][i]);
+}
+
+void afficheDiag2(int t[][3], int nblignes){
+  int i;
+  for (i=0;i<n;i++)
+    ecrireInt(t[i][n-i]);
+}
+
+void afficheColonne(int t[][3], int nblignes, int ncol){
+  int i;
+  for (i=0;i<n;i++)
+    {
+      ecrireInt(t[i][col]);
+      ecrireString("\n");
+    }
+}
+
+BOOL estPresent(int t[][3],int n, int x){
+  int i,j;
+  for (i=0;i<n;i++)
+    {
+      for (j=0;j<3;j++)
+	 if(t[i][j] ==x)
+	return TRUE;
+    }
+  return FALSE;
+}
+
+BOOL testColonneZeros(int t[][3], int nblignes, int ncol){
+  int i;
+  for (i=0;i<n;i++)
+    {
+      if(t[i][col] != 0)
+	return FALSE;
+    }
+  return TRUE;
+}
+
+int sommeColonne(int t[][3], int nblignes, int ncol){
+  int i;
+  int somme = t[0][col];
+  for (i=1;i<n;i++)
+    {
+       somme += t[i][col];
+     
+    }
+  return somme;
+}
+
+
+
+
+void main ( void ) {
+  int t[3][3]={{1,2,3},{4,5,6},{7,8,9}};
+  
+  affiche(t,3);
+  BOOL res = estPresent (t,3,1);
+  ecrireInt(res);
+  
+  int occ =nbOccurrence(t,3,1);
+  ecrireInt(occ);
+  int min = minimum(t,3);
+  ecrireInt(min);
+  int max = maximum(t,3);
+  ecrireInt(max);
+  int moy = moyenne(t,3);
+  ecrireInt(moy);
+  res = estTrie(t,3);
+  ecrireInt(res);
+  decalage(t,3);
+  affiche(t,3);
+
+  void affiche(int t[][3], int nblignes)
+void affichenTranspose(int t[][3], int nblignes)
+  void afficheDiag(int t[][3], int nblignes)
+void afficheDiag2(int t[][3], int nblignes)
+  void afficheColonne(int t[][3], int nblignes, int ncol)
+BOOL estPresent(int t[][3],int n, int x)
+  BOOL testColonneZeros(int t[][3], int nblignes, int ncol)
+int sommeColonne(int t[][3], int nblignes, int ncol
+  
+}
+

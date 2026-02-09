@@ -1,0 +1,218 @@
+\documentclass{../enonce}
+\usepackage{enumerate}
+\usepackage{listings}
+\usepackage{graphicx}
+\lstset{language=C}
+\lstset{%
+  %escapeinside={(*@}{@*)},%
+  %morecomment=*[n][\it\ttfamily]{/\\*\\*}{\\*/},% reconnaît mots-clés, commentaires...
+  %moredelim=[is][\it]{/*}{*/},% éviter keyword style in comment
+  flexiblecolumns=false,%
+  %mathescape=true,%
+  basicstyle=\tt\small,%
+  keywordstyle=\bf\ttfamily,%
+  commentstyle=\it\ttfamily,%
+  frame=tblr,% top + bottom
+  morekeywords={String},%
+  rangeprefix=/*@,rangesuffix=@*/,%
+  includerangemarker=true,% false Plante avec l'utf8
+  % backgroundcolor=\color{grey2},%
+  % Astuce pour masquer qd meme les range:
+  literate={/*@debutexo1@*/}{{\ }}1{/*@finexo1@*/}{{\ }}1{/*@debutexo2@*/}{{\ }}1{/*@finexo2@*/}{{\ }}1%
+  {à}{{\`a}}1{è}{{\`e}}1{ê}{{\^e}}1{é}{{\'e}}1{ù}{{\`u}}1{ç}{{\,c}}1{î}{{\^i}}1{À}{{\`A}}1{È}{{\`E}}1{Ê}{{\^E}}1{É}{{\'E}}1{Ù}{{\`U}}1{Ç}{{\,C}}1{Î}{{\^I}}1,%
+  showstringspaces=false,%
+}
+ 
+\usepackage[colorlinks,urlcolor=blue,linkcolor=blue]{hyperref}
+\title{TP1 Introduction au langage C}
+\author{Algo et JavaScript}
+\date{}
+
+
+\begin{document}
+%\excludecomment{correction}
+
+\noindent~
+\begin{minipage}{9cm}
+CNAM\\
+DSP Informatique - Réseau de la Réussite Vincent Merle
+%IFIPS Informatique 1ère année
+\end{minipage}
+%\hfill Année 2018--2019 ~
+
+%\title{IUT-L1 - USAL22}
+%\author{Les Exceptions}
+
+\vspace{1mm}
+
+\noindent ~\hrulefill~
+
+\vspace{2mm}
+
+\noindent
+\begin{minipage}{9cm}
+Algo/JavaScript -- USAL34\\
+%Votre nom :
+\end{minipage}
+
+\bigskip
+
+%\vspace{1cm}
+
+\begin{center}
+\bf {\Large TP1 : Introduction au langage C}\\
+%\bf {\Large Interrogation écrite}\\
+%31 mai 2019
+\end{center}
+%\bigskip
+\vspace{0.2cm}
+
+\noindent \textbf{Objectifs du TP}
+ \begin{itemize}
+ \item Apprendre à compiler un programme avec deux fichiers (dont un déjà fourni).
+ \item Ecrire des procédures simples sans puis avec paramètres.
+ \item  Tester les affichage produits par ces procédures.
+  \end{itemize}
+
+ 
+  Les programmes et les commandes ci-dessous peuvent être  copiée/collées dans l'éditeur ou le terminal. Pour cela il peut être nécessaire d'activer la sélection de texte dans le visionneur de pdf (\texttt{okular}): menu \texttt{Outil/Mode Sélection de texte}.
+
+
+\section{Prise en main et compilation}
+
+Effectuez les opérations suivantes:
+
+\begin{itemize}
+\item Démarrez une session linux.
+\item Téléchargez les fichiers   \href{https://cedric.cnam.fr/~lamberta/enseignements/DSP/C/sources/inout.h}{inout.h} et   \href{https://cedric.cnam.fr/~lamberta/enseignements/DSP/C/sources/inout.c}{inout.c} et   mettez les dans un répertoire \texttt{tp1}. Pour cela vous pouvez faire les commandes suivantes dans un terminal
+  (menu pricipal: \texttt{terminal/Konsole}):
+\begin{lstlisting}{bash,literate={}}
+mkdir tp1
+cd tp1
+wget "https://cedric.cnam.fr/~lamberta/enseignements/DSP/C/inout.h"
+wget "https://cedric.cnam.fr/~lamberta/enseignements/DSP/C/inout.c"
+\end{lstlisting}
+
+\item Dans le même terminal, effectuez la commande suivante pour   compiler le fichier \texttt{inout.c}:
+  \begin{lstlisting}{bash,literate={}}
+gcc -c inout.c
+\end{lstlisting}
+\item Vérifiez le contenu du répertoire: \texttt{ls}
+\item Ouvrez l'éditeur \texttt{kwrite} (menu principal   \texttt{editeur/kwrite}) ou tout autre éditeur de votre choix, SAUF LES IDEs de type Eclipse/Netbeans.
+\item Ouvrez un nouveau fichier \texttt{priseenmain.c} dans le même répertoire  \texttt{tp1}. Et copiez-collez le programme suivant dedans:
+  \lstinputlisting{priseenmain.c}
+\item Compilez ce nouveau fichier:
+\begin{lstlisting}{bash,literate={}}
+gcc -c priseenmain.c
+\end{lstlisting}
+\item Fabriquez un exécutable:
+\begin{lstlisting}{bash,literate={}}
+gcc inout.o priseenmain.o -o priseenmain
+\end{lstlisting}
+\item Exécutez le le pogramme obtenu:
+\begin{lstlisting}{bash,literate={}}%
+./priseenmain
+\end{lstlisting}
+
+\end{itemize}
+
+Modifiez le programme pour ajouter une procédure \lstinline!g! et
+faire appel à \lstinline!g! (après l'appel à \lstinline!f!) dans le
+\lstinline!main!:
+
+\lstinputlisting{priseenmain2.c}
+
+\begin{enumerate}
+\item Que va faire ce programme?
+\item Testez votre réponse en compilant et exécutant le fichier
+  \lstinline!priseenmain.c! modifié.
+\end{enumerate}
+\section{Premières procédures en C}
+\noindent \textbf{Avant de commencer}\\
+\begin{itemize}
+\item Ouvrez un nouveau fichier \texttt{tp1.c} dans le même répertoire  \texttt{tp1}. \textbf{Vous écrirez toutes vos procédures dans ce  fichier, chaque procédure devra être testée. N'effacez pas vos procédures une fois finies et testées. }
+\item Lorsque vous voulez compilez ce fichier:
+\begin{lstlisting}{bash,literate={}}
+gcc -c tp1.c
+\end{lstlisting}
+\item Fabriquez un exécutable:
+\begin{lstlisting}{bash,literate={}}
+gcc inout.o tp1.o -o tp1
+\end{lstlisting}
+\item Exécutez le le pogramme obtenu:
+\begin{lstlisting}{bash,literate={}}%
+./tp1
+\end{lstlisting}
+
+\end{itemize}
+
+\vspace{0.4cm}
+
+\noindent \textbf{Comment testez vos procédures?}\\
+
+Programmez et tester les procédures \emph{une par une} (testez une procédures dès que vous pensez qu'elle est finie). Les procédures de ce TP n'ont aucun effet à part les affichages, donc il faut vérifier sur l'écran que les messages qui s'affichent sont corrects. TESTEZ PLUSIEURS CAS, ce n'est pas parce-qu'un appel semble fonctionner que votre procédure est correcte. \\
+
+Pour tester une procédure \lstinline!proc(...)! écrivez une autre procédure \lstinline!testproc()! dans laquelle vous effectuez un ou plusieurs appels à \lstinline!proc!. Lorsque vous désirez lancer le test, ajoutez l'instruction \lstinline!testproc();! dans la fonction \lstinline!main!, compilez, lancez l'exécutable, vérifiez les affichages. \\
+
+N'effacez pas vos procédures de test! Elle peuvent servir à nouveau si vous devez corriger/améliorer vos procédures. En revanche vous pouvez effacer l'appel aux tests dans le \lstinline!main!, il sera facile de le remettre plus tard. Dans l'exemple ci-dessous la procédure \lstinline!testecritSommeDeuxInt! commence par afficher un message permettant de savoir quelle procédure est testée, puis chaque appel de
+la méthode est annoncé avant d'être appelée. \\
+\newpage
+\noindent \textbf{Exemple:}
+
+\begin{lstlisting}
+#include"inout.h"
+
+void ecritSommeDeuxInt(int x, int y){
+   ...
+}
+
+void testecritSommeDeuxInt(){
+  ecrireString("** Début test ecritSommeDeuxInt:");
+  ecrireString("** (2,5): ");
+  ecritSommeDeuxInt(2,5); // devrait afficher 7
+  ecrireSautDeLigne();
+  ecrireString("** (-2,2): ");
+  ecritSommeDeuxInt(-2,2); // devrait afficher 0
+  ecrireString("** Fin test ecritSommeDeuxInt:");
+}
+
+void main(void){
+  testecritSommeDeuxInt();
+}
+\end{lstlisting}
+
+\begin{exo}[Lecture au clavier et affichage à l'écran]~\\
+  Programmez et tester ces fonctions \emph{une par une} (testez une procédure dès que vous pensez qu'elle est finie). Pour tester une procédure, il faut programmer un ou plusieurs appels à cette procédure dans le \texttt{main} et on observe les affichage.
+  \begin{enumerate}
+\item \lstinline!void ecritBonjour() { ... }! qui écrit
+  \lstinline!"Bonjour"! à l'écran.
+ 
+\item \lstinline!void ecrit3Bonjour() { ... }! qui écrit à l'écran le
+  texte ci-dessous:
+\begin{verbatim}
+Bonjour
+Bonjour
+Bonjour
+\end{verbatim}
+Vous pouvez faire appel à la procédure précédente.
+\item \lstinline!void ecritSommeDeuxlireInt() { ... }! qui écrit à l'écran la somme de deux entiers lus au clavier   (\lstinline!lireInt()!).
+\item \lstinline!void ecritDeuxFoislireInt(){ ... ! qui écrit deux  fois à l'écran un entiers lu au clavier (avec un seul appel à  \lstinline!lireInt()!). Il est nécessaire d'utiliser une variable.
+\item \lstinline!void ecritDeuxInt(int x, int y) { ... }!  qui écrit les deux entiers passés en paramètres.
+\item \lstinline!void ecritSommeDeuxInt(int x, int y) { ... }! qui écrit à   l'écran la somme de deux entiers passés en paramètres.
+\item \lstinline!void ecritSommeDeuxIntBavard(int x, int y) { ... }!  qui écrit les deux entiers passés en paramètres puis leur somme.
+  \item \lstinline!void ecritSommeTroisInt(int x, int y, int z){ ... }! qui écrit à l'écran la somme des trois entiers passés en paramètres.
+\item \lstinline!void ecritSommeDifflireInt(){ ... }! qui écrit la  somme puis la différence (sur deux lignes consécutives) de deux entier lus au clavier.
+  \end{enumerate}
+
+%\begin{correction} \lstinputlisting{../corriges/tp1.c} \end{correction}
+ 
+\end{exo}
+
+
+\begin{exo}[Fonctions (si vous avez fini avant la fin)]~\\
+Si vous connaissez l'instruction \lstinline!return! et la notion de fonction, reprogrammez les procédures de l'exercice 1 sous forme de fonctions retournant le résultat au lieu de l'afficher. Programmez des tests pour ces fonctions.
+\end{exo}
+
+
+
+\end{document}

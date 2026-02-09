@@ -1,0 +1,396 @@
+\documentclass{enonce}
+\usepackage{enumerate}
+\usepackage{listings}
+\usepackage{graphicx}
+\lstset{language=C}
+\lstset{%
+  %escapeinside={(*@}{@*)},%
+  %morecomment=*[n][\it\ttfamily]{/\\*\\*}{\\*/},% reconnaît mots-clés, commentaires...
+  %moredelim=[is][\it]{/*}{*/},% éviter keyword style in comment
+  flexiblecolumns=false,%
+  %mathescape=true,%
+  basicstyle=\tt\small,%
+  keywordstyle=\bf\ttfamily,%
+  commentstyle=\it\ttfamily,%
+  frame=tblr,% top + bottom
+  morekeywords={String},%
+  rangeprefix=/*@,rangesuffix=@*/,%
+  includerangemarker=false,% false Plante avec l'utf8
+  % backgroundcolor=\color{grey2},%
+  % Astuce pour masquer qd meme les range:
+  literate={/*@debutexo1@*/}{{\ }}1{/*@finexo1@*/}{{\ }}1{/*@debutexo2@*/}{{\ }}1{/*@finexo2@*/}{{\ }}1%
+  {à}{{\`a}}1{è}{{\`e}}1{ê}{{\^e}}1{é}{{\'e}}1{ù}{{\`u}}1{ç}{{\,c}}1{î}{{\^i}}1{À}{{\`A}}1{È}{{\`E}}1{Ê}{{\^E}}1{É}{{\'E}}1{Ù}{{\`U}}1{Ç}{{\,C}}1{Î}{{\^I}}1,%
+  showstringspaces=false,%
+}
+ 
+\usepackage[colorlinks,urlcolor=blue,linkcolor=blue]{hyperref}
+\title{TP1 Introduction au langage C}
+\author{Algo et JavaScript}
+\date{}
+\newcounter{exercice}
+
+\newcommand{\exercice}[1][]{
+  \refstepcounter{exercice}
+  \section*{Exercice \theexercice{} #1}}
+
+% Le compteur des questions
+\newcounter{question}[exercice]
+\newcommand{\question}[1][]{
+  \stepcounter{question}
+  \subsection*{Question \theexercice.\thequestion{} #1}}
+
+\begin{document}
+\excludecomment{correction}
+
+\noindent~
+\begin{minipage}{9cm}
+CNAM\\
+DSP Informatique - Réseau de la Réussite Vincent Merle
+%IFIPS Informatique 1ère année
+\end{minipage}
+%\hfill Année 2018--2019 ~
+
+%\title{IUT-L1 - USAL22}
+%\author{Les Exceptions}
+
+\vspace{1mm}
+
+\noindent ~\hrulefill~
+
+\vspace{2mm}
+
+\noindent
+\begin{minipage}{9cm}
+Algo/JavaScript -- USAL34\\
+%Votre nom :
+\end{minipage}
+
+\bigskip
+
+%\vspace{1cm}
+
+\begin{center}
+\bf{\Large Devoir Surveillé}\\
+%\bf {\Large Interrogation écrite}\\
+%31 mai 2019
+\end{center}
+%\bigskip
+
+
+\noindent \textbf{Nom :}\\
+\textbf{Prénom :}
+
+\begin{exo}[Questions de cours]\textit{(3 points)}
+~\\
+  On veut écrire une fonction \lstinline!estZero! qui teste si son argument est égal à zéro. On doit pouvoir compiler le code suivant:
+\begin{lstlisting}
+int n = lireInt(); /* demande un entier (positif) à l'utilisateur*/
+while (!estZero(n)) {
+  printf("pas encore zéro\n");
+  n = n / 2;
+}
+\end{lstlisting}
+\begin{enumerate}[(1)]
+\item  Quel type doit retourner cette fonction? Pourquoi?
+
+  \noindent\fbox{\hbox to 13.4cm{\vbox to 1.3cm{}}}
+\item Écrivez cette fonction, n'oubliez pas de déclarer
+  les arguments (et leurs types) et le type de retour de la fonction.
+  Vous aurez les points si le code ci-dessus peut marcher avec votre
+  fonction.
+  
+\noindent\fbox{\hbox to 13.4cm{\vbox to 4cm{}}}
+\item L'exemple de code ci-dessus est-il une boucle
+  infinie? Justifiez.
+
+  \noindent\fbox{\hbox to 13.4cm{\vbox to 1.3cm{}}}
+  \end{enumerate}
+\end{exo}
+\begin{exo}[QCM] \textit{(3 points)}~\\
+
+
+
+Pour chacun des morceaux de codes suivants remplissez le tableau associé en répondant aux questions suivantes :
+\begin{itemize}
+\item Est-il accepté par le compilateur sans erreur ni warning? Si non
+  justifiez en quelques mots.
+\item Si oui est-ce-que l'exécution sera correcte? Si non justifiez en
+  quelques mots.
+\item Si les deux réponses ci-dessus son \og OK\fg{} et que le
+  programme comporte une variable \lstinline!x! alors donnez sa valeur
+  à la fin du morceau de programme.
+\end{itemize}
+
+\emph{Attention}: les réponses fausses sans justification ou avec une
+justification sans fondement valent un malus. Ne répondez que si vous
+êtes sûr de vous.
+
+\newcommand{\qcmcode}[1][]{
+  \begin{minipage}{.47\linewidth}
+    \hfill
+    \begin{tabular}{| p{1.25cm} | p{1.25cm} | p{1.25cm} |p{2.1cm} |}\hline
+      \multicolumn{2}{|r}{compilation }
+      & \multicolumn{2}{|r|}{exécution}
+      \\\hline
+      erreur & OK & incorrect & OK#1 \\
+      warning & & &  \\\hline
+      \multicolumn{4}{|l|}{Justification:}\\
+      \multicolumn{4}{|l|}{}\\\hline
+    \end{tabular}
+  \end{minipage}
+}
+\begin{enumerate}
+\item 
+ \begin{minipage}{.5\linewidth}
+\begin{lstlisting}
+char t = "t";
+\end{lstlisting} % NON mauvais type
+\end{minipage}\hfill\qcmcode[,x =]
+
+\item 
+\begin{minipage}{.5\linewidth}
+\begin{lstlisting}
+char t = 't';
+\end{lstlisting} % OUI
+\end{minipage}
+\hfill\qcmcode[,x =]
+
+\item 
+\begin{minipage}{.5\linewidth}
+\begin{lstlisting}
+char * t = "toto";
+\end{lstlisting} % OUI
+\end{minipage}
+\hfill\qcmcode[,x =]
+\item 
+\begin{minipage}{.5\linewidth}
+\begin{lstlisting}
+char t = 'toto';
+\end{lstlisting} % NON mauvais guillemets
+\end{minipage}
+\hfill\qcmcode[,x =]
+
+\item
+\begin{minipage}{.5\linewidth}
+\begin{lstlisting}
+char t[] ={'a','1','$','m','6','-'};
+char x = t [6];
+\end{lstlisting} % OUI
+\end{minipage}
+\hfill\qcmcode[,x =]
+\item
+\begin{minipage}{.5\linewidth}
+\begin{lstlisting}
+double t[] = { 4.5, 5.7, 7.9 };
+int x = t[0] + t[1] + t[2];
+\end{lstlisting} % OUI valeur = 18 car les addition sont dans double
+                 % et seyle l'affecation arrondit
+\end{minipage}
+\hfill\qcmcode[,x =]
+\item
+\begin{minipage}{.5\linewidth}
+\begin{lstlisting}
+double a=4.5, b=5.7, c=7.9;
+int x = a + b + c;
+\end{lstlisting} % OUI 18 idem
+\end{minipage}
+\hfill\qcmcode[,x =]
+\end{enumerate}
+
+\end{exo}
+
+\begin{exo}[Exécution de programmes]~\\
+Chacun de ces programmes suivants est sensé réaliser l'affichage suivant :
+\begin{verbatim}
+1
+2
+3
+4
+5
+\end{verbatim}
+avec un dernier saut de ligne après le \verb!5!. \\
+
+Cochez les programmes qui vous semblent faire effectivement cela.
+
+%\lstset{numbersymbol={},numbers=left,stepnumber=1}
+\begin{enumerate}
+\item % OK
+$\boxempty$\quad  \begin{minipage}{.8\linewidth}
+\lstinputlisting[linerange=q1d-q1f]{qcm-declTab.c}
+  \end{minipage}
+\item % saut deligne qu'à la fin
+$\boxempty$\quad  \begin{minipage}{.8\linewidth}
+\lstinputlisting[linerange=q2d-q2f]{qcm-declTab.c}
+  \end{minipage}
+\item %0 à 4
+$\boxempty$\quad  \begin{minipage}{.8\linewidth}
+\lstinputlisting[linerange=q3d-q3f]{qcm-declTab.c}
+  \end{minipage}
+\item % 0 à 4
+$\boxempty$\quad  \begin{minipage}{.8\linewidth}
+\lstinputlisting[linerange=q4d-q4f]{qcm-declTab.c}
+  \end{minipage}
+\item % à l'envers
+$\boxempty$\quad  \begin{minipage}{.8\linewidth}
+\lstinputlisting[linerange=q5d-q5f]{qcm-declTab.c}
+\end{minipage}
+\item % OK
+$\boxempty$\quad  \begin{minipage}{.8\linewidth}
+\lstinputlisting[linerange=q6d-q6f]{qcm-declTab.c}
+\end{minipage}
+\item % pas de i++
+$\boxempty$\quad  \begin{minipage}{.8\linewidth}
+\lstinputlisting[linerange={q7d-q7xxxd,q7xxxf-q7f}]{qcm-declTab.c}
+\end{minipage}
+\item % pas de i++, saut deligne qu'à la fin
+$\boxempty$\quad  \begin{minipage}{.8\linewidth}
+\lstinputlisting[linerange={q8d-q8xxxd,q8xxxf-q8f}]{qcm-declTab.c}
+\end{minipage}
+\item
+
+$\boxempty$\quad  \begin{minipage}{.8\linewidth}
+\lstinputlisting[linerange=q9d-q9f]{qcm-declTab.c}
+\end{minipage}
+\item
+$\boxempty$\quad  \begin{minipage}{.8\linewidth}
+\lstinputlisting[linerange=q10d-q10f]{qcm-declTab.c}
+\end{minipage}
+\end{enumerate}
+\end{exo}
+
+\newpage
+\begin{exo}[Boucles simples] \textit{(6 points)}~\\
+\begin{enumerate}
+
+\item  Écrivez une procédure \lstinline!void comptejusqua(int n)! qui affiche tous les nombres de 0
+jusqu'à \lstinline!n! sur une même ligne. Par exemple \lstinline!comptejusqua(6)! affiche à l'écran \lstinline!0123456!.
+
+
+\noindent\fbox{\hbox to 13.4cm{\vbox to 4cm{}}}
+
+\item   Écrivez une fonction \lstinline!int majoritePositifs(int t [], int taille)! qui retourne 1
+si strictement plus de la moitié des cases de \lstinline!t! (entre 0
+et \lstinline!taille!-1) contiennent des entiers positifs (ou nuls) et
+zéro sinon.
+
+\noindent\fbox{\hbox to 13.4cm{\vbox to 4cm{}}}
+
+% \question[(2pt)] Écrivez une fonction %
+% \lstinline!int contientChar(char t [], int taille,char c)! qui retourne 1 si au
+% moins une case (entre 0 et \lstinline!taille!-1) de \lstinline!t!
+% contient le caractère \lstinline!c!.
+
+%
+%\question[(2pt)] Écrivez une fonction %
+%\lstinline!int compteChar(char t [], int taille,char c)! qui retourne
+%le nombre de cases (entre 0 et \lstinline!taille!-1) contenant le
+%caractère \lstinline!c!.
+%
+
+\item Écrivez une fonction %
+\lstinline!int memesEcarts(int t [], int taille, int delta)! qui
+retourne 1 si chaque case (entre 1 et \lstinline!taille!-1) du tableau
+\lstinline!t! est exactement égale à (\lstinline!delta! + la valeur de
+la case précédente). Par exemple sur le tableau \lstinline!{2;5;8;11}!
+et une valeur de \lstinline!delta!=3, la fonction retourne 1 car
+chaque case (sauf la première évidemment) est égale à 3 + la case
+précédente.
+
+\noindent\fbox{\hbox to 13.4cm{\vbox to 4cm{}}}
+%% \question[(2pt)**] Écrivez une fonction %
+%% \lstinline!int deuxiemePlusGrande(int t [], int taille)! qui retourne
+%% la deuxième plus grande valeur du tableau \lstinline!t! si elle
+%% existe, et \lstinline!-1! sinon. On suppose le tableau de longueur
+%% \lstinline!taille!. Par exemple sur le tableau
+%% \lstinline!{43,43,42,43,23,42,-5}! la fonction doit retourner
+%% \lstinline!42!.
+
+%% \noindent \emph{Note: vous aurez sans doute besoin de deux variables
+%%   permettant de stocker les deux plus grandes valeurs rencontrées
+%%   pendant le parcours.}
+
+\end{enumerate}
+\end{exo}
+\begin{exo}~\\
+
+Considérez la procédure suivante qui prend en entrée $a$ et $b$ et calcule $2b+2a$. Complétez les pointillés par le code qui vous semble correct.\\
+
+\begin{lstlisting}
+int f(int a, int b)  {
+	b = 2*b;
+	b = b+a;
+	.............. // A compléter
+	.............. // A compléter
+}
+\end{lstlisting}
+
+
+\end{exo}
+
+
+
+\begin{exo}[Affichage de programme] \textit{(2 points)}
+  \begin{enumerate}[(1)]
+  \item  Qu'affiche le programme suivant si le nombre entré par l'utilisateur est 10 ?
+
+\begin{lstlisting}
+void main(){
+	int a,i,compt;
+	i=0;
+	compt=0;
+	ecrireString("Entrez un nombre");
+	a=lireInt();
+	while(i<=a) {
+		if(i%2==0){
+			ecrireString(" "+i);
+			ecrireSautDeLigne();
+			compt=compt+1;
+		}
+		i=i+1;
+	}
+	ecrireString("En tout "+ compt + " entiers.");
+}
+\end{lstlisting}
+
+\noindent\fbox{\hbox to 13.4cm{\vbox to 4cm{}}}
+
+
+\item  Donnez les affichages du programme suivant : 
+\begin{lstlisting}
+void main(){
+	int a =5;
+	int b= 7;
+	int c =13;
+	c = calc(a,b);
+	ecrireString("a vaut: ");
+        ecrireInt(a);
+	ecrireSautDeLigne;
+	ecrireString("b vaut: ");
+        ecrireInt(b);
+	ecrireSautDeLigne;
+        ecrireString("c vaut: "+c );
+        ecrireInt(c);
+	ecrireSautDeLigne;
+}
+int calc(int a, int c){
+	int b;
+	ecrireString("a vaut: ");
+        ecrireInt(a);
+	ecrireSautDeLigne;
+	ecrireString("c vaut: ");
+        ecrireInt(c);
+	ecrireSautDeLigne;
+	b = a+c;
+	a = b+1;
+	return b;
+}
+\end{lstlisting}
+
+\noindent\fbox{\hbox to 13.4cm{\vbox to 4cm{}}}
+\end{enumerate}
+
+
+\end{exo}
+
+
+\end{document}

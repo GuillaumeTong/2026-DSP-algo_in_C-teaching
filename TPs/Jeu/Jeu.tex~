@@ -1,0 +1,1318 @@
+\documentclass{../enonce}
+\usepackage{enumerate}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{array,multirow,colortbl}
+\usepackage{calc}
+
+
+\usepackage{etoolbox}% http://ctan.org/pkg/etoolbox
+\newlength{\cellw}
+\newlength{\cellh}
+\setlength{\cellh}{3ex}
+\setlength{\cellw}{3ex}
+\newcommand{\case}[2][]{
+  \node[rectangle=1pt,draw=black,minimum width=\cellw,minimum height=\cellh] at (#2\cellw,0) {#1};
+}
+\newcommand{\casev}[2][]{
+  \node[rectangle=1pt,draw=black,minimum width=\cellw,minimum height=\cellh] at (0,-#2\cellh) {#1};
+}
+\newcommand{\caseb}[2][]{
+  \node[rectangle=1pt,very thick,draw=black,minimum width=\cellw,minimum height=\cellh] at (#2\cellw,0) {#1};
+}
+
+
+\newcounter{tabcnt}
+\newcommand{\tab}[1]{%
+  \setcounter{tabcnt}{0}
+  \def\nextitem{\def\nextitem{}}% Separator
+  \renewcommand*{\do}[1]{\nextitem\case[##1]{\value{tabcnt}}\stepcounter{tabcnt}}% How to process each item
+    \docsvlist{#1}% Process list
+}
+\newcommand{\tabv}[1]{%
+  \setcounter{tabcnt}{0}
+  \def\nextitem{\def\nextitem{}}% Separator
+  \renewcommand*{\do}[1]{\nextitem\casev[##1]{\value{tabcnt}}\stepcounter{tabcnt}}% How to process each item
+    \docsvlist{#1}% Process list
+}
+
+\newcommand{\tabpict}[1]{%
+  \begin{tikzpicture}
+    \tab{#1}
+  \end{tikzpicture}
+}
+\newcommand{\tabvpict}[1]{%
+  \begin{tikzpicture}
+    \tab{#1}
+  \end{tikzpicture}
+}
+
+\lstset{language=C}
+\lstset{%
+  %escapeinside={(*@}{@*)},%
+  %morecomment=*[n][\it\ttfamily]{/\\*\\*}{\\*/},% reconnaît mots-clés, commentaires...
+  %moredelim=[is][\it]{/*}{*/},% éviter keyword style in comment
+  flexiblecolumns=false,%
+  %mathescape=true,%
+  basicstyle=\tt\small,%
+  keywordstyle=\bf\ttfamily,%
+  commentstyle=\it\ttfamily,%
+  frame=tblr,% top + bottom
+  morekeywords={String},%
+  rangeprefix=/*@,rangesuffix=@*/,%
+  includerangemarker=true,% false Plante avec l'utf8
+  % backgroundcolor=\color{grey2},%
+  % Astuce pour masquer qd meme les range:
+  literate={/*@debutexo1@*/}{{\ }}1{/*@finexo1@*/}{{\ }}1{/*@debutexo2@*/}{{\ }}1{/*@finexo2@*/}{{\ }}1%
+  {à}{{\`a}}1{è}{{\`e}}1{ê}{{\^e}}1{é}{{\'e}}1{ù}{{\`u}}1{ç}{{\,c}}1{î}{{\^i}}1{À}{{\`A}}1{È}{{\`E}}1{Ê}{{\^E}}1{É}{{\'E}}1{Ù}{{\`U}}1{Ç}{{\,C}}1{Î}{{\^I}}1,%
+  showstringspaces=false,%
+}
+\usepackage{tikz,pgf}
+
+\usetikzlibrary{shapes,arrows,decorations.markings,calc,positioning}
+\tikzstyle{oval}=[ellipse,thick,inner sep=2pt,minimum height=1.3em,draw=red]
+\pgfsetxvec{\pgfpoint{0.5cm}{0cm}}
+\pgfsetyvec{\pgfpoint{0cm}{0.5cm}}
+\tikzset{
+  red>/.style={->,ultra thick,color=red}
+}
+
+
+
+
+% latex2html
+%\usepackage{html,makeidx,color}
+
+%\let\emph\relax % there's no \RedeclareTextFontCommand
+%\DeclareTextFontCommand{\emph}{\it}
+\renewcommand{\emph}[1]{{\it #1}}
+
+\usepackage[colorlinks,urlcolor=blue,linkcolor=blue]{hyperref}
+
+
+
+\title{TP4 Passage de paramètres et fonctions}
+\author{Algo et JavaScript}
+\date{}
+
+
+\begin{document}
+\excludecomment{correction}
+
+\noindent~
+\begin{minipage}{9cm}
+CNAM\\
+DSP Informatique - Réseau de la Réussite Vincent Merle
+%IFIPS Informatique 1ère année
+\end{minipage}
+%\hfill Année 2018--2019 ~
+
+%\title{IUT-L1 - USAL22}
+%\author{Les Exceptions}
+
+\vspace{1mm}
+
+\noindent ~\hrulefill~
+
+\vspace{2mm}
+
+\noindent
+\begin{minipage}{9cm}
+Algo/JavaScript -- USAL34\\
+%Votre nom :
+\end{minipage}
+
+\bigskip
+
+%\vspace{1cm}
+
+\begin{center}
+\bf {\Large TP4 Passage de paramètres et fonctions}\\
+%\bf {\Large Interrogation écrite}\\
+%31 mai 2019
+\end{center}
+%\bigskip
+\vspace{0.5cm}
+
+
+
+%% \begin{exo}[Horaires de trains]~\\
+%%   Le but de cet exercice est de concevoir une application donnant les horaires de trains pour se rendre d'une ville à une autre. Pour simplifier, on suppose que les horaires ne dépendent pas du jour de la semaine : les mêmes trains circulent aux mêmes heures tous les jours. On suppose également que tous les trains arrivent le même jour que leur départ. \\
+  
+%%   Pour représenter l'heure dans une journée, on utilise le nombre de minutes écoulées depuis minuit. Ainsi, $6h$ du matin est représenté par $360$ et $17h37$ par $1057$ ($17 * 60 + 37$).
+  
+%%   Les horaires d'une ligne dans un sens donné sont représentés sous la forme de deux tableaux \texttt{depart} et \texttt{arrivee}. La taille de chacun de ces tableaux est le nombre de trains circulant dans la journée sur la ligne.\\
+
+%%   \textit{Exemple :} \\
+%%   \begin{tabular}{ccccc} 
+%%     \multicolumn{5}{c}{\texttt{depart}} \\ \hline
+%%     0 & 1 & 2 & 3 & 4 \\ \hline
+%%     490 (8h10) & 625 (10h25) & 800 (13h20) & 1020 (17h) & 1135 (18h55) \\ \hline
+%%   \end{tabular}
+
+%%    \begin{tabular}{ccccc} 
+%%     \multicolumn{5}{c}{\texttt{arrivee}} \\ \hline
+%%     0 & 1 & 2 & 3 & 4 \\ \hline
+%%     620 (10h20) & 750 (12h30) & 940 (15h40) & 1155 (19h15) & 1260 (21h) \\ \hline
+%%     \end{tabular}
+
+%% \vspace{0.3cm}
+%%    Ainsi, le train numéro $2$ part à $13h20$ et arrive à $15h40$.
+
+%%    \begin{enumerate}
+%%    \item \'Ecrire une méthode \texttt{void heure(int minutes)}  qui, étant donné un entier correspondant à une durée exprimée en minutes depuis minuit affiche son équivalent exprimé en heures et minutes. Un message d'erreur sera affiché si la durée est supérieure à une journée (c'est-à dire supérieur à 1440 minutes).
+%%    \item  \'Ecrire une méthode \texttt{int prochainTrain(int[] depart, int heure)}  qui, étant donnés le tableau \texttt{depart} d'une ligne, ainsi qu'une \texttt{heure} exprimée sous forme d'un nombre de minutes écoulées depuis minuit, retourne le numéro du prochain train partant le jour même à cette heure ou plus tard. La méthode renverra \texttt{-1} s'il n'y a pas de train partant dans la journée à partir de cette heure.\\
+%%      Pour l'exemple ci-dessus, la méthode retourne 2 pour l'heure 780 (13h), 3 pour l'heure 990 (16h30) et -1 pour l'heure 1140 (19h).
+%%    \item \'Ecrire une méthode \texttt{void afficherTrain(int[] depart, int [] arrivee, int train) } qui étant donné un \texttt{numero} de train et ses tableaux  \texttt{depart} et \texttt{arrivee} d'horaires de départs et d'arrivées, affiche la chaîne suivante : \\
+%%      \texttt{Train numero 1 : 10h25 --> 12h30}
+%%     \item On s'intéresse maintenant à un déplacement avec correspondance, c'est-à-dire nécessitant un changement de train. Il y a donc deux lignes : une première ligne reliant la gare A à la gare B, et une deuxième ligne reliant la gare B à la gare C. On impose en outre que le voyageur dispose d'au moins 15 minutes dans la gare de correspondance et qu'ensuite il y prend le premier train disponible. \\
+%% \'Ecrire une méthode \texttt{void tousTrajets(int [] depart1, int [] arrivee1, int [] depart2, int [] arrivee2)} affichant tous les trajets ayant lieu dans la même journée (pas d'arrivée le lendemain) entre la gare de A et celle de C. On affichera les heures de départ et d'arrivée dans chaque ville, le temps total de trajet (temps effectivement passé dans le train plus le temps d'attente lors de la correspondance) et le temps d'attente à la gare B. Les paramètres sont les tableaux depart et arrivee des deux lignes.
+
+%% \end{enumerate}
+%% \begin{correction}
+%% %barême : exos 1,2,3,4 : 2pts
+%% \begin{small}
+%% \begin{lstlisting}
+%% public class Principale {
+
+
+%% public static void heure(int date){
+%%     if(date < 0 || date >= 1440) 
+%%         System.out.println("heure incorrecte");
+%%     else {
+%%         int minutes = date%60;
+%%         System.out.print(date/60 + "h");
+%%         if(minutes < 10) System.out.print("0" + minutes);
+%%         else System.out.print(minutes);
+%%     }
+
+%% }
+
+
+%% public static void afficherTrain(int[] depart, int [] arrivee, int train) {
+%%     System.out.print("Train numéro " + train + " : ");
+%%     heure(depart[train]);
+%%     System.out.print(" -->  ");
+%%     heure(arrivee[train]);
+%%     System.out.println("/ ");
+%% }
+
+%% public static int prochainTrain(int[] depart, int date){
+%%     // le parametre arrivee est inutile
+%%     if(date < 0 || date >= 1440) return -1;
+%%     for(int train = 0; train < depart.length; train++)
+%%         if (depart[train] >= date)
+%%             return train;
+%%     return -1;
+%% }
+
+%% public static void tousTrajets(int[] depart1, int[] arrivee1, int[] depart2, int[] arrivee2){
+%%     int train1, train2, correspondance;
+%%     int plusCourt1 = -1;
+%%     int plusCourt2 = -1;
+%%     for(train1 = 0; train1 < depart1.length; train1 ++){
+%%         correspondance = arrivee1[train1] + 15;
+%%         train2 = prochainTrain(depart2, correspondance);
+%%     if(train2 == -1)
+%%         return;
+
+%%      afficherTrain(depart1, arrivee1, train1);
+%%      afficherTrain(depart2, arrivee2, train2);
+
+%%     System.out.print(" **** Temps total ");
+%%     heure(arrivee2[train2] - depart1[train1]);
+%%     System.out.print(" **** Temps d'attente ");
+%%     heure(depart2[train2] - arrivee1[train1]);
+%%     System.out.println();
+%%     }
+%% }
+
+%%  public static void main (String[] args) {
+%%     int [] depart1 = {490,625,800,1020,1135};
+%%     int [] arrivee1 = {620,750,940,1155,1260};
+%%      int [] depart2 = {350,575,760, 900, 1045};
+%%      int [] arrivee2 = {530,755,940,1080,1225};
+
+%%      for (int i =0;i<depart1.length;i++)
+%%     afficherTrain(depart1,arrivee1,i);
+
+%% for (int i =0;i<depart2.length;i++)
+%%     afficherTrain(depart2,arrivee2,i);
+
+%%     afficherTrain(depart1, arrivee1,prochainTrain(depart1,824));
+%%     afficherTrain(depart2,arrivee2,prochainTrain(depart2,525));
+
+%%     tousTrajets(depart1,arrivee1,depart2,arrivee2);
+
+
+%%  }
+
+%% }
+%% \end{lstlisting}
+%% \end{small}
+
+%% \end{correction}
+%% \end{exo}
+
+
+
+
+\begin{exo}[Multiple de 3] ~\\
+  Dans cet exercice, nous allons écrire un algorithme qui détermine si un nombre est multiple de trois, en utilisant la propriété suivante : 
+  
+\begin{center} "un nombre est multiple de 3 si la somme de ses chiffres est elle-même un multiple de 3".\end{center}
+
+\begin{enumerate}[1.]
+ \item  \'Ecrire une fonction \texttt{int sommeChiffre (int nombre)} qui prend un nombre entier en paramètre, en renvoie la somme des chiffres de ce nombre.\\
+
+\textit{Exemple :} si le nombre est $978$, la somme sera $9+7+8=24$. Voici l'algorithme que nous allons utiliser que nous illustrons sur le nombre $978$ : 
+
+  \begin{enumerate}[(a)]
+  \item Pour extraire le nombre des unités, on fait d'abord la division entière de 978 par 10, et on obtient $97$. On multiplie ensuite ce résultat par $10$, et on obtient $970$. Il ne reste plus qu'à soustraire au nombre initial $978$ le résultat obtenu $970$, et on obtient le chiffre des unités : $978 - 970 = 8$.
+  \item Pour extraire le chiffre des dizaines, on divise notre nombre par 10 (division entière), on obtient 97 et on recommence : on fait la division entière de 97 par 10, on obtient 9, que l'on multiplie par 10, on obtient 90, que l'on soustrait à 97, et on obtient : $97 - 90 = 7$
+  \item Pour extraire celui des centaines, on divise notre nombre par 10 (division entière), on obtient 9 et on recommence : on fait la division entière de 9 par 10, on obtient 0, que l'on multiplie par 10, on obtient 0, que l'on soustrait à 9, et on obtient : $9 - 0 = 9$ 
+  \end{enumerate}
+  Il faudra evidemment additionner à chaque itération chaque chiffre obtenu dans un compteur que l'on retournera à la fin de la méthode. \\
+
+  Ainsi, vous écrirez d'abord la méthode  \texttt{int extraireChiffreUnite(int nombre)} qui extrait le chiffre des unités du \texttt{nombre} passé en paramètre. Il suffira ensuite dans la méthode \texttt{int sommeChiffre (int nombre)} d'appeler la méthode \texttt{extraireChiffreUnite} itérativement comme décrit dans l'exemple.%, sur le \texttt{nombre} passé en paramètre, en le divisant par 10 à chaque tour de boucle tant que celui-ci est strictement positif. 
+   \\
+\item  \'Ecrire une fonction \texttt{boolean multipleTrois(int nombre)} qui renvoie un booléen permettant de savoir si un nombre est un multiple de 3 ou non. Pour cela, on calculera la somme des chiffre du nombre tant que celle si est supérieure à 10. Il suffira ensuite de vérifier si cette somme vaut 3, 6 ou 9 pour déterminer si le nombre est bien un multiple de 3.
+\end{enumerate}
+
+
+
+\begin{correction}
+  
+\begin{small}
+\begin{lstlisting}
+public class Principale {
+ public static int extraireChiffreUnite(int nombre)
+    {
+    int chiffre_unite = nombre - (nombre/10)*10;
+    return chiffre_unite;
+    }
+
+
+public static int SommeDesChiffres(int nombre)
+{
+    int somme = 0;
+    int unite;
+    while (nombre > 0)
+    {
+    unite = extraireChiffreUnite(nombre);
+    somme = somme + unite;
+    nombre = nombre / 10;
+    }
+    return somme;
+}
+
+
+    public static boolean estMultipleTrois(int nombre){
+        int somme = SommeDesChiffres(nombre);
+        while (somme > 9)
+        {
+            somme = SommeDesChiffres(somme);
+        }
+        if( (somme==3) || (somme==6) || (somme==9))
+            return true;
+        else
+            return false;
+
+    }
+
+    public static void main(String[] args){
+    System.out.println(estMultipleTrois(12368));
+
+    }
+}
+\end{lstlisting}
+\end{small}
+\end{correction}
+\end{exo}
+
+
+
+\begin{exo}[Tableau à 2 dimensions]~\\
+\begin{enumerate}
+\item \'Ecrivez une fonction
+\begin{verbatim}
+    public static int[][] saisie()
+\end{verbatim}
+qui lit deux entiers \verb|n| et \verb|m|, puis $\verb|n|\times\verb|m|$
+entiers, puis retourne un tableau de \verb|n| lignes et \verb|m| colonnes
+contenant les entiers saisis.
+
+\item \'Ecrivez une fonction
+\begin{verbatim}
+    public static void affichage(int[][] a)
+\end{verbatim}
+qui affiche le tableau passé en paramètre. 
+
+\'Ecrivez une fonction \verb|main| qui saisit un tableau et l'affiche, et
+testez votre programme.
+
+\item \'Ecrivez une fonction
+\begin{verbatim}
+    public static boolean recherche(int[][] a, int v)
+\end{verbatim}
+qui retourne \verb|true| s'il existe une paire d'indices $i$, $j$ tels que
+$\verb|a[|i\verb|][|j\verb|]| = \verb|v|$.
+
+\item \'Ecrivez une fonction \verb|main| qui lit un tableau au clavier, une valeur,
+et affiche si la valeur se trouve dans le tableau.  (Vous pouvez bien-sÃ»r
+vous servir des fonctions écrites dans la partie précédente.)
+\end{enumerate}
+\begin{correction}
+\begin{lstlisting}
+import java.util.Scanner;
+public class Tableau {
+  public static int [][] saisie(){
+      int i,j;
+      Scanner input = new Scanner(System.in);
+      System.out.println("Entrez la valeur de n :");
+      int n = input.nextInt();
+      System.out.println("Entrez la valeur de m :");
+      int m = input.nextInt();
+      int [][] tab = new int[n][m];
+      for(i=0;i<n;i++)
+        for(j=0;j<m;j++){
+          System.out.println("Entrez tab[" +i+"]["+j+"] : ");
+          tab[i][j]=input.nextInt();
+        }
+       return tab;
+    }
+
+    public static void afficher(int[][] a){
+      int i,j;
+      for(i=0;i<a.length;i++){
+        for(j=0;j<a[i].length;j++)
+          System.out.print(a[i][j] + " , ");
+        System.out.println();
+      }
+    }
+
+  public static boolean recherche (int[][] a, int v){
+    int i,j;
+    for(i=0;i<a.length;i++)
+      for(j=0;j<a[i].length;j++)
+        if(a[i][j] == v)
+          return true;
+    return false;    
+    }
+    
+    public static void main(String[] args) {
+        int [][] tab = saisie();
+        afficher(tab);
+        System.out.println("Entrez la valeur de v");
+        Scanner input = new Scanner(System.in);
+        int v= input.nextInt();
+        boolean reach = recherche (tab, v);
+        if (rech == false)
+          System.out.println("L'élément " + v + " n'est pas dans le tableau");
+        else
+       System.out.println("L'élément " + v + " est dans le tableau");
+    }
+}
+\end{lstlisting}
+\end{correction}
+\end{exo}
+
+\begin{exo}[carré magique]~\\
+Un {\em carré magique\/} est une matrice carrée de taille $n\times n$ telle
+que la somme de chaque rangée, de chaque colonne et de chaque diagonale ait
+la même valeur.  Un carré magique est dit {\em normal\/} s'il contient
+chaque entier compris entre 1 et $n^2$ exactement une fois.  Par exemple,
+le tableau suivant est un carré magique normal :
+\[ \left[\begin{array}{ccc}6&7&2\\1&5&9\\8&3&4\end{array}\right] \]
+
+\begin{enumerate}
+\item \'Ecrivez une fonction
+\begin{verbatim}
+    public static boolean carre(int[][] a)
+\end{verbatim}
+qui retourne \verb|true| si le tableau \verb|a| est une matrice carrée (qui
+a autant de lignes que de colonnes).  \'Ecrivez une fonction \verb|main| et
+testez votre programme.
+
+\item \'Ecrivez deux fonctions
+\begin{verbatim}
+    public static int ligne(int[][] a, int i)
+    public static int colonne(int[][] a, int j)
+\end{verbatim}
+qui retournent la somme de la \verb|i|-ème ligne (resp. de la \verb|j|-ème
+colonne) du tableau passé en paramètre.  \'Ecrivez une fonction \verb|main|
+qui vous permette de tester ces fonctions.
+\item \'Ecrivez deux fonctions
+\begin{verbatim}
+    public static int diagonale1(int[][] a)
+    public static int diagonale2(int[][] a)
+\end{verbatim}
+qui retournent la somme de la diagonale majeure (resp. de la diagonale
+mineure) du tableau passé en paramètre.  \'Ecrivez une fonction \verb|main|
+qui vous permette de tester ces fonctions.
+
+\item \'Ecrivez une fonction
+\begin{verbatim}
+    public static int[] histogramme(int[][] a, int n)
+\end{verbatim}
+qui retourne l'histogramme du tableau \verb|a|, c'est-à-dire le tableau
+\verb|h| de taille \verb|n| tel que $\verb|h[|i\verb|-1]|$ contient le nombre
+d'occurrences de la valeur $i$ dans le tableau \verb|a|.
+\item \'Ecrivez une fonction
+\begin{verbatim}
+  public static boolean normal(int[][] a)
+\end{verbatim}
+qui retourne \texttt{true} si le tableau \verb|a| est normal et \texttt{false} sinon.
+\item \'Ecrivez un programme qui demande à l'utilisateur de rentrer un tableau, et
+affiche s'il s'agit d'un carré magique normal.
+\end{enumerate}
+
+\begin{correction}
+\begin{lstlisting}
+import java.util.Scanner;
+public class CarreMagique {
+  public static int [][] saisie(){
+      int i,j;
+      Scanner input = new Scanner(System.in);
+      System.out.println("Entrez la valeur de n :");
+      int n = input.nextInt();
+      System.out.println("Entrez la valeur de m :");
+      int m = input.nextInt();
+      int [][] tab = new int[n][m];
+      for(i=0;i<n;i++)
+        for(j=0;j<m;j++){
+          System.out.println("Entrez tab[" +i+"]["+j+"] : ");
+          tab[i][j]=input.nextInt();
+        }
+       return tab;
+    }
+
+    public static void afficher(int[][] a){
+      int i,j;
+      for(i=0;i<a.length;i++){
+        for(j=0;j<a[i].length;j++)
+          System.out.print(a[i][j] + " , ");
+        System.out.println();
+      }
+    }
+    
+    public static boolean carre (int[][] a){
+      int i;
+      int nb_ligne = a.length;
+      for(i=1;i<nb_ligne;i++)
+        if (a[i].length != nb_ligne)
+           return false;
+    return true;
+    
+  }
+  
+    public static int ligne(int[][] a, int i){
+      int j;
+      int somme=0;
+      for(j=0;j<a[i].length;j++)
+         somme += a[i][j];
+       return somme;
+    }
+    
+  public static int colonne(int[][] a, int j){
+      int i;
+      int somme=0;
+      for(i=0;i<a.length;i++)
+         somme += a[i][j];
+       return somme;
+    }
+  
+  public static int diagonale1(int[][] a){
+      int i;
+      int somme=0;
+      for(i=0;i<a.length;i++)
+         somme += a[i][i];
+       return somme;
+    }
+  
+  public static int diagonale2(int[][] a){
+      int i;
+      int somme=0;
+      for(i=0;i<a.length;i++)
+          somme += a[i][a.length-1-i];
+       return somme;
+    }
+   
+  public static int[] histogramme(int[][] a, int n){
+     int [] h =new  int [n];
+     int i,j;
+     for(i=0;i<n;i++)
+         h[i]=0;
+     
+     for(i=0;i<a.length;i++)
+         for(j=0;j<a[i].length;j++)
+             h[a[i][j]-1]++;     
+     return h;
+   }
+  
+  public static boolean normal(int[][] a){
+  int i;
+  int [] h = histogramme( a, a.length);
+  for(i=0;i<a.length;i++)
+     if (h[i]>1)
+         return false;
+  return true;
+  }
+          
+  public static void main(String[] args) {
+    int [][] tab = saisie();
+    afficher(tab);
+    int i,j;
+    int sum1,sum2,sum3,sum4;
+    boolean magique = true;
+    sum3=diagonale1(tab);
+    sum4=diagonale2(tab);
+    if (sum4 != sum3)
+        magique = false;
+    if (magique == true){
+        for(i=0;i<tab.length;i++){
+            sum1 = ligne(tab,i);
+            sum2 = colonne(tab,i);
+            if (sum1 !=sum2){
+                magique = false;
+                break;
+            }
+        }
+    }
+     
+    boolean rech;        
+    if (magique==true){
+      System.out.println("Le carré est magique");
+      rech = normal(tab);
+      if (rech == false)
+        System.out.println("Le carré n'est pas normal");
+      else
+        System.out.println("Le carré est normal");
+    }
+    else
+       System.out.println("Le carré n'est pas magique"); 
+  }
+}
+\end{lstlisting}
+\end{correction}
+\end{exo}
+
+
+\maketitle 
+\begin{abstract}
+  On écrit des boucle \lstinline!while! et on utilise des tableaux
+  pour programmer le morpion de manière plus simple et plus souple.
+\end{abstract}
+
+\section{Rappels}
+
+La bibliothèque d'entrée-sortie:
+\href{http://deptinfo.cnam.fr/~courtiep/inout/inout.h}{inout.h} et
+\href{http://deptinfo.cnam.fr/~courtiep/inout/inout.c}{inout.c} et
+mettez les dans un répertoire \texttt{tp2}. Pour cela vous pouvez
+faire les commandes suivantes (une seule fois) dans un terminal (menu
+pricipal: \texttt{terminal/Konsole}):
+\begin{lstlisting}[language=bash,literate={}]
+mkdir tp2 # si tp2 pas deja cree
+cd tp2
+wget "http://deptinfo.cnam.fr/~courtiep/inout/inout.h"
+wget "http://deptinfo.cnam.fr/~courtiep/inout/inout.c"
+\end{lstlisting}
+
+\paragraph{\texttt{BOOL}:} Continuez à utiliser un pseudo type
+\lstinline!BOOL! à la place de \lstinline!int!:
+
+\begin{lstlisting}
+#define BOOL int
+#define TRUE 1
+#define FALSE 0
+\end{lstlisting}
+
+\paragraph{\texttt{BOOL} toujours:} Attention Ne faites
+\emph{\textbf{jamais}} \lstinline!if (xxx == TRUE)! mais
+\lstinline!if (XXX)!. Symétriquement ne faites pas
+\lstinline!if (xxx==FALSE)! mais \lstinline+if (!XXX)+.
+
+
+Programmez et tester ces fonctions \emph{une par une} (testez une
+fonction dès que vous pensez qu'elle est finie). Pour tester une
+fonction \lstinline!f! on programme un ou plusieurs appels à cette
+procédure dans une procédure \lstinline!test_f! de la manière vue en
+cours: on test le résultat obtenu par rapport au résultat attendu et
+on affiche un message d'erreur si ils ne sont pas égaux.
+
+\section{Fin TP 2}
+
+Ceux qui n'ont pas fini le TP 2 (le morpion sans test de victoire),
+finissez le rapidement.
+
+\section{Morpion avec un tableau fixe de taille 9}
+
+Dans un nouveau fichier, reprogrammez le morpion en changeant votre
+structure de donnée: enlevez les 9 variable
+\lstinline!c1!...\lstinline!c9! et remplacez les par un tableau de 9
+caractères.
+
+\begin{lstlisting}
+char t[] = { '_' , '_' , '_' , '_' , '_' , '_' , '_' , '_' , '_' };
+\end{lstlisting}
+
+Cette ligne crée un tableau de 9 caractère et initialise le tableau
+avec les caractère écrit entre les accolades. Le nombre de caractères
+donnés détermine la taille du tableau.
+
+Remarquez que si vous 
+\begin{enumerate}
+\item remplacez \lstinline!c1! par \lstinline!c[0]!\dots
+  \lstinline!c9! par \lstinline!c[8]! dans le programme principal
+  (fonction \lstinline!main!) uniquement. Votre programme devrait
+  fonctionner à nouveau.
+\item Remplacez la fonction%
+  \lstinline!afficheGrille(char a1, char a2 ..., char a9)! par la
+  fonction qui prend seulement un tableau de caractères en paramètre:
+\begin{lstlisting}
+void afficheGrille(char tc[]){
+  ...
+}
+\end{lstlisting}
+\item Simplifiez le code de votre fonction \lstinline!main!, en effet
+  les 9 cas traités séparément peuvent maintenant être traité en un
+  seul \lstinline!if! sur le caractère tapé par l'utilisateur. Il faut
+  tester si l'entier correspond bien à une case et si cette case est
+  vide.
+\end{enumerate}
+
+\section{Morpion à taille variable}
+
+Il s'agit maintenant de faire évoluer votre code (dans le
+\lstinline!main! et dans \lstinline!afficheGrille!) pour supporter
+plusieurs tailles de grille. La taille de la grille sera fixée avant
+de compiler en modifiant la valeur d'une variable
+(\lstinline!largeurGrille! voir ci-dessous) au début du main.
+
+
+\begin{enumerate}
+\item Changez la déclaration du tableau \lstinline!t! de la manière
+  suivante (il se peut que l'option \lstinline!-std=c99! soit nécessaire):
+\begin{lstlisting}
+  const int largeurGrille = 4;
+  char t[largeurGrille*largeurGrille];
+\end{lstlisting}
+  L'idée est que pour changer de taille de grille il vous suffit de
+  modifier le \og \lstinline!4!\fg{} ci-dessous par une autre taille
+  pour que tout marche correctement. Il n'est pas demandé de
+  programmer le test de victoire (mais vous pouvez essayé si tout le
+  reste est fini).
+\item Reprogrammez l'initialisation de la grille (toutes les cases
+  mises à \lstinline!'_'!) pour qu'elle s'adapte à la largeur
+  \lstinline!largeurGrille!.
+\item Ajouter un argument \lstinline!int larg! à la procédure
+  \lstinline!afficheGrille!. Cet argument représente le nombre de
+  lignes (et de colonnes) de la grille. Adaptez le code de la
+  procédure pour qu'elle s'adapte à la largeur passée en paramètre.
+
+  Remarques: Voir dans l'appendice comment relier la position dans la
+  grille et le numéro de la case dans le tableau.
+\end{enumerate}
+
+
+\subsection{Amélioration}
+
+\begin{enumerate}
+\item Définissez une fonction \lstinline!lireCoupMorpion! de lecture
+  d'un entier au clavier qui redemande un coup tant que celui-ci est
+  invalide. Quels arguments doit prendre cette fonction? Que doit-elle
+  retourner?
+
+  Pour redemander la lecture vous pouvez soit utiliser une boucle
+  \lstinline!while! (voir ci-dessous) soit simplement rappeler la
+  fonction \lstinline!lireCoupMorpion!.
+\item Programmez la fonction %
+  \verb!BOOL testpasGagne(char tc[], int larg){ .. }! %
+  qui retouren \lstinline!FALSE! si le tableau \lstinline!tc!, de
+  taille \lstinline!larg!$\times$\lstinline!larg!, contient une grille
+  de morpion dans laquelle un joueur a gagné (3 cases aligné avec la
+  même coche, et \lstinline!TRUE! sinon.
+
+\end{enumerate}
+\subsection{Exercice Supplémentaire: Puissance 4}
+
+Si, et seulement si, vous avez programmé toutes les améliorations
+ci-dessus (morpion à taille variable + test de victoire, protection
+contre les coups invalides), programmez le puissance 4 en utilisant le
+même genre de technique (tableau de taille 42 puis variable) ou un
+tableau à 2 dimensions si vous connaissez déjà cette technique.
+
+\appendix
+
+\section{Traduction position dans la grill (x,y) $\Rightarrow$ position dans le tableau (i)}
+
+  \setlength{\cellw}{2.7em}
+  \setlength{\cellh}{1.5em}
+
+  Considérons la grille 4x4 (\texttt{larg=4}) suivante, numérotée pour
+  l'utilisateur (à partir de 1) et la case (4,3) (4$^e$ colonne, 3$^e$
+  ligne):\medskip
+
+  \begin{tabular}{cc|c|c|c|c|}
+   & \multicolumn{1}{c}{} & \multicolumn{1}{c}{\scriptsize 1}
+    & \multicolumn{1}{c}{\scriptsize 2}
+    & \multicolumn{1}{c}{\scriptsize 3} & \multicolumn{1}{c}{\scriptsize 4}\\\cline{3-6}
+    \cline{3-6}
+    \multirow{3}{*}{\rotatebox[origin=c]{90}{
+    \makebox[\totalheightof{
+    \begin{tabular}{|l|}
+      \hline '\_'\\\hline
+      'x'\\\hline
+    \end{tabular}}]
+    {$\overbrace{\makebox[\totalheightof{
+    \begin{tabular}{|l|}
+      \hline '\_'\\\hline
+      ''x\\\hline
+    \end{tabular}}]{}
+    }^{\rotatebox[origin=c]{-90}{\textnormal{\parbox{2cm}{\centering 2 lignes complètes}}}}$}}}
+ & \scriptsize 1 & '\_' & 'x'& '\_'& 'o'\\\cline{3-6}
+ & \scriptsize 2 & 'x' & 'o'& '\_'& '\_'\\\cline{3-6}
+ & \scriptsize 3 & '\_' & 'x'& '\_'&  \cellcolor{blue!25}'o'\\\cline{3-6}
+ & \scriptsize 4 & 'x' & 'o'& '\_'& '\_'\\\cline{3-6}
+  \end{tabular}\medskip
+
+  Cette grille est représentée en mémoire par un tableau à 16 cases:\medskip
+
+  \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+    \multicolumn{1}{c}{\scriptsize 0} & \multicolumn{1}{c}{\scriptsize 1} &
+    \multicolumn{1}{c}{\scriptsize 2} & \multicolumn{1}{c}{\scriptsize 3} &
+    \multicolumn{1}{c}{\scriptsize 4} & \multicolumn{1}{c}{\scriptsize 5} &
+    \multicolumn{1}{c}{\scriptsize 6} & \multicolumn{1}{c}{\scriptsize 7} &
+    \multicolumn{1}{c}{\scriptsize 8} & \multicolumn{1}{c}{\scriptsize 9} &
+    \multicolumn{1}{c}{\scriptsize 10} & \multicolumn{1}{c}{\scriptsize 11} &
+    \multicolumn{1}{c}{\scriptsize 12} & \multicolumn{1}{c}{\scriptsize 13} &
+    \multicolumn{1}{c}{\scriptsize 14} & \multicolumn{1}{c}{\scriptsize 15} \\\hline
+    \_ & 'x' & '\_' & 'o' & 'x' & 'o' & '\_' & '\_' & '\_' & 'x' & '\_' & \cellcolor{blue!25}'o' & 'x' & 'o' & '\_' & '\_' \\\hline
+  \end{tabular}\medskip
+  
+  la 4$^e$ case de la 3$^e$ ligne se situe dans le tableau à la case
+  $(2 \times \mathtt{larg} + 3)$. Plus généralement la case $(n,m)$
+  (colonne $n$ , ligne $m$) se situe à la case
+  $(n-1)\times \mathtt{larg} + m-1$.
+\begin{abstract}
+  On écrit des boucles \lstinline!while! imbriquées et on utilise des
+  tableaux de chaînes de caractères
+
+\end{abstract}
+
+\section{Rappels}
+
+\paragraph{\texttt{inout.c/h}:}~
+
+\begin{lstlisting}[language=bash,literate={}]
+wget "http://deptinfo.cnam.fr/~courtiep/inout/inout.h"
+wget "http://deptinfo.cnam.fr/~courtiep/inout/inout.c"
+\end{lstlisting}
+
+\paragraph{\texttt{BOOL}:} Continuez à utiliser un pseudo type
+\lstinline!BOOL! à la place de \lstinline!int!:
+
+\begin{lstlisting}
+#define BOOL int
+#define TRUE 1
+#define FALSE 0
+\end{lstlisting}
+
+\paragraph{\texttt{BOOL} toujours:} Attention Ne faites
+\emph{\textbf{jamais}} \lstinline!if (xxx == TRUE)! mais
+\lstinline!if (XXX)!. Symétriquement ne faites pas
+\lstinline!if (xxx==FALSE)! mais \lstinline+if (!XXX)+.
+
+\section{Programmer le jeu de puissance 4 avec un tableau à double
+  entrée}
+
+Si vous ne l'avez pas déjà fait, programmez le morpion avec une grille
+10x10 représentée en mémoire par un tableau de caractères à double
+entrée. Si vous l'avez déjà fait ou si vous préférez vous pouvez faire
+les exercices de la section suivante.
+
+
+\begin{exo}[la courte paille - (Bonus)]~\\
+5 joueurs décident de choisir l'un d'entre eux en tirant à la courte paille. La paille est représentée par un entier compris entre \texttt{1} et  \texttt{5}. Les joueurs sont représentés par les lettres  \texttt{a},  \texttt{b},  \texttt{c},  \texttt{d},  \texttt{e}.\\
+Compléter le programme suivant qui tire aléatoirement une paille pour chaque joueur et affiche le nom du gagnant. Il est possible qu'il y ait égalité de pailles gagnantes, dans ce cas, le joueur dont le nom est le plus petit en suivant l'ordre alphabétique gagne.\\
+
+\textbf{Rappel :} \\
+Pour effectuer un tirage pseudo-aléatoire, il faut créer un générateur d'une séquence pseudo-aléatoire de la classe \texttt{Random}. Il faut l'importer :\\
+\texttt{import java.util.Random}\\
+puis créer un objet initialisant la séquence\\
+\texttt{Random alea = new Random();}\\
+puis générer un entier à l'aide de la méthode \texttt{nextInt( int x )}  qui retourne la valeur aléatoire dans l'intervalle \texttt{[0,x[} qui suit dans la séquence.\\
+\texttt{int a = alea.nextInt(x);}
+
+\begin{lstlisting}
+import java.util.Random;
+public class CourtePaille{
+  public static void main(String[] args ){
+  // déclarer et initialiser le tableau représentant les 5 pailles
+   ...
+  // déclarer et initialiser le tableau représentant les 5 joueurs
+   ...
+  // création d'un objet initialisant la séquence
+  Random alea = new Random();
+  // tirage aléatoire des 5 pailles.
+  for( int i=0;i<5;i++ )
+   ...
+  // détermination de l'indice de la plus courte et donc de l'indice du gagnant
+  // il est possible qu'il y ait égalité.
+  // l'indice de la paille dans le tableau paille est en correspondance avec l'indice du joueur
+  // dans le tableau joueurs.
+  int plusCourte = 0;
+  for( int i=1;i<5;i++ )
+          ...
+  // affichage du joueur gagnant
+  System.out.println(" le gagnant est : "+ ... );
+  }
+}
+\end{lstlisting}
+\begin{correction}
+\begin{lstlisting}
+import java.util.Random;
+public class CourtePaille{
+  public static void main(String[] args ){
+  // déclarer et initialiser le tableau représentant les 5 pailles
+  int[] paille = new int[5];
+  // déclarer et initialiser le tableau représentant les 5 joueurs
+  char[] joueurs = {'a','b','c','d','e'};
+  // création d'un objet initialisant la séquence
+  Random alea = new Random();
+  for( int i=0;i<5;i++)
+    paille[i] = alea.nextInt(15);
+  // détermination de l'indice de la plus courte et donc de l'indice du gagnant
+  // il est possible qu'il y ait égalité.
+  // l'indice de la paille dans le tableau paille est en correspondance avec l'indice du joueur
+  // dans le tableau joueurs.
+  int plusCourte = 0;
+  for( int i=1;i<5;i++ )
+    if( paille[plusCourte]>paille[i] ) plusCourte=i;
+       System.out.println(" le gagnant est : "+ joueurs[plusCourte] );
+  }
+}
+\end{lstlisting}
+\end{correction}
+\end{exo}
+
+
+%% \begin{exo}[Images noir et blanc]
+
+%% On rappelle qu'une image noir et blanc est représentée en mémoire par
+%% un tableau de booléens.  L'affichage d'une telle image peut se faire à
+%% l'aide de la fonction suivante :
+%% \begin{verbatim}
+%%     public static void dessine(boolean[][] image) {
+%%         for(int i = 0; i < image.length; i++)
+%%             for(int j = 0; j < image[i].length; i++) {
+%%                 if(image[i][j])
+%%                     Deug.drawPoint(i, j);
+%%             }
+%%     }
+%% \end{verbatim}
+
+%% \begin{enumerate} 
+%% \item \'Ecrivez une fonction
+%% \begin{verbatim}
+%%     public boolean[][] croix(int l, int h)
+%% \end{verbatim}
+%% qui retourne une image de taille $l\times h$ contenant les segments
+%% qui connectent les milieux des bords opposés.
+
+%% \'Ecrivez un programme qui affiche le contenu de cette image.
+%% \item \'Ecrivez une fonction
+%% \begin{verbatim}
+%%     public boolean[][] croixDiagonale(int l)
+%% \end{verbatim}
+%% qui retourne une image de taille $l\times l$ contenant les segments
+%% connectant les angles opposés.
+%% \item  \'Ecrivez une fonction
+%% \begin{verbatim}
+%%     public boolean[][] superpose(boolean[][] im1, boolean[][] im2)
+%% \end{verbatim}
+%% qui retourne une nouvelle image qui contient la superposition des
+%% images \verb|im1| et \verb|im2|.  \'Ecrivez un programme qui affiche la
+%% superposition des deux croix dessinées aux exos précédents.
+%% \end{enumerate}
+%% \begin{correction}
+%% \begin{lstlisting}
+
+%% \end{lstlisting}
+%% \end{correction}
+%% \end{exo}
+
+%% \begin{exo}[Images en niveaux de gris] 
+%% On rappelle qu'une image en niveaux de gris est représentée par une
+%% matrice d'entiers courts :
+%% \begin{verbatim}
+%%     short[][]
+%% \end{verbatim}
+%% contenant des valeurs comprises entre 0, représentant la couleur
+%% noire, et 255, représentant la couleur blanche.
+%% \begin{enumerate}
+%% \item \'Ecrivez une fonction
+%% \begin{verbatim}
+%%     public static void dessineGris(short[][])
+%% \end{verbatim}
+%% qui dessine une image en niveaux gris.
+
+%% En supposant que l'image contient des zones entières de couleur
+%% identique, comment peut-on minimiser le nombre d'appels à
+%% \verb|setGray| ?
+%% \item  \'Ecrivez une fonction
+%% \begin{verbatim}
+%%     public static short[][] colourExpand(boolean[][] im)
+%% \end{verbatim}
+%% qui convertit une image noir et blanc en une image en niveaux de gris
+%% identique.  Testez votre fonction.
+%% \item \'Ecrivez une fonction
+%% \begin{verbatim}
+%%     short[][] antiAlias(short[][] im)
+%% \end{verbatim}
+%% qui implémente un {\em filtre d'anti-aliasage}.  Elle retourne une
+%% nouvelle image de la même taille que l'image \verb|im| où les
+%% "~créneaux~" ont été adoucis en utilisant les niveaux de gris.
+%% L'intensité d'un pixel de la nouvelle image sera obtenue en combinant
+%% la couleur du pixel correspondant de l'ancienne image avec la moyenne
+%% des couleurs des 8 pixels avoisinants, dans une proportion 3/4, 1/4.
+
+%% \'Ecrivez un programme qui affiche la version filtrée de la
+%% superposition des deux croix obtenues ci-dessus.
+%% \end{enumerate}
+%% \begin{correction}
+%% \begin{lstlisting}
+
+%% \end{lstlisting}
+%% \end{correction}
+%% \end{exo}
+
+
+\section{Jeu du morpion}
+
+On désire écrire un jeu de morpion jouable à deux sur un clavier
+unique, les joueurs tapent leurs coups alternativement.
+
+Une partie typique devrait ressembler à l'écran à ceci:
+
+\begin{center}
+  \begin{minipage}{.75\linewidth}
+\begin{verbatim}
+___
+___
+___
+
+Joueur1? 5
+
+___
+_x_
+___
+
+Joueur 2? 1
+
+o__
+_x_
+___
+
+Joueur 1? 7
+
+o__
+_x_
+x__
+
+Joueur 2? 3
+
+o_o
+_x_
+x__
+
+...
+\end{verbatim}
+  \end{minipage}
+\end{center}
+Plus précisément:
+\begin{enumerate}
+\item Avant chaque coup le programme affiche la grille: 3 lignes de 3
+  caractères: \lstinline!'_'! pour la case vide, \lstinline!'x'! pour
+  un case cochée par le joueur 1, et \lstinline!'o'! pour une case
+  cochée par le joueur 2.
+\item Ensuite le programme affiche le nom du joueur qui doit jouer et
+  lit le coup au clavier: un entier entre 1 et 9.
+\item Si le coup est invalide pour une raison quelconque le coup n'est
+  pas exécuté et c'est au joueur suivant de jouer (retour à l'étape 1.).
+\item Si le coup est valide et que la partie n'est pas finie le coup
+  est exécuté (une case est cochée) et c'est au joueur suivant de
+  jouer (retour à l'étape 1.).
+\item Si le coup est autorisé et gagnant le programme s'arrêter
+  (\lstinline!exit(0);!) avec un message indiquant quel joueur a
+  gagné.
+\end{enumerate}
+
+\subsection{ La grille du morpion en mémoire}
+
+Le squelette de programme fourni est basé sur l'idée suivante: l'état
+du morpion se résume à l'état des 9 cases de la grille. À tout moment
+chaque case est dans l'un des 3 états suivants: vide, cochée X ou
+cochée O.
+
+Pour représenter en mémoire la grille et les trois états possibles de
+chaque case on utilise 9 variables \lstinline!c1!\dots\lstinline!c9!
+de type \lstinline!char! déclarées dans la fonction \lstinline!main!.
+Ces variables représentent les cases de la grille du morpion:
+\lstinline!c1! représente la case 1, \lstinline!c2! la case 2 etc.
+
+\emph{Votre programme doit faire en sorte} qu'à tout moment le
+caractère contenu dans chaque variable correspond à l'état de la case
+correspondante (\lstinline!'_'! si la case est vide, \lstinline!'x'!
+si elle a été cochée par le joueur 1 et \lstinline!'o'! si par le joueur
+2).
+
+De cette façon pour afficher la grille il suffit d'afficher le contenu
+des variables, pour savoir l'état de la case i il suffit de regarder
+le contenu de la variable \lstinline!ci!.
+
+Le schéma ci-dessous montre d'un côté la grille du morpion telle que
+l'utilisateur l'imagine et de l'autre telle qu'elle existe en
+mémoire. On voit que les variables sont dans des adresses aléatoires
+de la mémoire (différentes à chaque exécution du programme). C'est
+uniquement l'utilisation (l'affichage, le calcul de la victoire) de
+ces variables qui permet de donner l'\og{}illusion\fg{} que les cases
+sont organisées en grille. Nous verrons cela en cours bientôt.
+
+
+
+\setlength{\cellh}{2ex}
+\setlength{\cellw}{2ex}
+\newcommand{\xx}{\huge$\times$}
+\newcommand{\oo}{\Huge$\ocircle$}
+\begin{tikzpicture}[remember picture,scale=1.25]
+  \draw[dashed] (-9,7) -- (-9,-7);
+  \node at (-7,7) {Mémoire};
+  \node at (-12,7) {Morpion};
+  \draw (-1,1) ellipse (8 and 6);
+  \node (unchar) at (-12.5,3){
+    \begin{tabular}{|c|c|c|}\hline
+      \xx\tikz\coordinate(case1); & \tikz\coordinate(case2); & \oo\tikz\coordinate(case3); \\\hline
+      \tikz\coordinate(case4); & \oo\tikz\coordinate(case5); & \oo\tikz\coordinate(case6); \\\hline
+      \tikz\coordinate(case7); & \xx\tikz\coordinate(case8); & \xx\tikz\coordinate(case9); \\\hline
+    \end{tabular}
+  };
+  \begin{scope}[xshift=-2.5cm,yshift=4ex]
+    \coordinate (coche1);\small\tab{'x'}; % 120 = 'x'
+  \end{scope}
+  \begin{scope}[xshift=-.5cm,yshift=-5ex]
+    \coordinate (coche2);\small\tab{'\_'}; % 95 = '_'
+  \end{scope}
+  \begin{scope}[xshift=-3cm,yshift=8ex]
+    \coordinate (coche3);\small\tab{'o'}; % 111 = 'o'
+  \end{scope}
+
+  %\only<3->{
+    \begin{scope}[xshift=.5cm,yshift=11ex]
+      \coordinate (coche4);\small\tab{'\_'}; % 95 = '_'
+    \end{scope}
+
+    \begin{scope}[xshift=-2cm,yshift=-7ex]
+      \coordinate (coche5);\small\tab{'o'}; % 111 = 'o'
+    \end{scope}
+    \begin{scope}[xshift=1cm,yshift=0]
+      \coordinate (coche6);\small\tab{'o'}; % 111 = 'o'
+    \end{scope}
+
+    \begin{scope}[xshift=-2cm,yshift=-1ex]
+      \coordinate (coche7);\small\tab{'\_'}; % 95 = '_'
+    \end{scope}
+    \begin{scope}[xshift=-2cm,yshift=13ex]
+      \coordinate (coche8);\small\tab{'x'}; % 120 = 'x'
+    \end{scope}
+    \begin{scope}[xshift=-1cm,yshift=2ex]
+      \coordinate (coche9);\small\tab{'x'}; % 120 = 'x'
+    \end{scope}
+  %}
+
+
+  \node[xshift=6ex] (midcoche1) at (coche1) {};
+  {\node[yshift=2ex] at (midcoche1) {\color{red}\scriptsize \texttt{c1}};}
+  \node[xshift=6ex] (midcoche2) at (coche2) {};
+  {\node[yshift=2ex] at (midcoche2) {\color{red}\scriptsize \texttt{c2}};}
+  \node[xshift=6ex] (midcoche3) at (coche3) {};
+  {\node[yshift=2ex] at (midcoche3) {\color{red}\scriptsize \texttt{c3}};}
+
+  %\only<3->{
+    \node[xshift=6ex] (midcoche4) at (coche4) {};
+    {\node[yshift=2ex] at (midcoche4) {\color{red}\scriptsize \texttt{c4}};}
+    \node[xshift=6ex] (midcoche5) at (coche5) {};
+    {\node[yshift=2ex] at (midcoche5) {\color{red}\scriptsize \texttt{c5}};}
+    \node[xshift=6ex] (midcoche6) at (coche6) {};
+    {\node[yshift=2ex] at (midcoche6) {\color{red}\scriptsize \texttt{c6}};}
+    \node[xshift=6ex] (midcoche7) at (coche7) {};
+    {\node[yshift=2ex] at (midcoche7) {\color{red}\scriptsize \texttt{c7}};}
+    \node[xshift=6ex] (midcoche8) at (coche8) {};
+    {\node[yshift=2ex] at (midcoche8) {\color{red}\scriptsize \texttt{c8}};}
+    \node[xshift=6ex] (midcoche9) at (coche9) {};
+    {\node[yshift=2ex] at (midcoche9) {\color{red}\scriptsize \texttt{c9}};}
+  %}
+  % \begin{scope}[transparency group, opacity=0.75]
+  %\only<2->{
+    \draw[red>,opacity=.4,shorten <=1ex] (coche1) to[bend left = 45]  (case1);
+    \draw[red>,opacity=.4,shorten <=1ex] (coche2) to[bend right = 60] (case2);
+    \draw[red>,opacity=.4,shorten <=1ex] (coche3) to[bend right = 45] (case3);
+  %}
+  %\only<4->{
+    \draw[red>,opacity=.4,shorten <=1ex] (coche4) to[bend right = 45] (case4);
+    \draw[red>,opacity=.4,shorten <=1ex] (coche5) to[bend left = 45]  (case5);
+    \draw[red>,opacity=.4,shorten <=1ex] (coche6) to[bend left = 90]  (case6);
+
+    \draw[red>,opacity=.4,shorten <=1ex] (coche7) to[bend left = 45] (case8);
+    \draw[red>,opacity=.4,shorten <=1ex] (coche8) to[bend right = 45]  (case7);
+    \draw[red>,opacity=.4,shorten <=1ex] (coche9) to[bend left = 45]
+    (case9);
+  %}
+  % \end{scope}
+\end{tikzpicture}
+
+
+\subsection{Dans votre fonction principale}
+
+Le squelette fourni contient plusieurs fonctions et procédures que
+vous devez compléter puis utiliser dans le \lstinline!main!. N'hésitez
+pas à ajouter des fonctions supplémentaires si vous en avez le besoin.
+
+Vous noterez l'utilisation d'un nouveau type de variable:
+\lstinline!char!. Il s'agit des variables contenant un caractère (un
+seul). Pour représenter une valeur constante de ce type on écrit un
+caractère entre \emph{guillemets simples}, par exemple le
+caractère \og c\fg{} s'écrit \lstinline!'c'!. Autre exemple: dans le
+squelette vous trouverez le caratère \og souligné\fg{}
+\lstinline!'_'!.
+
+On peut tester l'égalité entre deux caractères avec le test
+\lstinline!==!.
+
+% make squelette pour générer ce fichier
+\lstinputlisting[frame=]{squelette/morpion.c}
+
+
+Le déroulement du jeu est à programmer dans la boucle \lstinline!while!
+(voir ci-dessous pour une explication). Les différentes étapes sont
+écrites en commentaire.
+
+\subsection{Exercice 1}
+
+Programmez le morpion.
+
+
+\subsection{Amélioration}
+
+Définissez une fonction \lstinline!lireCoupMorpion! de lecture d'un
+entier au clavier qui redemande un coup tant que celui-ci est
+invalide. Quels arguments doit prendre cette fonction? Que doit-elle
+retourner?
+
+Pour redemander la lecture vous pouvez soit utiliser une boucle
+\lstinline!while! (voir ci-dessous) soit simplement rappeler la
+fonction \lstinline!lireCoupMorpion!.
+
+\subsection{Exercice 2}
+
+Reprogrammez le jeu de morpion avec un tableau de 9 cases à la place
+des 9 variables. Pour déclarer ce tableau il suffit d'écrire ceci dans
+le main:
+
+\begin{lstlisting}
+int main() {
+  char grille [] = {'_','_','_','_','_','_','_','_','_'};
+\end{lstlisting}
+Maintenant la case 1 est représentée par la case 0 du tableau:
+\lstinline!grille[0]!. Plus généralement la case \lstinline!x! est
+représentée par \lstinline!grille[x-1]!.
+
+
+Petite précision: vous pouvez écrire des fonctions qui prennent le
+tableau en paramètre (à la place de
+\lstinline!c1!\dots\lstinline!c9!). \emph{GROS AVANTAGE: vos fonctions
+  peuvent modifier le contenu des cases du tableau passé en paramètre}
+(en réalité c'est l'adresse du tableau qui est envoyé à la fonction).
+On peut donc imaginer une nouvelle fonction:
+\begin{lstlisting}
+void setCase(int i, char val, int[] g) {
+  grille[i] = val;
+}
+\end{lstlisting}
+telle que \lstinline!setCase(casecochee-1,'x',grille)! met le
+caractère \lstinline!'x'! dans la case numéro \lstinline!casecochee-1!
+du tableau \lstinline!grille!. Attention: les numéros de case
+commencent à 0.
+
+
+
+\subsection{Exercice 3}
+
+Cet exercice est nettement plus difficile, réservé au étudiants ayant
+déjà bien pratiqué les tableaux et les boucles.
+
+Programmez le jeu de puissance 4 (grille 6 lignes par 7 colonnes).
+Vous êtes autorisés à utiliser des tableaux et des boucles
+\lstinline!while! si vous savez vous en servir. Ce n'est pas
+indispensable.
+
+Le joueur donne le numéro de la colonne et le pion se place à la bonne
+hauteur.
+
+Le test de victoire n'est pas demandé (mais vous pouvez essayer).
+
+
+\appendix
+
+\section{Rappel sur la boucle \texttt{while}}
+
+La fonction \lstinline!main! contient une boucle \lstinline!while!.
+C'est une notion nouvelle traitée en cours récemment (ou bientôt),
+voici ce que vous avez besoin de savoir.
+
+Lorsqu'on veut répéter une séquence d'instructions plusieurs fois, on
+utilise une \emph{boucle}. En C il n'existe qu'une seule sorte de
+boucle: la boucle \lstinline!while! (toutes les autres sont des
+variantes de celle-ci). Il est interdit d'utiliser une autre boucle
+pour l'instant.
+
+La boucle while ressemble à un \lstinline!if! sans \lstinline!else!:
+
+\begin{lstlisting}
+while (cond) {
+ ... // Corps de la boucle: séquence d'instruction à
+     // effectuer ET À RECOMMENCER TANT QUE cond est vraie
+}
+\end{lstlisting}
+
+Cette instruction s'exécute de la façon suivante:
+\begin{enumerate}
+\item\label{debutwhile} la condition (\lstinline!cond!) est évaluée
+\item Si elle est fause, on sort immédiatement de l'instruction
+  \lstinline!while! (le corps de la boucle n'est pas exécutée)
+\item Si elle est vraie on exécute le corps de la boucle
+\item Puis on revient à l'étape \ref{debutwhile} ci-dessus.
+\end{enumerate}
+
+Notez que si le corps de la boucle ne modifie par la valeur de
+\lstinline!cond! le programme va boucler indéfiniment.
+
+Par exemple le programme suivant:
+
+\begin{lstlisting}
+int x = 0;
+while(x>=0) {
+  x = lireInt();
+  ecrireString("vous avez tapé: ");
+  ecrireInt(x);
+  ecriresautDeLigne();
+}
+\end{lstlisting}
+lit au clavier des nombres jusqu'à ce qu'un nombre négatif soit tapé.
+
+
+
+
+
+\end{document}

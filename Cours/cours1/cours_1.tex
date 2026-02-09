@@ -1,0 +1,1788 @@
+\makeatletter\let\ifGm@compatii\relax\makeatother 
+\documentclass[xcolor=dvipsnames,svgnames, handout=show]{beamer}
+
+\usepackage[frenchb]{babel}
+\usepackage{wasysym}
+
+\usepackage{beamerthemesplit}
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{mathrsfs}
+\usepackage{latexsym}
+\usepackage{graphicx}
+\usepackage{enumerate}
+\usepackage{multirow}
+\usepackage[dvipsnames]{xcolor}
+\definecolor{commentgreen}{RGB}{2,112,10}
+\definecolor{eminence}{RGB}{108,48,130}
+\definecolor{weborange}{RGB}{255,165,0}
+\definecolor{frenchplum}{RGB}{129,20,83}                
+
+%\lstset{language=Java,columns=fullflexible,mathescape=true}
+\usepackage{textcomp}
+
+
+\newcommand{\danger}{
+  \begin{minipage}{0.1\linewidth}
+    \includegraphics[scale=.3]{danger}
+  \end{minipage}
+}
+
+\usepackage{calc}
+\newlength{\lstwiiidth}
+
+\usepackage{tikz,pgf}
+\usetikzlibrary{shapes,arrows,decorations.markings,calc,positioning}
+%\tikzstyle{oval}=[ellipse,thick,inner sep=2pt,minimum height=1.3em,draw=red]
+
+\tikzstyle{every picture}+=[baseline=-.25em,remember picture,>=stealth,thick,line width=.3pt,cap=round,join=round]
+\tikzstyle{annot}=[red,font=\normalfont]
+\tikzset{red>/.style={->,ultra thick,color=red,opacity=.5}}
+\tikzstyle{annottransp}=[annot,opacity=.35]
+\tikzstyle{oval}=[ellipse,minimum height=1ex,draw=red,fill=red]
+\tikzstyle{ovalise}=[annottransp,oval,%
+  xshift={#1/2},%
+  text width={#1/1.35},%
+  minimum height={1em+5pt},%
+]
+\tikzstyle{annotfleche}=[->,annottransp,line width=.05cm,opacity=.5]
+\tikzstyle{Annotfleche}=[->,annottransp,line width=.08cm,opacity=.5]
+
+% #1 is best if given by width("text") where
+% text is the text in the node (where
+% punctuation is replaced by letter for
+% correct width computation)
+\tikzset{bigovalise/.style 2 args={annottransp,oval,very thick,text width={#1/1.3},text height={#2}}}
+
+
+
+
+
+\pgfsetxvec{\pgfpoint{0.5cm}{0cm}}
+\pgfsetyvec{\pgfpoint{0cm}{0.5cm}}
+\makeatletter
+% Stuff for calc compatiability.
+\let\real=\pgfmath@calc@real
+\let\minof=\pgfmath@calc@minof
+\let\maxof=\pgfmath@calc@maxof
+\let\ratio=\pgfmath@calc@ratio
+\let\widthof=\pgfmath@calc@widthof
+\let\heightof=\pgfmath@calc@heightof
+\let\depthof=\pgfmath@calc@depthof
+\makeatother
+
+
+%\pgfarrowsdeclare{:}{:}{}{}
+
+
+\tikzstyle{outil}=[rectangle,draw=black] %,inner sep=2.5mm
+\tikzstyle{autreoutil}=[rectangle,draw=black] %,inner sep=2.5mm
+
+\tikzset{onslide/.code args={<#1>#2}{%
+  \only<#1>{\pgfkeysalso{#2}} % \pgfkeysalso doesn't change the path
+}}
+\tikzset{temporal/.code args={<#1>#2#3#4}{%
+  \temporal<#1>{\pgfkeysalso{#2}}{\pgfkeysalso{#3}}{\pgfkeysalso{#4}} % \pgfkeysalso doesn't change the path
+}}
+
+\tikzstyle{highlight}=[red,ultra thick]
+
+\usepackage{etoolbox}% http://ctan.org/pkg/etoolbox
+\newlength{\cellw}
+\newlength{\cellh}
+\setlength{\cellh}{3ex}
+\setlength{\cellw}{3ex}
+\newcommand{\case}[2][]{
+  \node[rectangle=1pt,draw=black,minimum width=\cellw,minimum height=\cellh] at (#2\cellw,0) {#1};
+}
+\newcommand{\casev}[2][]{
+  \node[rectangle=1pt,draw=black,minimum width=\cellw,minimum height=\cellh] at (0,-#2\cellh) {#1};
+}
+\newcommand{\caseb}[2][]{
+  \node[rectangle=1pt,very thick,draw=black,minimum width=\cellw,minimum height=\cellh] at (#2\cellw,0) {#1};
+}
+
+
+\newcounter{tabcnt}
+\newcommand{\tab}[1]{%
+  \setcounter{tabcnt}{0}
+  \def\nextitem{\def\nextitem{}}% Separator
+  \renewcommand*{\do}[1]{\nextitem\case[##1]{\value{tabcnt}}\stepcounter{tabcnt}}% How to process each item
+    \docsvlist{#1}% Process list
+}
+\newcommand{\tabv}[1]{%
+  \setcounter{tabcnt}{0}
+  \def\nextitem{\def\nextitem{}}% Separator
+  \renewcommand*{\do}[1]{\nextitem\casev[##1]{\value{tabcnt}}\stepcounter{tabcnt}}% How to process each item
+    \docsvlist{#1}% Process list
+}
+
+\newcommand{\tabpict}[1]{%
+  \begin{tikzpicture}
+    \tab{#1}
+  \end{tikzpicture}
+}
+\newcommand{\tabvpict}[1]{%
+  \begin{tikzpicture}
+    \tab{#1}
+  \end{tikzpicture}
+}
+
+\usepackage{amsmath,amssymb}%,stmaryrd
+%\usepackage{colortbl}
+
+\definecolor{colorC}{rgb}{0.95,0.95,.98}
+\definecolor{colorSH}{rgb}{0.95,1,0.95}
+\definecolor{colorV}{rgb}{0.98,1,0.95}
+\definecolor{colorasm}{RGB}{255,250,240}
+\definecolor{kwcolor}{rgb}{0,0,1}
+\definecolor{kindcolor}{rgb}{0.1,0.5,.1}
+%\definecolor{commentcolor}{rgb}{.6,.05,.05}
+\definecolor{commentcolor}{rgb}{.4,.4,.6}
+
+\usepackage{listings,lstasm}
+%\def\lstlanguagefiles{lstasm.sty}
+
+\lstset{language=C}
+\lstset{literate={~}{{\ }}1}
+\lstset{morekeywords={FILE}}
+
+\lstdefinestyle{small}
+{
+  escapeinside={/*@}{@*/},  
+  basicstyle=\tt\small,
+  keywordstyle=\color{kwcolor},
+  commentstyle=\it\ttfamily\color{commentcolor},
+  keywordstyle=[2]\ttfamily\color{kindcolor},
+  %backgroundcolor=\color{colorCoq},
+  showstringspaces=false,
+  flexiblecolumns=false,mathescape=true,
+  rangeprefix=/*-,rangesuffix=-*/,includerangemarker=false,
+}
+
+
+\lstset{style=small}
+
+% Powerful boxing stuff, with a special listing interaction 
+\usepackage[many]{tcolorbox}
+%% Ne marche pas dans un \onslide
+\tcbuselibrary{listings,xparse}% this load listings if not already done
+
+% options abandonnées
+% spartan, frame empty, size=minimal,
+\def\commonlstenvoptions{
+   arc=4pt,outer arc=4pt,
+   boxsep=0pt, % unit (pt,mm) mandatory here
+   boxrule=.1px,
+   left=1mm,right=2mm,top=-2mm,bottom=-2mm,
+   listing only
+}
+
+\def\commonlstinlineoptions{
+  colupper=black,nobeforeafter,tcbox raise base,
+  arc=2pt,outer arc=2pt,
+  boxrule=.1px,
+  boxsep=0pt,left=1.5pt,right=1.5pt,top=3pt,bottom=2.8pt,
+}
+
+
+\newtcblisting{lstlistingC}[1][]
+ { colback=colorC,
+   code={\pgfkeysalsofrom{\commonlstenvoptions}},
+   listing options={ style=small, #1} }
+
+\newtcblisting{lstlistingsh}[1][]
+ { colback=colorSH,
+   code={\pgfkeysalsofrom{\commonlstenvoptions}},
+   listing options={style=small,#1 } }
+
+\newtcblisting{lstlistingv}[1][]
+ { colback=colorV,
+   code={\pgfkeysalsofrom{\commonlstenvoptions}},
+   listing options={style=small, #1} }
+
+
+% La même chose pour lstinputlisting
+\newtcbinputlisting{\lstinputlistingC}[2][]
+ {
+   listing engine=listings,
+   listing file={#2},
+   colback=colorC,
+   code={\pgfkeysalsofrom{\commonlstenvoptions}},
+   listing options={ style=small, #1 } }
+
+% La même chose pour lstinputlisting
+\newtcbinputlisting{\lstinputlistingasm}[2][]
+{
+   listing engine=listings,
+   listing file={#2},
+   colback=colorasm,
+   code={\pgfkeysalsofrom{\commonlstenvoptions}},
+   listing options={
+     style=small,
+     #1
+   },
+ }
+
+
+
+% \lstinlineCv{foo} ou bien \lstinlineCv!foo! etc
+% ATTENTION: si dans un argument de macro ça ne marche pas
+\NewTotalTCBox{\lstinlineCv}{ O{white} v}
+{ colback=colorC,
+  code={\pgfkeysalsofrom{\commonlstinlineoptions}},
+}
+{\lstinline§#2§}
+
+\NewTotalTCBox{\lstinlinesh}{ O{white} v}
+{ colback=colorSH,
+  code={\pgfkeysalsofrom{\commonlstinlineoptions}},
+}
+{\lstinline§#2§}
+
+% Version qui ne peut pas aller dans un argument de macro, on utilse
+% {} comme parenthésage MAIS ATTENTION le code est interprété
+\NewTotalTCBox{\lstinlineC}{ O{white} m}
+{ colback=colorC,
+  code={\pgfkeysalsofrom{\commonlstinlineoptions}},
+}
+{\lstinline§#2§}
+
+\NewTotalTCBox{\lstinlineshh}{ O{white} m}
+{ colback=colorSH,
+  code={\pgfkeysalsofrom{\commonlstinlineoptions}},
+}
+{\lstinline§#2§}
+
+
+\title{Algo/Prog -- DUT 1}
+\date{}
+
+% HACK pour avoir une TOC plus compacte: on recopie ce bout de code et on met vskip0.5 au lieu de vskip1.5 au bon endroit
+\makeatletter
+\def\sectionintoc{}
+\def\beamer@sectionintoc#1#2#3#4#5{%
+\ifnum\c@tocdepth>0%
+\ifnum#4=\beamer@showpartnumber%
+{
+  \beamer@saveanother%
+  \gdef\beamer@todo{}%
+  \beamer@slideinframe=#1\relax%
+  \expandafter\only\beamer@tocsections{\gdef\beamer@todo{%
+      \beamer@tempcount=#5\relax%
+      \advance\beamer@tempcount by\beamer@sectionadjust%
+      \edef\inserttocsectionnumber{\the\beamer@tempcount}%
+      \def\inserttocsection{\hyperlink{Navigation#3}{#2}}%
+      \beamer@tocifnothide{\ifnum\c@section=#1\beamer@toc@cs\else\beamer@toc@os\fi}%
+      {
+        \ifbeamer@pausesections\pause\fi%
+        \ifx\beamer@toc@ooss\beamer@hidetext
+          \vskip0.5em% <==============================ICI
+        \else
+          \vfill
+        \fi
+        {%
+          \hbox{\vbox{%
+              \def\beamer@breakhere{\\}%
+              \beamer@tocact{\ifnum\c@section=#1\beamer@toc@cs\else\beamer@toc@os\fi}    {section in toc}}}%
+         \par%
+        }%
+      }%
+    }
+  }%
+  \beamer@restoreanother%
+  }
+  \beamer@todo%
+  \fi\fi%
+}
+\makeatother
+%\lstset{language=Java,columns=fullflexible,mathescape=true}
+
+\usepackage{multirow}
+
+\usepackage{amsmath}
+\usepackage{euscript}
+\usepackage{array}
+
+\usetheme{Boadilla}
+%\setbeamercolor{normal text}{Dolphin}
+
+\setbeamercolor{background canvas}{parent=normal text}
+
+\title[Introduction]{Introduction}
+
+\author[A. Lambert/P. Courtieu]{A. Lambert/P. Courtieu}
+
+\date[Algo - Javascript / USAL 34]{DSP - USAL 34 }
+
+
+
+\begin{document}
+
+\frame{
+
+\titlepage
+}
+
+
+
+\frame
+{
+ \frametitle{Planning du cours}
+\begin{center}
+\includegraphics[width=12cm]{planning_DSP.pdf} 
+\end{center}
+Supports de cours, TD et TP sur \hyperref{https://lecnam.net}{}{}{\textcolor{blue}{\texttt{https://lecnam.net}}} ou \hyperref{https://cedric.cnam.fr/~lamberta/enseignements/DSP/C}{}{}{\textcolor{blue}{\texttt{https://cedric.cnam.fr/$\sim$lamberta/enseignements/DSP/C}}}.
+}
+
+\frame
+{
+ \frametitle{Modalités d'évaluation}
+\begin{itemize}
+\item Tous les TPs sont à rendre\\ $\rightarrow$ la moyenne compte pour 25\% de la note finale.
+\vspace{1cm}
+\item Un DS $\rightarrow$ la note compte pour 75\% de la note finale.
+\end{itemize}
+
+}
+
+
+
+\frame
+{
+ 
+\begin{center} {\huge \textbf{\textcolor{NavyBlue}{La chaine de production de programmes}}} \end{center}
+}
+
+\begin{frame}\frametitle{Qu'est-ce qu'un programme?}
+  Wikipedia:
+  \begin{quote}
+    \textcolor{NavyBlue}{\og Un programme informatique est un ensemble d'opérations
+    destinées à être exécutées par un ordinateur.\fg{}}
+  \end{quote}
+ \begin{itemize}
+\item  C'est la description d'une méthode de resolution d'un problème : une suite d'instructions qui traitent les données du problème à résoudre, jusqu'à aboutir à une solution.
+\end{itemize}
+
+\vspace{0.5cm}
+
+Il existe plusieurs catégories de programmes :
+\begin{itemize}
+  \item \textcolor{NavyBlue}{Programme source }(langage de programmation).\\
+    Compilable ($\Rightarrow$ binaire) (C,fortran) ou interprétable
+    (Java,Python).\medskip
+  \item \textcolor{NavyBlue}{Programme binaire }(langage machine).\\
+    exécutable par un microprocesseur.
+
+
+
+\end{itemize}
+\end{frame}
+ \begin{frame}
+ \frametitle{Exécution d'un programme}
+            
+\begin{itemize}
+\item Les traitements décrits par les instructions sont appliqués aux données (\textcolor{NavyBlue}{\texttt{entrées}}),
+  \vspace{0.2cm}
+\item Les données ainsi transformées permettent d'aboutir aux solutions recherchées (\textcolor{NavyBlue}{\texttt{sorties}}).
+\end{itemize}
+\bigskip
+
+Le système d'exploitation\footnote{(windows, macos, ios, linux,  android,...)} \og démarre\fg{} un programme binaire : \\
+\textcolor{NavyBlue}{il ordonne au   processeur d'exécuter les instructions du programme.}\\
+
+\vspace{0.2cm}
+
+Par exemple, lorsqu'on double-clique sur une icône, ou bien lorsqu'on tape le nom du ficher exécutable en ligne de commande.
+\end{frame}
+
+
+
+\begin{frame}\frametitle{Qu'est-ce qu'un programme (séquentiel)?}
+  Une recette, comme en cuisine. Une étape après l'autre.
+  \begin{center}
+    \fbox{\small
+      \begin{minipage}{.90\linewidth}
+        \begin{enumerate}
+        \item Pelez et hachez finement \tikz \coordinate (1/4);1/4 oignon(s).
+        \item Dans un bol:
+          \begin{enumerate}
+          \item battez \tikz \coordinate (oeufs);2 oeufs entiers
+          \item ajoutez \tikz \coordinate (basilic);1 branche de basilic ciselé
+          \item ajoutez \tikz \coordinate (cube);1/4 cube de bouillon de volaille.
+          \item ajoutez sel et poivre à votre goût
+          \item mélangez bien au fouet.
+          \end{enumerate}
+        \item Dans une poêle:
+          \begin{enumerate}
+          \item faites chauffer l'huile d'olive
+          \item faites revenir les oignons hachés pendant 2 min, en
+            remuant
+          \end{enumerate} 
+        \item Versez dans la poêle les oeufs et le fromage râpé
+          laissez cuire 7 min.
+        \end{enumerate}
+      \end{minipage}
+    }
+  \end{center}
+\end{frame}
+
+
+\begin{frame}<handout:1,2>\frametitle{Écrire une recette $\neq$ faire la cuisine}
+  \begin{itemize}
+  \item {\alt<all:2->{\color{red}Un programme}{\color{NavyBlue}{Une recette}}} écrit{\alt<all:2->{}{e}} par
+    {\alt<all:2->{\color{red}un programmeur}{\color{NavyBlue}{un auteur}}}:
+    \begin{itemize}
+    \item \emph{est} un morceau de texte 
+    \end{itemize}\medskip
+  \item Une exécution par un {\alt<all:2->{\color{red}processeur}{\color{NavyBlue}{cuisinier}}}:
+    \begin{itemize}
+    \item lit {\alt<all:2->{\color{red}le programme}{\color{NavyBlue}{la recette}}}
+    \item réalise les actions décrites
+    \end{itemize}\medskip
+    \visible<all:2>{
+      \item $1$ programme, $\infty$ exécutions \emph{différentes}
+        \begin{itemize}
+        \item \emph{\color{NavyBlue}{paramètres}} différents
+        \item \emph{\color{NavyBlue}{entrées}} différentes (clavier, souris, fichier, etc)
+        \end{itemize}
+      }
+  \end{itemize}
+\end{frame}
+
+\begin{frame}\frametitle{$1$ programme, $\infty$ exécutions \emph{différentes}}
+  Ne pas confondre:\medskip
+  \begin{itemize}
+  \item Le \textcolor{NavyBlue}{programmeur} qui \emph{programme} :
+    \begin{itemize}
+    \item \emph{prévoit} \emph{chaque} cas possibles à l'avance
+    \item décrit la (sous-)recette à suivre dans chacun des cas
+    \end{itemize}\medskip
+  \item Le \textcolor{NavyBlue}{processeur} qui \emph{exécute}
+    \begin{itemize}
+    \item ne fait que suivre la \og recette\fg{} pas à pas
+    \item ne fera pas tous les cas lors d'\emph{une} exécution
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+%
+%  On peut le \emph{faire faire} par un ordinateur
+%    \begin{itemize}
+%    \item mais il ne sait exécuter que les programmes binaires,
+%    \item recette dans un autre langage $\rightarrow$
+%      \emph{traduction} (compilation) du programme en binaire
+%    \item C'est le rôle du compilateur
+%    \end{itemize}
+%
+
+
+\begin{frame}\frametitle{Exemple de programme machine (hexadécimal)}
+  \begin{center}
+    \includegraphics[width=.7\textwidth]{Binary_executable_file2.png}
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Exemple de programme machine (assembleur)}
+  \lstinputlistingasm[basicstyle=\tt\tiny,morekeywords={data,.long,string,float,space,text,globl,%
+      movl,addl,jnz,int,decl},mathescape=false,escapeinside={/*@}{@*/},linerange=debut-fin,flexiblecolumns=false]{exemple_assembleur.asm}
+\begin{tikzpicture}[remember picture, overlay]
+  \scriptsize\tt%so that width computes the correct size
+  \node<2>[ovalise=width("/* 4 entiers. */")] (ovalcomment) at (comment) {};
+  \node<2>[xshift=width("/* 4 entiers. */")/2+3em] (xxx) at
+  (ovalcomment.east) {\color{red} {\textnormal{\small Commentaire (sans effet)}}};
+
+  \node<3>[ovalise=width("  start:")] (ovalstart) at (start) {};
+  \node<3>[xshift=width("  start:")/2+6em] (starttext) at (ovalstart.east) {\color{red}{\textnormal{\small  Début des instructions}}};
+
+\end{tikzpicture}
+\end{frame}
+
+\begin{frame}\frametitle{Exemple de programme C}
+\lstinputlistingC{exemple_c.c}
+\end{frame}
+
+
+
+\frame
+{
+ \frametitle{Les langages de programmation}
+
+ \textbf{\textcolor{NavyBlue}{Les langages de haut niveau :}} (Ex : C, Ada, Pascal, Cobol, Java, OCaml, Python).
+ \begin{itemize}
+ \item fournissent des constructions sophistiquées qui facilitent l'écriture des programmes.
+ \item sont comprehensibles par les humains, mais pas directement exécutables par les machines.
+ \item $\Rightarrow$ Traduction en langage machine avant son exécution.
+  \end{itemize}
+
+ \vspace{0.5cm}
+ 
+ \textbf{\textcolor{NavyBlue}{Les langages de bas niveau :}} (langages cibles ou natifs)
+\begin{itemize}
+\item instructions propres à chaque machine (SPARC/Sun, Intel/PC, etc).
+\item codés en binaire et directement exécutables par chaque machine.
+\end{itemize}
+
+
+}
+
+\frame
+{
+ \frametitle{Description d'un langage de haut niveau}
+
+ \textbf{\textcolor{NavyBlue}{Les types des données :}} utilisés pour modéliser les données. \\
+
+\textcolor{NavyBlue}{Exemple :} Le type \texttt{\textcolor{NavyBlue}{int}} en \texttt{C} sert à modéliser les nombres entiers.\\
+\vspace{0.4cm}
+
+\textbf{\textcolor{NavyBlue}{La syntaxe : }} règles de formation textuelle des instructions.\\
+\textcolor{NavyBlue}{ Exemple :} pour écrire l'expression mathématique $\textcolor{NavyBlue}{1 \leq x \leq 7}$, une syntaxe possible en \texttt{C} est : $\texttt{\textcolor{NavyBlue}{1 <= x \&\& x <= 7}}$.\\
+\vspace{0.4cm}
+ \textbf{\textcolor{NavyBlue}{La sémantique :}} règles qui précisent "le sens" des contructions syntaxiques à l'exécution et  la cohérence entre types. \\
+\textcolor{NavyBlue}{Exemples : }
+\begin{itemize}
+  \item $\texttt{\textcolor{NavyBlue}{4+3*2}}$ équivaut à la valeur entière $\texttt{\textcolor{NavyBlue}{10}}$
+\item \texttt{\textcolor{NavyBlue}{"bonjour"$\texttt{*2}$}} est correct syntaxiquement, mais non sémantiquement : $ \texttt{\textcolor{NavyBlue}{*}}$ ne peut pas s'appliquer à une chaîne de caractères
+\end{itemize}
+
+
+}
+
+\frame
+{
+ \frametitle{Compilation vs Interprétation}
+ \vspace{0.2cm}
+Il faut  \textbf{\textcolor{NavyBlue}{traduire}} le langage de haut niveau vers le langage machine spécifique à un processeur $\Rightarrow$ il peut lire les instructions et les exécuter. \\
+ \vspace{0.2cm}
+\textbf{\textcolor{NavyBlue}{2 méthodes :}}
+\begin{itemize}
+\item \texttt{\textcolor{NavyBlue}{Compilation : }} traduction de toutes les instructions, puis exécution de la traduction : le résultat dépend de l'ordinateur visé \\
+\item \texttt{\textcolor{NavyBlue}{Interprétation :}} conversion et exécution de chaque instruction les unes derrière les autres : plus fexible mais plus lent.
+\end{itemize}
+\begin{center}
+ % \vspace{-0.5cm}
+\includegraphics[width=12cm]{../images/interpretation_compil.png} 
+\end{center}
+}
+
+\frame
+{
+ 
+\begin{center} {\huge \textbf{\textcolor{NavyBlue}{Un premier programme \texttt{C}}}} \end{center}
+}
+
+
+
+
+\begin{frame}[fragile]\frametitle{Structure d'un programme en \texttt{C}}
+Un programme contient \texttt{C} au moins un fichier principal contenant une fonction \texttt{\textcolor{NavyBlue}{main}} qui recoit la suite d'instructions à exécuter.
+
+\vspace{1cm}
+
+\lstinputlistingC[basicstyle=\tt\small]{premierprog.c}
+  \begin{tikzpicture}[remember picture,overlay]
+    \small\tt%pour que width soit correct
+    \node[right=of rightmost,xshift=2cm] (vertref) {};
+    \only<2>{
+      \node[ovalise={width("Xinclude xinout.hx")}] (ovalinouth) at (inouth) {};
+      \node (textinouth) at (vertref|-inouth) {\color{red} \textnormal{\small Permet\lstinlineCv[basicstyle=\tt\small]!ecrireString!,etc}};
+      \draw[red>] (textinouth) to (ovalinouth);
+    }
+    \only<3>{
+      \node[ovalise={width("int main(int nargs, char **args)")}] (ovalmain) at (main) {};
+      \node (textmain) at (vertref|-main) {\textnormal{\color{red} Fonction principale}};
+      \draw[red>] (textmain) to (ovalmain);
+    }
+    \only<4>{
+      \node[ovalise={width("x")}] (ovaldebut) at (debut) {};
+      \node (textdebut) at (vertref|-debut) {\textnormal{\color{red} Début du programme}};
+      \draw[red>] (textdebut) to (ovaldebut);
+    }
+    \only<5>{
+      \node[ovalise={width("ecrireString(xHello world!xxnx);")}] (ovalhello) at (hello) {};
+      \node (texthello) at (vertref|-hello) {\textnormal{\color{red} Première instruction}};
+      \draw[red>] (texthello) to (ovalhello);
+    }
+  \end{tikzpicture}
+\end{frame}
+
+\subsubsection{Compilation, exécution}
+
+\begin{frame}[fragile]\frametitle{En ligne de commande (unix,gcc)}
+\definecolor{colorC}{rgb}{0.96,0.98,.80}
+  \begin{overprint}[\linewidth]
+    \begin{tikzpicture}[node distance=5cm,>=stealth',very thick,shorten >=2pt,shorten <=2pt,step=1cm]
+
+      \begin{scope}[xshift=-5cm]
+        \draw[black]
+        (0,-1.5) coordinate (a2)
+        -- coordinate (ab2) (0,1.5) coordinate (b)
+        -- coordinate (bc2) (7,1.5) coordinate (c)
+        -- coordinate (cd2) (7,-1.5) coordinate (d)
+        -- cycle;
+        \node(pb) at (3.2,0) {
+          \begin{tabular}[t]{l}
+            \visible<2->{\small\texttt{inout.c}} \\
+            \visible<3->{\small\texttt{monprogramme.c}}
+          \end{tabular}
+        };
+        \node(compil) at  (3.2,2) {Source};
+      \end{scope}
+
+      \draw[black]
+      (0,-1.5) coordinate (a)
+      -- coordinate (ab) (0,1.5) coordinate (b)
+      -- coordinate (bc) (7,1.5) coordinate (c)
+      -- coordinate (cd) (7,-1.5) coordinate (d)
+      -- cycle;
+      \node(compilation) at (3.2,0) {
+          \begin{tabular}{l}
+            \visible<4->{\small\texttt{inout.o}} \\
+            \visible<5->{\small \texttt{monprogramme.o}}
+          \end{tabular}};
+
+      \node (user) at (11,0) {{\visible<7->{\small\texttt{monexe}}}};
+      \draw [->] (cd.east) -- node [above] {} (user); 
+      \draw [->] (cd2.east) -- (ab.west); 
+    \end{tikzpicture}\vfill\vfill\vfill\vfill
+  \end{overprint}
+
+  \begin{overprint}[\linewidth]
+\begin{lstlistingsh}[language=bash,basicstyle=\small\tt]
+/*@\tikz \coordinate (opt1);@*/gcc -c /*@\tikz \coordinate (inout);@*/inout.c
+/*@\tikz \coordinate (opt2);@*/gcc -c /*@\tikz \coordinate (premprog);@*/premprogramme.c
+/*@\tikz \coordinate (link1);@*/gcc inout.o premprogramme.o /*@\tikz \coordinate (monexe);@*/-o monexe /*@\tikz \coordinate (monexe2);@*/
+\end{lstlistingsh}
+\begin{tikzpicture}[remember picture, overlay]
+  \small\tt%so that width computes the correct size
+  \node<2>[ovalise=width("inout.c")] (ovalinout) at (inout) {};
+  \node<2>[xshift=width("inout")/2+10em,yshift=3em] (inouttext) at
+  (ovalinout.east) {\color{red} {\textnormal{\normalsize bibliothèque maison (lecture
+      au clavier)}}};
+  \draw<2>[red>] (inouttext) to (ovalinout);
+
+  \node<3>[ovalise=width("monpgrograme.c")] (ovalpremprog) at (premprog) {};
+  \node<3>[xshift=width("monpgrograme.c")/2+10em,yshift=2.7em] (premprogtext) at
+  (ovalpremprog) {\color{red} {\textnormal{\normalsize Écrit par vous}}};
+  \draw<3>[red>] (premprogtext) to (ovalpremprog);
+
+  \node<4>[ovalise=width("gcc -c")] (ovalopt1) at (opt1) {};
+  \node<4>[xshift=4em,yshift=3em] (opt1text) at (opt1) {
+    \color{red} {\textnormal{\normalsize "Compiler" }}};
+  \draw<4>[red>] (opt1text) to (ovalopt1.north);
+
+  \node<4->[xshift=width("inout")/2+18em] (inout_o) at
+  (ovalinout.east) {\color{red} {\tt inout.o}};
+  \draw<4->[red>,dashed] (ovalinout) to (inout_o) ;
+
+  \node<5-> (premprog_o) at (inout_o|-ovalpremprog)
+  {\color{red} {\tt premprogamme.o}};
+  \draw<5->[red>,dashed] (ovalpremprog) to (premprog_o) ;
+
+  \node<6>[ovalise=width("gcc")] (ovallink1) at (link1) {};
+  \node<6>[xshift=10em,yshift=-3em] (link1text) at (link1) {
+    \color{red} {\textnormal{\normalsize "construire un exécutable" (link) }}};
+  \draw<6>[red>] (link1text) to (ovallink1.south east);
+
+  \node<6>[ovalise=width("-o")] (ovalmonexe) at (monexe) {};
+
+  \node<6>[xshift=11em,yshift=-3em] (monexetext) at (monexe) {
+    \color{red} {\textnormal{\normalsize "nom de l'exécutable"}}};
+  \draw<6>[red>] (monexetext) to (ovalmonexe.south east);
+
+  \node<7-> (monexe_o) at (inout_o|-monexe2) {\color{red} {\tt monexe}};
+  \draw<7->[red>,dashed] (monexe2) to (monexe_o) ;
+\end{tikzpicture}
+\end{overprint}
+\vfill
+
+\begin{overlayarea}{\linewidth}{2.8cm}
+  \only<8>{
+    \begin{itemize}
+    \item répertoire courant: \textcolor{NavyBlue}{\lstinline!inout.c!}, \textcolor{NavyBlue}{\lstinline!inout.h!}
+      et \textcolor{NavyBlue}{\lstinline!premprogamme.c!}
+    \item link: tous les fichiers \textcolor{NavyBlue}{\texttt{.o}} d'un seul coup, ordre important
+    \item raccourci quand un seul fichier:
+      \lstset{basicstyle=\tt\small} \lstinlineshh{gcc monpogramme.c -o monexe}
+    \item Exécution: \lstset{basicstyle=\tt\small}
+      \lstinlinesh!./monexe! 
+    \end{itemize}}
+\end{overlayarea}
+\definecolor{colorC}{rgb}{0.94,0.96,.97}
+\end{frame}
+
+
+
+\frame{
+\begin{center} {\huge \textbf{\textcolor{NavyBlue}{Les variables}}}\end{center}
+}
+
+
+\begin{frame}[fragile]\frametitle{Comment mémoriser les opérations effectués ?}
+Considérons les fonctions :
+\begin{itemize}
+  \item \tikz \coordinate (lireInt);\lstinlineCv!lireInt();! qui lit un entier tapé au clavier, on dit qu'elle \textcolor{NavyBlue}{retourne} l'entier tapé. \\
+  \vspace{0.2cm}
+\item  \tikz \coordinate (lireInt);\lstinlineCv!ecrireInt(int a);! qui affiche à l'écran l'entier \textcolor{NavyBlue}{\texttt{a}} passé en paramètre.
+
+\end{itemize}
+
+\vspace{0.4cm}
+  On souhaite lire un entier $\textcolor{NavyBlue}{\texttt{n}}$ au clavier, puis afficher la
+    valeur de \textcolor{NavyBlue}{\texttt{$n + n^2$}}. \\
+
+
+\begin{itemize}
+  \item \lstinlineCv!ecrireInt(lireInt()+lireInt())! fait 2 lectures clavier.
+  \item comment faire pour utiliser plusieurs fois le résultat du
+    premier \lstinlineCv!lireInt()!?
+   \end{itemize}
+
+\vspace{0.4cm}
+  $\Rightarrow$ Stockage dans une \textbf{\textcolor{NavyBlue}{\textit{variable}}} de la valeur retournée par (du résultat)  \lstinlineCv!lireInt()! pour l'utiliser plus tard.
+ 
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Qu'est ce qu'une variable?}
+Une \textbf{\textcolor{NavyBlue}{\textit{variable}}} est une portion de mémoire qui a un nom (en C: n'importe quel nom commençant par une lettre). \\
+\vspace{0.3cm}
+Elle a les propriétés suivantes :
+
+\vspace{0.1cm}
+\begin{itemize}
+  \item elle doit être suffisamment grande pour contenir la donnée \\(ex: contenir un \lstinlineCv!int!)
+  \vspace{0.1cm}
+  \item elle change de valeur au cours de l'exécution du programme
+\end{itemize}
+ 
+\vspace{0.3cm}
+
+Il est nécessaire de la \emph{\textcolor{NavyBlue}{déclarer}} avant de l'utiliser. \\
+\vspace{0.3cm}
+
+Les opérations possibles sur les variables sont :
+
+\vspace{0.1cm}
+    \begin{itemize}
+    \item \emph{\textcolor{NavyBlue}{l'affectation}}: remplacer sa valeur courante par une autre valeur.
+    \vspace{0.1cm}
+    \item \emph{\textcolor{NavyBlue}{l'utilisation}}: utiliser sa valeur courante dans une instruction.
+ 
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Les variable : exemple en \texttt{C}}
+\vspace{0.2cm}
+
+\begin{itemize}
+  \item \emph{\textcolor{NavyBlue}{Déclaration}}: 
+\begin{lstlistingC}[]
+  /*@\tikz \coordinate(typ);@*/int /*@\tikz\coordinate(nme);@*/n ;
+  int x,m ;
+\end{lstlistingC}
+    % \tikz \coordinate (typ);\lstinlineCv!int! \tikz \coordinate (nme);\lstinlineCv!n;!
+  \item \emph{\textcolor{NavyBlue}{Affectation}}:
+\begin{lstlistingC}[]
+  n = 12 ;
+  x = 3+4 ;
+  m = lireInt()+7 ;
+\end{lstlistingC}
+    
+    \begin{itemize}
+    \item signe \og égal\fg{} (\lstinlineCv!=!) ne signifie pas
+      égalité (voir\lstinlineC!==!)
+    \item \lstinlineCv!x = 12;! signifie \og mettre la valeur 12
+      dans la variable \texttt{\textcolor{NavyBlue}{x}}\fg.
+    \end{itemize}\medskip
+  \item \emph{\textcolor{NavyBlue}{Utilisation}}:
+\begin{lstlistingC}[]
+    ecrireInt(n+8+g(n+3));
+    f(n + n*n + x * m);
+    x = g(n +3 , m - 7);
+\end{lstlistingC}
+
+  \end{itemize}
+  \begin{tikzpicture}[remember picture, overlay]
+    \node<2>[ovalise=width("int")] (ovaletyp) at (typ) {};
+    \node<2>[xshift=3ex,yshift=7ex] (annotetyp) at (ovaletyp) {{\small \color{red}type}};
+    \draw<2>[->,shorten <=1ex,red,ultra thick] (annotetyp) to (ovaletyp);
+    \node<2>[ovalise=width("n")] (ovalenme) at (nme) {};
+    \node<2>[xshift=10ex,yshift=6ex] (annotenme) at (ovalenme) {{\small \color{red}nom}};
+    \draw<2>[->,shorten <=1ex,red,ultra thick] (annotenme) to (ovalenme);
+  \end{tikzpicture}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Variable -- Affectation (1/3)}
+\begin{lstlistingC}[]
+    /*@\tikz \coordinate (ng);@*/x = g(/*@\tikz \coordinate (nd);@*/n +3 , m - 7);
+\end{lstlistingC}
+  \begin{center}
+    \danger\\
+    \textbf{pas la même signification à gauche ou à droite de l'affectation}
+  \end{center}
+  \begin{center}
+    \begin{minipage}{.3\linewidth}
+    \end{minipage}
+  \end{center}
+  \begin{block}{Règle}
+    Le nom d'une variable désigne toujours sa valeur sauf à gauche de l'affectation.
+  \end{block}
+  \begin{tikzpicture}[remember picture, overlay]
+    \node<2>[ovalise=width("n")] (ovaleng) at (ng) {};
+    \node<2>[xshift=0ex,yshift=-6ex] (annoteng) at (ovaleng) {{\small \color{red}\og{}Receptacle\fg}};
+    \draw<2->[->,shorten <=1ex,red,ultra thick] (annoteng) to (ovaleng);
+    \node<2>[ovalise=width("n")] (ovalend) at (nd) {};
+    \node<2>[xshift=7ex,yshift=-6ex] (annotend) at (ovalend) {{\small \color{red}\og{}Valeur\fg}};
+    \draw<2->[->,shorten <=1ex,red,ultra thick] (annotend) to (ovalend);
+  \end{tikzpicture}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Variable -- Affectation (2/3)}
+  Déroulement (à l'exécution) de l'affectation:\medskip
+\begin{lstlistingC}
+    x = g(n +3 , m - 7);
+\end{lstlistingC}
+  \begin{itemize}
+  \item partie de droite (ici \lstinlineCv!g(n +3 , m - 7)!) exécutée (donne un \textcolor{NavyBlue}{résultat})
+  \item \emph{ensuite} le \textcolor{NavyBlue}{résultat} de la partie droite est écrit dans la
+    variable de gauche (\lstinlineCv!x!) (efface la valeur précédente)
+  \end{itemize}\medskip
+
+\vspace{0.3cm}
+
+Un exemple de modification de la valeur d'une variable :
+\begin{lstlistingC}[]
+int n = 4;
+ecrireInt(n); // ? qu'affiche ceci
+/*@\tikz \coordinate (ng);@*/n = /*@\tikz \coordinate (nd);@*/n + 3;
+ecrireInt(n); // ? qu'affiche ceci
+\end{lstlistingC}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Variable-- Affectation (3/3)}
+  L'instruction d'affectation:
+  \begin{center}
+    \lstinlineCv!x = f(12) + 7 - g(4)!
+  \end{center}
+  S'exécute de la manière suivante:
+  \begin{enumerate}
+  \item Évaluation à droite du \og =\fg : \lstinlineCv!f(12) + 7 - g(4)!
+  \item Valeur obtenue stockée dans \lstinlineCv!x! (valeur précédente
+    écrasée).
+  \end{enumerate}\vfill
+  \textbf{\textcolor{NavyBlue}{Question}}: Que fait l'instruction  \lstinlineCv!x = x + 2;! ?
+\end{frame}
+
+\frame{
+\begin{center} {\huge \textbf{\textcolor{NavyBlue}{Les types de données }}}\end{center}
+}
+
+
+
+\frame
+{
+ \frametitle{Notion de type de données}
+Toutes les variables ont un \textbf{\textcolor{NavyBlue}{type}}, il définit :
+\vspace{0.2cm} 
+\begin{itemize}
+\item la taille de l'espace mémoire réservé pour celle-ci.
+\vspace{0.2cm} 
+\item l'ensemble des valeurs que peut prendre un objet informatique ainsi que les opérations permises sur ces valeurs.
+\end{itemize}
+\vspace{0.5cm}
+  \textbf{\textcolor{NavyBlue}{Un objet informatique}} est toute entité à laquelle un type est associé (variable, constante, fonction).\\
+  
+\vspace{0.7cm}
+\textbf{\textcolor{NavyBlue}{Exemple : le type entier \texttt{int} :}}
+\begin{itemize} 
+\item Ensemble de valeurs : $\mathbb{N}$ \\
+\item Ensemble d'opérations sur ces valeurs $(+,-,*,/,==, \ldots)$
+\end{itemize}
+
+}
+\frame
+{
+ \frametitle{Intérêt du concept de type}
+Fournir à la machine les \textbf{\textcolor{NavyBlue}{informations}} nécessaires pour qu'elle soit en mesure de \textbf{\textcolor{NavyBlue}{vérifier que l'utilisation}} des objets d'un programme est bien \textbf{\textcolor{NavyBlue}{conforme}} à l'intention préalable du programmeur :
+\vspace{0.1cm}
+\begin{itemize}
+\item  Lorsque nous déclarons un \textbf{\textcolor{NavyBlue}{objet (variable, constante, fonction, ...)}}, nous spécifions les contraintes de son utilisation, l'ensemble des valeurs qui pourront lui être associées et ainsi  le \textbf{\textcolor{NavyBlue}{cadre légitime de son utilisation}}.
+\vspace{0.1cm}
+\item L'utilisation de cet objet sera précédée d'une \textbf{\textcolor{NavyBlue}{vérification effectuée par le compilateur}}. La valeur qu'il prend appartient-elle à cet ensemble ? Son utilisation est-elle conforme aux contraintes spécifiées ?
+\end{itemize}
+\vspace{0.3cm}
+\textbf{\textcolor{NavyBlue}{Le concept de type permet d'établir un lien sémantique entre la déclaration et l'utilisation d'un objet}}.
+
+}
+
+\frame
+{
+ \frametitle{Les types primitifs}
+\begin{center}
+\begin{tabular}{|p{1.5cm}|p{7.5cm}|p{1.5cm}|}
+\hline 
+Type & Ensemble des valeurs & Taille \\\hline
+\texttt{\textcolor{NavyBlue}{byte}} & $[-128, \ldots, 127] ([-2^7, \ldots, 2^7 -1]) $ &1 \texttt{octet} \\\hline
+\texttt{\textcolor{NavyBlue}{short}} &  $[-32768, \ldots, 32767] ([-2^{15}, \ldots, 2^{15} -1]) $ &2 \texttt{octets} \\\hline
+\texttt{\textcolor{NavyBlue}{int}} &  $ [-2^{31}, \ldots, 2^{31} -1] $ &4  \texttt{octets}\\\hline
+\texttt{\textcolor{NavyBlue}{long}} &  $[-2^{63}, \ldots, 2^{63} -1] $ &8 \texttt{octets} \\\hline
+\texttt{\textcolor{NavyBlue}{float}} &  réels simple précision (7 chiffres significatifs) & 4  \texttt{octets} \\\hline
+\texttt{\textcolor{NavyBlue}{double}} & réels double précision (15 chiffres significatifs) & 8   \texttt{octets}\\\hline
+\texttt{\textcolor{NavyBlue}{char}} & les caractères & 2 \texttt{octets} \\\hline
+\end{tabular}
+\end{center}
+}
+
+\frame
+{
+ \frametitle{Opérateurs et expressions}
+\begin{itemize}
+\item Un \textbf{\textcolor{NavyBlue}{opérateur}} permet de réaliser des calculs sur une ou plusieurs valeurs appelées \textbf{\textcolor{NavyBlue}{opérandes}}.
+\vspace{0.2cm}
+\item Il existe des opérateurs unaires (une seule opérande), binaires et ternaires (ex: \texttt{x++}, $\mathtt{9*x}$)
+\vspace{0.2cm}
+\item Les \textbf{\textcolor{NavyBlue}{expressions}} sont des constructions décrivant des opérations à l'aide d'opérateurs et d'opérandes
+\vspace{0.2cm}
+\item Les opérandes d'une expression peuvent être des constantes, des variables valuées ou des appels de fonction :
+\begin{itemize}
+\item \texttt{(34 + min(x,y))} où \texttt{x} et \texttt{y} sont les paramètres de la fonction \texttt{min}.
+\item $\mathtt{2>5}$ est une expression booléenne dont le résultat est faux
+\item $\mathtt{!(2>5)}$ est une expression booléenne lue : \texttt{non 2 plus grand que 5}
+ \end{itemize}
+\vspace{0.2cm}
+\item \textcolor{NavyBlue}{Une expression correspond toujours à la valeur qu'elle calcule}
+\end{itemize}
+}
+\frame
+{
+ \frametitle{Opérateurs arithmétiques}
+\begin{itemize}
+\item \textbf{\textcolor{NavyBlue}{Opérateurs sur les types entiers}} (\texttt{byte, short, int, long})\\
+\begin{itemize}
+\item \texttt{+, -, *, /, \%}
+\vspace{0.2cm}
+\item Exemples : \texttt{9/4 = 2, 9\%4 = 1}
+\end{itemize}
+\vspace{0.5cm}
+\item \textbf{\textcolor{NavyBlue}{Opérateurs sur les types réels}} (\texttt{double, float})\
+\begin{itemize}
+\item \texttt{+,-,*,/}
+\vspace{0.2cm}
+\item Exemple : \texttt{9/4 = 2,25}
+\end{itemize}
+\vspace{0.5cm}
+\item \textbf{\textcolor{NavyBlue}{Opérateurs relationnels}}
+\begin{itemize}
+\item \texttt{<, >, <=, >=, ==, !=}
+\vspace{0.2cm}
+\item Exemples : \texttt{5 > x, a == 'b', (a != 0) \&\& (a <= 100)}
+\end{itemize}
+\end{itemize}
+}
+\frame
+{
+ \frametitle{Précédence des opérateurs (1/2)}
+Les expressions composées de plusieurs opérateurs sont évaluées de la \textbf{\textcolor{NavyBlue}{gauche vers la droite}}, selon des \textbf{\textcolor{NavyBlue}{règles de précédence}} indiquant la priorité des opérateurs les uns par rapport aux autres.
+\vspace{1cm}
+\begin{itemize}
+\item \texttt{2 + 3 * 4} $\Rightarrow$  équivaut à \texttt{2 +(3*4)} \\
+$\Rightarrow$ s'évalue en \texttt{14} et non pas en \texttt{20}
+\vspace{0.5cm}
+\item \texttt{2 + 3 > 4} $\Rightarrow$ s'évalue en \texttt{vrai}
+\vspace{0.5cm}
+\item \texttt{2 + (3 > 7)} $\Rightarrow$ produit une erreur
+\end{itemize}
+}
+\frame
+{
+ \frametitle{Précédence des opérateurs (2/2)}
+De la plus haute à la plus basse priorité :
+\vspace{1cm}
+\begin{center}
+\begin{tabular}{c}
+ \texttt{+,-} \\
+ \texttt{!}\\
+\texttt{* / \%} \\
+\texttt{+ -}\\
+\texttt{< <= > >=} \\
+\texttt{== !=}\\
+\texttt{\&\&}\\
+\texttt{||} \\
+ \end{tabular}
+\end{center}
+}
+
+
+% version avec un seul programme source
+% \begin{frame}[fragile]\frametitle{Compilation/Execution du premier programme}
+%   \begin{itemize}
+%   \item Compilation:
+%   \end{itemize}
+%   \begin{overprint}[\linewidth]
+%     \begin{tikzpicture}[node distance=5cm,>=stealth',very thick,shorten >=2pt,shorten <=2pt,step=1cm]
+%       \begin{scope}[xshift=-5.3cm]
+%         \small
+%         \draw[black]
+%         (0,-1.5) coordinate (a2)
+%         -- coordinate (ab2) (0,1.5) coordinate (b)
+%         -- coordinate (bc2) (8.2,1.5) coordinate (c)
+%         -- coordinate (cd2) (8.2,-1.5) coordinate (d)
+%         -- cycle;
+%         \node(pb) at (4,0) {
+%           \begin{tabular}[t]{l}
+%             \small\texttt{\visible<2->{premierprogramme.c}} \\
+%           \end{tabular}
+%         };
+%         \node(compil) at  (3.2,2) {Source};
+%       \end{scope}
+
+%       \draw[black]
+%       (0,-1.5) coordinate (a)
+%       -- coordinate (ab) (0,1.5) coordinate (b)
+%       -- coordinate (bc) (8.2,1.5) coordinate (c)
+%       -- coordinate (cd) (8.2,-1.5) coordinate (d)
+%       -- cycle;
+%       \node(compilation) at (4,0) {
+%           \begin{tabular}{l}
+%             \visible<4->{\small \texttt{premierprogramme.o}}
+%           \end{tabular}};
+
+%       \node (user) at (12,0) {{\visible<6->{\small\texttt{prog1}}}};
+%       \draw [->] (cd.east) -- node [above] {} (user); 
+%       \draw [->] (cd2.east) -- (ab.west); 
+%       \node(compil) at  (12,2) {Binaire};
+%     \end{tikzpicture}\vfill\vfill\vfill\vfill
+%   \end{overprint}
+% \begin{lstlisting}[language=bash,basicstyle=\small\tt\bfseries]
+% /*@\tikz \coordinate (opt1);@*/gcc -c /*@\tikz \coordinate (premprog);@*/premierprogramme.c
+% \end{lstlisting}
+% \begin{lstlisting}[language=bash,basicstyle=\small\tt\bfseries]
+% /*@\tikz \coordinate (link1);@*/gcc premierprogramme.o /*@\tikz \coordinate (monexe);@*/-o prog1 /*@\tikz \coordinate (monexe2);@*/
+% \end{lstlisting}
+%   \bigskip
+%   \bigskip
+
+%   \begin{itemize}
+%   \item<7-> Exécution:
+%   \end{itemize}
+% \visible<7->{\small\tt\bfseries./prog1}
+% \hfill  \visible<8>{DÉMO.}
+
+% \begin{tikzpicture}[remember picture, overlay]
+%   \small\tt%so that width computes the correct size
+
+%   \node<2>[ovalise=width("premierpgrograme.c")] (ovalpremprog) at (premprog) {};
+%   \node<2>[xshift=width("monpgrograme.c")/2+9em,yshift=2.6em] (premprogtext) at
+%   (ovalpremprog) {\color{red} {\tt\bfseries Écrit par vous}};
+%   \draw<2>[red>] (premprogtext) to (ovalpremprog);
+
+%   \node<3,4>[ovalise=width("gcc -c")] (ovalopt1) at (opt1) {};
+%   \node<3,4>[xshift=4em,yshift=2.6em] (opt1text) at (opt1) {
+%     \color{red} {\tt\bfseries "Compiler" }};
+%   \draw<3,4>[red>] (opt1text) to (ovalopt1.north);
+
+%   \node<4->[xshift=width("premprog")/2+10em] (premprog_o) at
+%   (ovalpremprog.east) {\color{red} {\tt\bfseries premierprogramme.o}};
+%   \draw<4->[red>,dashed] (ovalpremprog) to (premprog_o) ;
+
+%   \node<5,6>[ovalise=width("gcc")] (ovallink1) at (link1) {};
+%   \node<5,6>[xshift=10em,yshift=-3em] (link1text) at (link1) {
+%     \color{red} {\tt\bfseries "construire un exécutable" }};
+%   \draw<5,6>[red>] (link1text) to (ovallink1.south east);
+
+%   \node<5,6>[ovalise=width("-o")] (ovalmonexe) at (monexe) {};
+
+%   \node<5,6>[xshift=11em,yshift=-3em] (monexetext) at (monexe) {
+%     \color{red} {\tt\bfseries "nom de l'exécutable"}};
+%   \draw<5,6>[red>] (monexetext) to (ovalmonexe.south east);
+
+%   \node<6->[xshift=width("prog1")/2+3.5em] (monexe_o) at
+%   (monexe2) {\color{red} {\tt\bfseries prog1}};
+%   \draw<6->[red>,dashed] (monexe2) to (monexe_o) ;
+% \end{tikzpicture}
+% \end{frame}
+
+\frame{
+\begin{center} {\huge \textbf{\textcolor{NavyBlue}{Les instructions et les expressions}}}\end{center}
+}
+
+
+\begin{frame}[fragile]\frametitle{Qu'est ce qu'une instruction ?}
+  \begin{center}
+    \lstinlineCv!ecrireString("Hello world\n");!
+  \end{center}\vfill
+
+  Une \emph{\textcolor{NavyBlue}{instruction}}
+  \begin{itemize}
+  \item morceau de programme/recette = morceau de texte,
+  \item se termine (en C, C++, \texttt{C}) par un point-virgule: \lstinlineCv!;!
+  \item opération \emph{réalisée} à l'exécution,
+  \end{itemize}\vfill
+
+  \begin{minipage}[t]{.5\linewidth}
+    Exemples:
+    \begin{itemize}
+    \item \og battez 2 oeufs entiers\fg{}
+    \item \lstinlineCv!ecrireString("Toto\n");!
+    \item \lstinlineCv!x = y + 3;!
+    \item \lstinlineCv!return (3);!
+    \end{itemize}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{.3\linewidth}
+    Contre-exemples:
+    \begin{itemize}
+    \item \og 2 oeufs\fg{}
+    \item \lstinlineCv!"Toto\n"!
+    \item \lstinlineCv!y+3!
+    \item \lstinlineCv!(3)!
+    \end{itemize}
+  \end{minipage}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Qu'est ce qu'une expression ?}
+  \begin{center}
+    \lstinlineCv!"Hello world\n"!\hfill
+    \lstinlineCv!45!\hfill
+    \lstinlineCv!2 + 7 * 0xFF!\hfill
+    \lstinlineCv!x!\hfill
+    \lstinlineCv!2 + x * 0xFF!
+  \end{center}\vfill
+
+  Une \emph{\textcolor{NavyBlue}{expression}}
+  \begin{itemize}
+  \item morceau de programme/recette = morceau de texte,
+  \item une \emph{partie} d'une instruction
+  \item qui correspondra à une \emph{\textcolor{NavyBlue}{valeur}} à l'exécution,
+  \end{itemize}\vfill
+
+  \begin{minipage}[t]{.3\linewidth}
+    Contre-exemples:
+    \begin{itemize}
+    \item \og 2 oeufs\fg{}
+    \item \lstinlineCv!"Toto\n"!
+    \item \lstinlineCv!y+3!
+    \item \lstinlineCv!(3)!
+    \end{itemize}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{.5\linewidth}
+    Exemples:
+    \begin{itemize}
+    \item \og battez 2 oeufs entiers\fg{}
+    \item \lstinlineCv!ecrireString("Toto\n");!
+    \item \lstinlineCv!x = y + 3;!
+    \item \lstinlineCv!return (3);!
+    \end{itemize}
+  \end{minipage}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Instruction VS expression}
+   Quelques règles :
+   \medskip
+\begin{center}
+    \begin{tabular}{l|l}
+      Instruction & Expression \\\hline
+      se termine par \lstinlineCv!;!& fait partie d'une instruction\\[.5em]
+      aura un \tikz \coordinate (effet);\emph{effet} à l'exécution & aura une \tikz \coordinate (valeur);\emph{valeur} à l'exécution\\[.5em]
+      n'a pas de type (\lstinlineCv!void!) & a un type (\lstinlineCv!int!,\lstinlineCv!double!,etc)
+    \end{tabular}\vfill
+\end{center}
+En \texttt{C}:
+    \begin{itemize}
+    \item les expressions sont parfois aussi des instructions.
+    \item retournent une valeurs ET ont un effet.
+    \item ex: \lstinlineCv!x = 3!
+      \begin{itemize}
+      \item effet: met la valeur 3 dans la variable \lstinlineCv!x!
+      \item valeur: 3.
+      \item code bizarre: x = (y = f(x,y)) \emph{à éviter}
+      \end{itemize}
+    \end{itemize}
+
+\begin{tikzpicture}[remember picture, overlay]
+  \node<2>[ovalise=width("effet")] (ovaleffet) at (effet) {};
+  \node<2>[ovalise=width("valeur")] (ovalvaleur) at (valeur) {};
+\end{tikzpicture}
+\end{frame}
+
+
+
+\frame
+{
+ 
+
+\begin{center} {\huge \textbf{\textcolor{NavyBlue}{Appeler un sous-programme}}}\end{center}
+}
+
+
+\begin{frame}\frametitle{Les sous-programmes}
+
+\textcolor{NavyBlue}{Un sous-programme} est un \og{}bout de programme\fg{}
+\begin{itemize}
+   \item qui utilise des \emph{\textcolor{NavyBlue}{paramètres}} (ou arguments)
+  \item qu'on peut appeler autant qu'on veut \emph{\textcolor{NavyBlue}{avec des paramètres différents}}
+  \item qui peut avoir des \emph{\textcolor{NavyBlue}{effets}} (modif. écran ou mémoire, etc)
+  \item qui peut avoir {\color{red}un} \emph{\textcolor{NavyBlue}{résultat}} (valeur de
+    \og{}retour\fg)
+  \end{itemize}\hfill
+
+\vspace{0.4cm}
+Il peut être :
+
+  \begin{overprint}
+    \onslide<2->{
+      \begin{itemize}
+      \item écrit par soi-même
+      \item ou par un autre programmeur
+      \item code source connu/inconnu
+              \end{itemize}
+    }
+  \end{overprint}
+\end{frame}
+
+
+\begin{frame}\frametitle{Sous-programme: procédures VS fonction}
+
+  \tikz \coordinate (inputproc1);
+  \hfill\begin{minipage}[m]{.5\linewidth}
+    \begin{center}
+      \tikz \coordinate (inputproc2);\fbox{
+        \begin{minipage}[t]{.5\linewidth}
+          \begin{center}
+            proc\tikz \coordinate (proc);édure
+          \end{center}
+        \end{minipage}
+      }\tikz \coordinate (outputproc1);
+    \end{center}
+  \end{minipage}\hfill\tikz \coordinate (outputproc2);~
+  \vfill
+  \vfill
+  
+  \tikz \coordinate (inputfun1);
+  \hfill
+  \begin{minipage}[m]{.5\linewidth}
+    \begin{center}
+      \tikz \coordinate (inputfun2); \fbox{
+        \begin{minipage}[t]{.5\linewidth}
+          \begin{center}
+            fonction
+          \end{center}
+        \end{minipage}
+      }\tikz \coordinate (outputfun1);
+    \end{center}
+  \end{minipage}\hfill\tikz \coordinate (outputfun2);~
+  \begin{tikzpicture}[remember picture, overlay]
+    \node[yshift=3em] (inputproc11) at (inputproc1) {};
+    \node[yshift=-3em] (inputproc12) at (inputproc1) {};
+    \draw[red>] (inputproc11) to node [above] {param 1} (inputproc2) ;
+    \draw[red>] (inputproc1) to node [above] {param 2} (inputproc2) ;
+    \draw[red>] (inputproc12) to node [above] {param 3} node [below=-.5em] {$\vdots$} (inputproc2) ;
+
+    \node[yshift=3em] (inputfun11) at (inputfun1) {};
+    \node[yshift=-3em] (inputfun12) at (inputfun1) {};
+    \draw[red>] (inputfun11) to node [above] {param 1} (inputfun2) ;
+    \draw[red>] (inputfun1) to node [above] {param 2} (inputfun2) ;
+    \draw[red>] (inputfun12) to node [above] {param 3} node [below=-.5em] {$\vdots$} (inputfun2) ;
+    \node[red,xshift=5em] (void) at (outputproc1) {\lstinline!void!};
+    \draw[red>] (outputfun1) to node [above] {Résultat} node [below] {\lstinline!int!, \lstinline!double!, etc} (outputfun2) ;
+    %% On calcule l'adresse de départ de la flèche des effets de la procédure
+    \node[yshift=1em] (effectproc1) at (proc) {};
+    \node[yshift=2em,xshift=10em] (effectproc2) at (effectproc1) {};
+    \draw[red>,dashed,green] (effectproc1) to node [above] {Effet} (effectproc2) ;
+  \end{tikzpicture}
+  \vfill
+  \vfill
+
+  \onslide<2-3>{procédure = instruction\only<2>{/expression?} \hfill fonction = \only<2>{instruction/}expression\only<2>{?}}
+\end{frame}
+
+
+\subsection{Appeler une procédure}
+
+
+\begin{frame}[fragile]\frametitle{Appel de procédure}
+  \begin{center}
+     \tikz \coordinate (ecrireDate);\lstinlineCv!ecrireDate();!
+  \end{center} \vfill
+  \fbox{\small
+    \begin{minipage}[t]{.58\linewidth}
+      \begin{enumerate}
+      \item \tikz \coordinate (separez);Séparez les feuilles de la salade
+      \item \tikz \coordinate (lavez);Lavez les feuilles
+      \item \tikz \coordinate (vinaigrette);\tikz \coordinate (procvinaigr);\textbf{Faites une
+          vinaigrette, page 12.}
+      \item \tikz \coordinate (egouttez);égouttez les feuilles
+      \item \dots
+      \end{enumerate}
+    \end{minipage}
+  }
+  \begin{tikzpicture}[remember picture, overlay]
+    \node<all:2-|handout:1>[ovalise={width("ecrireDate")}] (ovalecrireDate) at (ecrireDate) {};
+    \node<all:2-|handout:1>[xshift=5em,yshift=-2em] (ovalecrireDateannot) at (ovalecrireDate) {\color{red} {\bfseries Appel de la procédure \lstinline!ecrireDate!}};
+    \draw<all:2-|handout:1>[red>,dashed] (ovalecrireDateannot) to (ovalecrireDate) ;
+
+    \node<all:3-|handout:1>[ovalise={width("Faites une vinaigrette")}] (ovalprocvinaigr) at (procvinaigr) {};
+    \node<all:3-|handout:1>[xshift=10em,yshift=2em] (ovalprocvinaigrannot) at (ovalprocvinaigr) {\color{red} {\bfseries Appel de la procédure \lstinline!vinaigrette!}};
+    \draw<all:3-|handout:1>[red>,dashed] (ovalprocvinaigrannot) to (ovalprocvinaigr) ;
+  \end{tikzpicture}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Appel de procédure I -- exécution}
+  \setlength{\fboxsep}{0pt}
+  ~\hfill
+  \begin{minipage}{.42\linewidth}
+    \small Salade verte:\\
+    \fbox{
+      \begin{minipage}[t]{.95\linewidth}
+        \begin{enumerate}
+        \item[]
+        \item[\only<2->{1.}] \tikz \coordinate (separez);Séparez les feuilles
+        \item[\only<3->{2.}] \tikz \coordinate (lavez);Lavez les feuilles
+        \item[\only<4->{3.}] \tikz \coordinate (vinaigrette);\textbf{Faites une
+            vinaigrette}\tikz \coordinate (vinaigrette2);
+        \item[\only<10->{9.}] \tikz \coordinate (egouttez);égouttez les feuilles
+        \item[\only<11->{10.}] \dots
+        \item[]
+        \end{enumerate}
+      \end{minipage}}
+  \end{minipage}~~
+  \begin{minipage}{.42\linewidth}
+    \small Vinaigrette:\\
+    \setlength{\fboxsep}{0pt}
+    \fbox{
+      \begin{minipage}[t]{.95\linewidth}
+        \begin{enumerate}
+        \item[] \tikz \coordinate (vinaigrettehaut);
+        \item[\only<all:5-|handout:1>{4.}] versez l'huile dans un bol
+        \item[\only<all:6-|handout:1>{5.}] versez le vinaigre 
+        \item[\only<all:7-|handout:1>{6.}] versez la moutarde
+        \item[\only<all:8-|handout:1>{7.}] battre jusqu'à émulsion
+        \item[\only<all:9-|handout:1>{8.}] salez poivrez
+        \item[]\tikz \coordinate (vinaigrettebas);
+        \end{enumerate}        
+      \end{minipage}}
+  \end{minipage}
+  \hfill~
+  \begin{tikzpicture}[remember picture, overlay]
+    \node<all:4-5|handout:1>[ovalise={width("Faites une vinaigrette")}] (ovalvinaigrette) at (vinaigrette) {};
+    \draw<all:5-|handout:1>[red>,dashed] (vinaigrette2) to (vinaigrettehaut) ;
+    \draw<all:9-|handout:1>[red>,dashed] (vinaigrettebas) to (vinaigrette2) ;
+  \end{tikzpicture}\vfill
+  \begin{overprint}[1.0\linewidth]
+      \begin{enumerate}
+    \item<all:4-|handout:1> \emph{\textcolor{NavyBlue}{arrête}} l'exécution de la recette courante
+    \item<all:5-|handout:1> démarre l'autre recette \textbf{\textcolor{NavyBlue}{avec le
+        paramètre réel}}
+    \item<all:9-|handout:1> autre recette finie $\Rightarrow$ \emph{\textcolor{NavyBlue}{redémarre la recette courante}}
+    \end{enumerate}    
+  \end{overprint}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Deuxième programme (procédure \lstinlineCv!pause!)}
+procédure \lstinlineCv!pause()! attend une pression sur \og entrée\fg{}.\\
+procédure \lstinlineCv!ecrireDate()! écrit la date à l'écran.\vfill
+\lstinputlistingC[basicstyle=\tt\small]{deuxiemeprog.c}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Appel de procédure II -- Paramètres}
+  \begin{center}
+    \tikz \coordinate (arg1);\lstinlineCv!ecrireString("Hello world\n");!\\
+    \tikz \coordinate (arg2);\lstinlineCv!ecrireInt(12);!
+  \end{center}\vfill
+
+  {\small Omelette salade}\\
+  \fbox{\small
+    \begin{minipage}[t]{.58\linewidth}
+      \begin{enumerate}
+      \item \tikz \coordinate (separez);Séparez les feuilles de la salade
+      \item \tikz \coordinate (lavez);Lavez les feuilles
+      \item \tikz \coordinate (vinaigrette);Faites une
+          vinaigrette (p.12)
+      \item \tikz \coordinate (omelette4);\textbf{Faites une
+          omelette \tikz \coordinate (pour4);pour 4 (p.23)}
+      \item \tikz \coordinate (egouttez);égouttez les feuilles
+      \item \dots
+      \end{enumerate}
+    \end{minipage}
+  }
+    \begin{tikzpicture}[remember picture, overlay]
+      \small\tt%so that width computes the correct size
+       \node<all:2-|handout:1>[ovalise={width("xHello world!xnx")},xshift=8em] (ovalarg1) at (arg1) {};
+       \node<all:2-|handout:1>[ovalise={width("12")},xshift=6.5em] (ovalarg2) at (arg2) {};
+       \node<all:3-|handout:1>[ovalise={width("pour 4")}] (ovalpour4) at (pour4) {};
+       \node<all:2-|handout:1>[xshift=4em,yshift=-3em] (args) at (ovalarg2) {\color{red} {\bfseries paramètres}};
+       \draw<all:2-|handout:1>[red>] (args) to (ovalarg2.south east);
+       \draw<all:2-|handout:1>[red>] (args) to (ovalarg1.south east);
+       
+       \draw<all:3-|handout:1>[red>] (args) to (ovalpour4.north east);
+    \end{tikzpicture}
+  \end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}<handout:1,3,4,5>\frametitle{Paramètre de procédures}
+  %\only<all:2>{\color<all:2>{red}Une seule personne!}%
+  %\only<all:3>{\color{red} $\Rightarrow$ Paramètre \tikz  \coordinate (n);$n$}%
+  %\only<all:4-6>{\color{red} Omelette pour \only<all:5,6>{4}\only<all:4>{3}\tikz \coordinate(paramr); \hfill
+    %\only<all:6|handout:4>{\tikz \node (paramreel) {paramètre réèl}; \hfill~}}%
+  \hfill \tikz\coordinate(top); \hfill\hfill~
+  \begin{center}
+    \fbox{\small
+      \begin{minipage}{.65\linewidth}
+        \small \small Omelette pour \tikz \coordinate[xshift=.5ex] (personnes);%
+        \only<all:-2>{1}%
+        \only<all:3>{{\color{red}n}}%
+        \only<all:4>{{\color{red}3}}%
+        \only<all:5,6>{{\color{red}4}}%
+        ~personne(s)
+        \begin{enumerate}
+        \item Pelez et hachez finement \tikz \coordinate (1/4);%
+          \only<all:-2>{1}%
+          \only<all:3>{{\color{red}n}}%
+          \only<all:4>{{\color{red}3}}%
+          \only<all:5,6>{{\color{red}4}}%
+          /4 oignon(s)%
+        \item Dans un bol:
+          \begin{enumerate}
+          \item battez \tikz \coordinate[xshift=.5ex] (oeufs);%
+            \only<all:-2>{2}%
+            \only<all:3>{{\color{red}2$\times$n}}%
+            \only<all:4>{2$\times${\color{red}\tikz \coordinate[xshift=.5ex] (mult);3}}%
+            \only<all:5,6>{2$\times${\color{red}\tikz \coordinate[xshift=.5ex] (mult);4}}%
+            ~oeufs entiers
+          \item ajoutez \tikz \coordinate[xshift=.5ex] (basilic);%
+            \only<all:-2>{1}%
+            \only<all:3>{{\color{red}n}}%
+            \only<all:4>{{\color{red}3}}%
+            \only<all:5,6>{{\color{red}4}}%
+            ~branche(s) de basilic ciselé
+          \item ajoutez \tikz \coordinate[xshift=.5ex] (cube);%
+            \only<all:-2>{1/4}%
+            \only<all:3>{{\color{red}n/4}}%
+            \only<all:4>{{\color{red}3}/4}%
+            \only<all:5,6>{{\color{red}4}/4}%
+            ~cube(s) de bouillon de volaille.
+          \item ajoutez sel et poivre à votre goût
+          \item mélangez bien au fouet.
+          \end{enumerate}
+        \item Dans une poêle:
+          \begin{enumerate}
+          \item faites chauffer l'huile d'olive
+          \item faites revenir les oignons hachés pendant 2 min, en
+            remuant
+          \end{enumerate}
+        \item Versez dans la poêle les oeufs et le fromage râpé
+          laissez cuire 7 min.
+        \end{enumerate}
+      \end{minipage}
+    }
+  \end{center}
+\begin{tikzpicture}[remember picture, overlay]
+    \scriptsize
+    \node<all:2> at (top) {\color<all:2>{red}Une seule personne!};
+    \node<all:3> at (top) {\color{red} $\Rightarrow$ Paramètre \tikz
+      \coordinate (n);$n$ (\textit{formel})};
+    %\node<all:4-6> at (top) {\color{red} Omelette pour \only<all:5,6>{4}\only<all:4>{3}\tikz \coordinate(paramr);
+       %\hfill\only<all:6|handout:4>{\tikz \node (paramreel) {paramètre réèl};}\hfill~};%
+    \node<all:4-6> at (top) {\color{red} Omelette pour \only<all:5,6>{4}\only<all:4>{3}\tikz \coordinate(paramr);};
+    \hfill\node<all:6|handout:4>[xshift=3cm] at (top) {\tikz \node (paramreel) {\color{red} paramètre \textit{réèl}};};\hfill~%
+    %
+    \node<all:2|handout:3>[ovalise={width("1/4")}] (oval14) at (1/4) {};
+    \node<presentation:2|handout:0>[ovalise={width("2")}] (ovaloeuf) at (oeufs) {};
+    \node<beamer:0|handout:3>[ovalise={width("2xn")}] (ovaloeuf2) at (oeufs) {};
+    \node<all:2|handout:3>[ovalise={width("1")}] (ovalbasilic) at (basilic) {};
+    \node<all:2|handout:3>[ovalise={width("1/4")}] (ovalcube) at (cube) {};
+    \node<all:2|handout:3>[ovalise={width("1")}] (ovalpersonne) at (personnes) {};
+    \draw<all:6|handout:4>[red>,shorten >= 1ex, shorten <=1ex] (paramreel) to (paramr);
+    \draw<all:6|handout:4>[red>,shorten >= 1ex, shorten <=2ex] (paramr.south west) to (personnes) ;
+    \draw<all:6|handout:4>[red>,shorten >= 1.5ex, shorten <=1ex] (paramr) to (1/4) ;
+    \draw<all:6|handout:4>[red>,shorten >= 1.5ex, shorten <=1ex] (paramr) to (mult) ;
+    \draw<all:6|handout:4>[red>,shorten >= 1.5ex, shorten <=1ex] (paramr.190) to (basilic) ;
+    \draw<all:6|handout:4>[red>,shorten >= 1.5ex, shorten <=1ex] (paramr.220) to (cube) ;
+  \end{tikzpicture}
+\end{frame}
+
+
+
+\begin{frame}<handout:1>[fragile]\frametitle{Troisième programme}
+  \lstinputlistingC[basicstyle=\tt\small]{troisiemeprog.c}
+  \begin{tikzpicture}[remember picture, overlay]
+    \small\tt
+    \node<all:2|handout:1>[ovalise={width("ecrireInt(12);")}] (ovalecrireInt) at (ecrireInt) {};
+    \node<all:2|handout:1>[xshift=8em,yshift=.6em] (textecrireInt) at (ovalecrireInt.east) {\textnormal{\color{red} Écrit un entier à l'écran}};
+  \end{tikzpicture}
+\end{frame}
+
+
+\begin{frame}<handout:1>[fragile]\frametitle{Quatrième programme}
+  \lstinputlistingC[basicstyle=\tt\small]{quatriemeprog.c}
+  \begin{tikzpicture}[remember picture, overlay]
+    \small\tt
+    \node<all:2|handout:1>[ovalise={width("12+3")}] (ovaladd) at (add) {};
+    \node<all:2|handout:1>[xshift=3em,yshift=.6em] (textadd) at (ovaladd.east) {\textnormal{\color{red} entier}};
+  \end{tikzpicture}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]\frametitle{Les fonctions}
+ Considérons la fonction \lstinlineCv!heureActuelle();!
+
+\vspace{0.3cm}
+Elle \og retourne\fg{} le numéro de l'heure actuelle (entre 0 et 23)
+\begin{itemize}
+  
+  \item \lstinlineCv!heureActuelle()! \textbf{\textcolor{NavyBlue}{équivalent à un entier}}
+  \item \lstinlineCv!heureActuelle() + 2! bloque l'addition jusqu'à son retour (démo)
+ \end{itemize}
+ 
+ Pour l'utiliser, il faut l'inclure dans une instruction. \\
+
+\vspace{0.5cm}
+
+   \textcolor{NavyBlue}{ex :} \lstinlineCv!ecrireInt(heureActuelle());! \\
+   \texttt{\textcolor{NavyBlue}{ecrireInt}} attends le retour de la fonction \texttt{\textcolor{NavyBlue}{heureActuelle()}} 
+  
+  %% \begin{tikzpicture}[remember picture, overlay]
+  %%   \small\tt%so that width computes the correct size
+  %%   \node<all:2-|handout:1>[ovalise={width("hactuelle();")}] (ovalhactuelle) at (hactuelle) {};
+  %% \end{tikzpicture}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Appel de fonction}
+  \begin{minipage}[t]{.4\linewidth}
+    \small Salade verte pour 3:\\
+    \fbox{
+      \begin{minipage}[t]{.9\linewidth}
+        \begin{enumerate}
+        \item[\only<2->{1.}] \tikz \coordinate (separez);Séparez les feuilles de la salade
+        \item[\only<3->{2.}] \tikz \coordinate (lavez);Lavez les feuilles
+        \item[\only<4->{3.}] \tikz \coordinate (egouttez);égouttez les feuilles
+        \item[\only<5->{4.}] \tikz \coordinate (vinaigrette);%
+          Faites une vinaigrette pour 3~~\tikz \coordinate (vinaigrette2);\\
+           \tikz \coordinate (versez);et versez \emph{la}\tikz \coordinate (versez2);
+        \item[\only<11->{10.}] ...
+        \end{enumerate}
+      \end{minipage}}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{.58\linewidth}
+    \small Vinaigrette pour 3:\\
+    \fbox{
+      \begin{minipage}[t]{.9\linewidth}
+         \tikz \coordinate (vinaigrettehaut);
+        \begin{enumerate}
+        \item[\only<all:6-|handout:1>{5.}] versez 3 cuillère d'huile dans un bol
+        \item[\only<all:7-|handout:1>{6.}] versez 3/3 cuillères de vinaigre
+        \item[\only<all:8-|handout:1>{7.}] versez 3/3 cuillères de moutarde
+        \item[\only<all:9-|handout:1>{8.}] battre jusqu'à émulsion
+        \item[\only<all:10-|handout:1>{9.}] salez poivrez
+        \end{enumerate}
+         \tikz \coordinate (vinaigrettebas);
+      \end{minipage}}
+  \end{minipage}
+  ~\tikz \coordinate (separator);
+  \begin{tikzpicture}[remember picture, overlay]
+
+    \node<all:5-6|handout:1>[ovalise={width("Faites une vinaigrette pour 3")}] (ovalvinaigrette) at (vinaigrette) {};
+    \draw<all:6-|handout:1>[red>,dashed] (vinaigrette2) to node [above=.4em,pos=.45] {3} (vinaigrettehaut) ;
+    \draw<all:10-|handout:1>[red>,dashed] (vinaigrettebas) to node [below=.2em,pos=.4] {
+      \begin{minipage}[m]{10ex}
+        résultat = vinaigr.
+      \end{minipage}
+    } (vinaigrette2) ;
+    \node<all:10-|handout:1>[ovalise={width("et versez la")}] (ovalversez) at (versez) {};
+
+  \end{tikzpicture}\vfill
+  \begin{overprint}[1.0\linewidth]
+     \begin{enumerate}
+    \item<all:4-|handout:1> \emph{\textcolor{NavyBlue}{arrête}} l'exécution de la recette courante : \textcolor{red}{instruction 4 pas finie !}
+    \item<all:5-|handout:1> démarre l'autre recette \textbf{\textcolor{NavyBlue}{avec le
+        paramètre réel}}
+    \item<all:9-|handout:1> autre recette finie $\Rightarrow$ \emph{\textcolor{NavyBlue}{ instruction 4. redémarre en utilisant la valeur         retournée}}
+    \end{enumerate}
+
+  \end{overprint}
+\end{frame}
+
+
+
+\begin{frame}[fragile]\frametitle{Fonction et procédures utiles}
+  \begin{center}
+    \lstinlineCv!lireInt();!
+  \end{center}
+  \begin{itemize}
+  \item Attend que l'utilisateur tape un entier (ex: 123) + \og entrée\fg{}
+  \item \og retourne\fg{} l'entier tapé
+  \item \lstinlineCv!lireInt()! \textbf{équivalent à un entier}
+  \item \lstinlineCv!ecrireInt(lireInt())! (démo)
+  \item \lstinlineCv!ecrireInt(lireInt()~+~lireInt())! (démo)
+  \end{itemize}
+\end{frame}
+    
+
+
+\begin{frame}[fragile]\frametitle{Erreur extrêmement courante}
+  \begin{center}
+    \danger \danger \danger \danger \danger \danger \danger \danger\bigskip
+  \end{center}
+  Répétez en c\oe{}ur:\medskip
+
+  \begin{center}
+    {\Large \og Prendre en paramètre n'est pas lire au clavier\fg}
+  \end{center}
+  \medskip
+
+  \begin{center}
+    {\Large \og Retourner un résultat n'est pas afficher à l'écran\fg}
+  \end{center}\bigskip
+
+  \begin{center}
+    \danger \danger \danger \danger \danger \danger \danger \danger
+  \end{center}
+\end{frame}
+
+
+%% \begin{frame}[fragile]\frametitle{Explications -- Morpion}
+%%   \small 9 variables (\lstinline!char!) représentant l'état
+%%   du jeu. Au début: \lstinline!c1,...,c9 = '_'!\medskip
+  
+%%   \begin{minipage}[t]{.42\linewidth}
+%%     \fbox{
+%%       \begin{minipage}[t]{.9\linewidth}
+%%         \hfill$\vdots$\hfill
+%%         \begin{enumerate}
+%%         \item[\only<2->{1.}] \tikz \coordinate (separez);Demander coup joueur 1\tikz \coordinate (appellireInt1);
+%%         \item[\only<4->{3.}] \tikz \coordinate (majmorpion);Cocher case jouée\medskip
+%%         \item[\only<5->{5.}] \tikz \coordinate (lavez);Vérifier victoire\tikz \coordinate (appeltestWin1);
+%%         \item[\only<7->{6.}] \tikz \coordinate (egouttez);Demander coup joueur 2\tikz \coordinate (appellireInt2);
+%%         \end{enumerate}
+%%         \hfill$\vdots$\hfill~
+%%       \end{minipage}}
+%%   \end{minipage}\hfill
+%%   \begin{minipage}[t]{.3\linewidth}
+%%     \small \lstinline!lireInt!\\
+%%     \fbox{
+%%       \begin{minipage}[t]{.9\linewidth}
+%%         \tikz \coordinate (vinaigrettehaut);
+%%         \begin{enumerate}
+%%         \item[\only<all:3-|handout:1>{2.}] ...
+%%         \end{enumerate}
+%%         \tikz \coordinate (vinaigrettebas);
+%%       \end{minipage}}\bigskip\\
+%%     \small \lstinline!testWin!\\
+%%     \fbox{
+%%       \begin{minipage}[t]{.9\linewidth}
+%%         \tikz \coordinate (testWinhaut);
+%%         \begin{enumerate}
+%%         \item[\only<all:3-|handout:1>{4.}] ...
+%%         \end{enumerate}
+%%         \tikz \coordinate (testWinbas);
+%%       \end{minipage}}
+%%   \end{minipage}
+%%   ~\tikz \coordinate (separator);
+%%   \begin{tikzpicture}[remember picture, overlay]
+%%     \draw<all:2-4|handout:1>[red>,dashed] (appellireInt1) to node [above=.4em,pos=.35] {} (vinaigrettehaut) ;
+%%     \draw<all:3-4|handout:1>[red>,dashed] (vinaigrettebas) to node [above=.4em,left=.3em,pos=.4] {ex.~:5} (appellireInt1) ;
+%%     \draw<all:5-|handout:1>[red>,dashed] (appeltestWin1) to node [above=.1em,pos=.5] {c1,...,c9} (testWinhaut) ;
+%%     \draw<all:6-|handout:1>[red>,dashed] (testWinbas) to node [above=.4em,left=.3em,pos=.4] {oui/non} (appeltestWin1) ;
+%%   \end{tikzpicture}\vfill
+%%   \begin{overlayarea}{1.0\linewidth}{2cm}
+%%     \begin{onlyenv}<all:4-5|handout:1>
+%%       \begin{itemize}
+%%       \item la ligne 3 \emph{a besoin} du résultat de
+%%         \lstinline!lireInt! pour mettre à jour la variable
+%%       \item L'\emph{affichage} de cet entier serait inutile
+%%       \end{itemize}
+%%     \end{onlyenv}
+%%     \begin{onlyenv}<all:6-|handout:1>
+%%       \begin{itemize}
+%%       \item De même \lstinline!testWin! \emph{a besoin} des valeurs
+%%         des 9 variables pour pouvoir faire son calcul de victoire.
+%%       \item \lstinline!testWin! NE DEMANDE RIEN À l'UTILISATEUR, on
+%%         l'appelle avec les 9 paramètres depuis morpion.
+%%       \end{itemize}
+%%     \end{onlyenv}
+%%   \end{overlayarea}
+%% \end{frame}
+
+
+%% \begin{frame}[fragile]
+
+
+
+
+%% \frame
+%% {
+%%  \frametitle{Appel de méthode}
+
+%%  \textbf{\textcolor{NavyBlue}{Syntaxe}} \\
+%% \begin{center} \texttt{<ident\_sous\_programme>(<arg>,<arg>,...,<arg>)} \end{center}
+%% \vspace{1cm}
+%% \begin{itemize}
+%% \item Le sous-programme est invoqué en lui passant les données (arguments) à traiter.
+%% \vspace{0.5cm}
+%% \item  Les arguments peuvent changer à chaque appel
+%% \vspace{0.5cm}
+%% \item  Comme résultat, on obtient une valeur ou bien une modification de l'état de 
+%% la machine appelée effet de bord ou bien encore les deux.
+%% \end{itemize}
+%% }
+%% \frame
+%% {
+%%  \frametitle{Transmission de paramètre}
+%% \begin{itemize}
+%% \item Lors de l'appel d'une fonction, le paramètre effectif est transmis au paramètre formel.
+%% \vspace{0.3cm}
+%% \item Tout se passe comme si une \textbf{\textcolor{NavyBlue}{copie de la valeur}} du paramètre effectif initialisait le paramètre formel
+%% \vspace{0.3cm}
+%% \item On parle de \textbf{\textcolor{NavyBlue}{passage par valeur}}
+%% \vspace{0.3cm}
+%% \item \textbf{\textcolor{NavyBlue}{Conséquence :}} l'exécution de la fonction ne peut pas modifier le paramètre effectif
+%% \vspace{0.3cm}
+%% \item Le paramètre formel \texttt{\textcolor{NavyBlue}{x}} est une \textbf{\textcolor{NavyBlue}{variable}} pendant toute l'exécution de la procédure 
+%% \vspace{0.3cm}
+%% \item \textbf{\textcolor{NavyBlue}{Note :}} la valeur transmise est une référence si le paramètre est un tableau ou un objet
+
+
+%% \end{itemize}
+%% }
+
+%% \begin{frame}[fragile]
+
+%%  \frametitle{Notion de bloc}
+%% \begin{itemize}
+%% \item Un bloc est une suite d'instructions contenue entre accolades\\
+%% \textbf{\textcolor{NavyBlue}{Exemples :}} Le corps d'une boucle (\texttt{\textcolor{NavyBlue}{for}}, \texttt{\textcolor{NavyBlue}{while}}) est donc un bloc.\\
+%%  Les instructions entre les accolades d'un \texttt{\textcolor{NavyBlue}{if}}, d'un \texttt{\textcolor{NavyBlue}{else}} sont des blocs.
+%% \vspace{0.2cm}
+%% \item  Un bloc est un \textbf{\textcolor{NavyBlue}{environnement local}} de déclarations de variables. Les variables n'existent que dans le bloc dans lequel elles sont déclarées
+%% \end{itemize}
+%% \textbf{\textcolor{NavyBlue}{Exemples :}}
+%% \begin{scriptsize}
+%% \begin{lstlisting}
+%% public static void main(String[] args){
+%%    int a=5;
+%%    if (a==0){
+%%       int b=3+2*a;
+%%       System.out println("b="+b);
+%%    }
+%%    else{
+%%       int c=3+a;
+%%       System.out println("c="+c); // b est inconnu
+%%    }
+%%    System.out println("a="+a); // b et c sont inconnus
+%% }
+%% \end{lstlisting}
+%% \end{scriptsize}
+%% \end{frame}
+
+
+
+
+
+\end{document}

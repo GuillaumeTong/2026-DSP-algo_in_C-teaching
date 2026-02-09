@@ -1,0 +1,24 @@
+%%
+%% gnuasm definition (c) 2001 Guillaume Dufay 
+%%                           <Guillaume.Dufay@sophia.inria.fr>
+%%
+\lstdefinelanguage{GAS}%
+  {morekeywords={.data,.long,.string,.float, .space,.text,.globl,movl,addl,int,decl},%
+   sensitive,%
+   morecomment=*[n]{/*}{*/},% reconnaît mots-clés, commentaires...
+   morestring=[d]",%
+   literate={\{}{{\bf\ttfamily\{}}1%
+{\}}{{\bf\ttfamily\}}}1%
+{;}{{\bf\ttfamily;}}1%
+}[keywords,comments,strings]%
+\endinput
+
+
+%%% Local Variables: ***
+%%% mode: latex ***
+%%% TeX-PDF-mode: t ***
+%%% ispell-dictionary: "british" ***
+%%% ispell-local-dictionary: "british" ***
+%%% mode: flyspell ***
+%%% TeX-master: "slides.beamer.tex" ***
+%%% End: ***

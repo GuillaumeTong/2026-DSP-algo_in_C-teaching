@@ -1,0 +1,812 @@
+\documentclass{../enonce}
+\usepackage{enumerate}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{array,multirow,colortbl}
+\usepackage{calc}
+
+
+\usepackage{etoolbox}% http://ctan.org/pkg/etoolbox
+\newlength{\cellw}
+\newlength{\cellh}
+\setlength{\cellh}{3ex}
+\setlength{\cellw}{3ex}
+\newcommand{\case}[2][]{
+  \node[rectangle=1pt,draw=black,minimum width=\cellw,minimum height=\cellh] at (#2\cellw,0) {#1};
+}
+\newcommand{\casev}[2][]{
+  \node[rectangle=1pt,draw=black,minimum width=\cellw,minimum height=\cellh] at (0,-#2\cellh) {#1};
+}
+\newcommand{\caseb}[2][]{
+  \node[rectangle=1pt,very thick,draw=black,minimum width=\cellw,minimum height=\cellh] at (#2\cellw,0) {#1};
+}
+
+
+\newcounter{tabcnt}
+\newcommand{\tab}[1]{%
+  \setcounter{tabcnt}{0}
+  \def\nextitem{\def\nextitem{}}% Separator
+  \renewcommand*{\do}[1]{\nextitem\case[##1]{\value{tabcnt}}\stepcounter{tabcnt}}% How to process each item
+    \docsvlist{#1}% Process list
+}
+\newcommand{\tabv}[1]{%
+  \setcounter{tabcnt}{0}
+  \def\nextitem{\def\nextitem{}}% Separator
+  \renewcommand*{\do}[1]{\nextitem\casev[##1]{\value{tabcnt}}\stepcounter{tabcnt}}% How to process each item
+    \docsvlist{#1}% Process list
+}
+
+\newcommand{\tabpict}[1]{%
+  \begin{tikzpicture}
+    \tab{#1}
+  \end{tikzpicture}
+}
+\newcommand{\tabvpict}[1]{%
+  \begin{tikzpicture}
+    \tab{#1}
+  \end{tikzpicture}
+}
+
+\lstset{language=C}
+\lstset{%
+  %escapeinside={(*@}{@*)},%
+  %morecomment=*[n][\it\ttfamily]{/\\*\\*}{\\*/},% reconnaît mots-clés, commentaires...
+  %moredelim=[is][\it]{/*}{*/},% éviter keyword style in comment
+  flexiblecolumns=false,%
+  %mathescape=true,%
+  basicstyle=\tt\small,%
+  keywordstyle=\bf\ttfamily,%
+  commentstyle=\it\ttfamily,%
+  frame=tblr,% top + bottom
+  morekeywords={String},%
+  rangeprefix=/*@,rangesuffix=@*/,%
+  includerangemarker=true,% false Plante avec l'utf8
+  % backgroundcolor=\color{grey2},%
+  % Astuce pour masquer qd meme les range:
+  literate={/*@debutexo1@*/}{{\ }}1{/*@finexo1@*/}{{\ }}1{/*@debutexo2@*/}{{\ }}1{/*@finexo2@*/}{{\ }}1%
+  {à}{{\`a}}1{è}{{\`e}}1{ê}{{\^e}}1{é}{{\'e}}1{ù}{{\`u}}1{ç}{{\,c}}1{î}{{\^i}}1{À}{{\`A}}1{È}{{\`E}}1{Ê}{{\^E}}1{É}{{\'E}}1{Ù}{{\`U}}1{Ç}{{\,C}}1{Î}{{\^I}}1,%
+  showstringspaces=false,%
+}
+\usepackage{tikz,pgf}
+
+\usetikzlibrary{shapes,arrows,decorations.markings,calc,positioning}
+\tikzstyle{oval}=[ellipse,thick,inner sep=2pt,minimum height=1.3em,draw=red]
+\pgfsetxvec{\pgfpoint{0.5cm}{0cm}}
+\pgfsetyvec{\pgfpoint{0cm}{0.5cm}}
+\tikzset{
+  red>/.style={->,ultra thick,color=red}
+}
+
+
+
+
+% latex2html
+%\usepackage{html,makeidx,color}
+
+%\let\emph\relax % there's no \RedeclareTextFontCommand
+%\DeclareTextFontCommand{\emph}{\it}
+\renewcommand{\emph}[1]{{\it #1}}
+
+\usepackage[colorlinks,urlcolor=blue,linkcolor=blue]{hyperref}
+
+
+
+\title{TP3 Les boucles et les tableaux}
+\author{Algo et JavaScript}
+\date{}
+
+
+\begin{document}
+%\excludecomment{correction}
+
+\noindent~
+\begin{minipage}{9cm}
+CNAM\\
+DSP Informatique - Réseau de la Réussite Vincent Merle
+%IFIPS Informatique 1ère année
+\end{minipage}
+%\hfill Année 2018--2019 ~
+
+%\title{IUT-L1 - USAL22}
+%\author{Les Exceptions}
+
+\vspace{1mm}
+
+\noindent ~\hrulefill~
+
+\vspace{2mm}
+
+\noindent
+\begin{minipage}{9cm}
+Algo/JavaScript -- USAL34\\
+%Votre nom :
+\end{minipage}
+
+\bigskip
+
+%\vspace{1cm}
+
+\begin{center}
+\bf {\Large TP3 Les boucles et les tableaux en C}\\
+%\bf {\Large Interrogation écrite}\\
+%31 mai 2019
+\end{center}
+%\bigskip
+\vspace{0.5cm}
+\noindent \textbf{Objectifs du TP}
+ \begin{itemize}
+ \item Apprendre à utiliser les structures de contrôles itératives (boucles  \texttt{for})
+ \item Apprendre à manipuler les tableaux à une dimension
+ \item Apprendre à manipuler les tableaux à deux dimensions 
+ \end{itemize}
+
+
+
+
+\section{Rappels : bibliothèque et compilation}
+
+La bibliothèque d'entrée-sortie:
+\href{http://deptinfo.cnam.fr/~courtiep/inout/inout.h}{inout.h} et
+\href{http://deptinfo.cnam.fr/~courtiep/inout/inout.c}{inout.c} et
+mettez les dans un répertoire \texttt{tp3}. Pour cela vous pouvez
+faire les commandes suivantes (une seule fois) dans un terminal (menu
+pricipal: \texttt{terminal/Konsole}):
+\begin{lstlisting}{bash,literate={}}
+mkdir tp3
+cd tp3
+wget "http://deptinfo.cnam.fr/~courtiep/inout/inout.h"
+wget "http://deptinfo.cnam.fr/~courtiep/inout/inout.c"
+\end{lstlisting}
+
+
+Programmez et tester ces fonctions \emph{une par une} (testez une
+fonction dès que vous pensez qu'elle est finie). Pour tester une
+fonction \lstinline!f! on programme un ou plusieurs appels à cette procédure dans
+une procédure \lstinline!test_f! : on teste
+le résultat obtenu par rapport au résultat attendu et on affiche un
+message d'erreur si ils ne sont pas égaux.
+
+\section{Les boucles et les tableaux à 1 dimension}
+\begin{exo}[Les fonctions itératives]~\\
+\begin{enumerate}
+\item Écrivez une procédure \lstinline!void carre(int n)! qui
+  affiche \lstinline!n! lignes de largeur \lstinline!n!, remplies de caractères \lstinline!'*'!.
+
+  Par exemple, \lstinline!carre(4);! doit afficher:
+\begin{verbatim}
+****
+****
+****
+****
+\end{verbatim}
+
+  Testez cette fonction dans une procédure \lstinline!void~testCarre()! qui demande à l'utilisateur la largeur qu'il désire (et qui passe la réponse en paramètre à la procédure \lstinline!carre!.
+\item Écrivez une procédure \lstinline!void triangle(int n)! qui
+  affiche un triangle (pointe vers le haut) composé de caractère
+  \lstinline!'*'!. Testez la de la même manière que \lstinline!carre!.
+
+  Par exemple, \lstinline!triangle(4);! doit afficher:
+\begin{verbatim}
+*
+**
+***
+****
+\end{verbatim}
+\item Écrivez une procédure \lstinline!void triangleInverse(int n)!
+  qui affiche un triangle pointe vers le bas composé de caractère
+  \lstinline!'*'!. Testez.
+
+  Par exemple, \lstinline!triangleInverse(4);! doit afficher:
+\begin{verbatim}
+****
+***
+**
+*
+\end{verbatim}
+\item Écrivez une procédure \lstinline!void triangleInverse2(int n)!
+  qui affiche un triangle pointe vers le bas composé de caractère
+  \lstinline!'*'! mais dont l'angle droit est à droite. Testez.
+
+  Par exemple, \lstinline!triangleInverse(4);! doit afficher:
+\begin{verbatim}
+****
+ ***
+  **
+   *
+\end{verbatim}
+  
+\end{enumerate}
+\begin{correction}  \lstinputlisting{../corriges/tp3_exo1.c}   \end{correction}
+\end{exo}
+
+\begin{exo}[Fonction manipulant un tableau à une dimension]~\\
+
+Programmez les fonctions et procédures ci-dessous. Elles nécessitent des boucles pour parcourir les tableaux.
+
+\begin{enumerate}
+\item \lstinline!void affiche(int t[], int n)! qui affiche les éléments  du tableau \texttt{T} de taille \texttt{n}
+
+\item \lstinline!BOOL estPresent(int t[], int n, int x)! qui teste si un entier \texttt{x} est dans le tableau \texttt{T} de taille \texttt{n}
+\item \lstinline!int nombreOccurence(int t[], int n, int x)! qui retourne le nombre d'occurrences de l'entier \texttt{x} dans le tableau \texttt{T} de taille \texttt{n}
+ \item \lstinline!int minimum(int t[], int n)! qui retourne la plus petite valeur du tableau \texttt{T} de taille \texttt{n}
+  \item \lstinline!int maximum(int t[], int n)! qui retourne la plus grande valeur du tableau \texttt{T} de taille \texttt{n}
+ \item \lstinline!double moyenne(int t[], int n)! qui retourne la moyenne des valeurs du tableau \texttt{T} de taille \texttt{n}
+ \item \lstinline!BOOL estTrie(int t[], int n)! qui teste si le tableau \texttt{T} de taille \texttt{n} est trié.
+ \item \lstinline!void decalage(int t[], int n)! qui décale les valeurs du tableau \texttt{T} de taille \texttt{n}. Si le tableau \texttt{T = \{1,2,3,4\}}, la procédure le modifie en  \texttt{T = \{2,3,4,1\}}.
+
+\end{enumerate}
+
+\begin{correction}  \lstinputlisting{../corriges/tp3_exo2.c}   \end{correction}
+\end{exo}
+
+
+\section{Fonctions manipulant un tableau à double entrées}
+
+
+En C (contrairement à Java par exemple), les tableaux à entrées multiples sont en fait des tableaux simples en mémoire. Par exemple le tableau \lstinline!t1! déclaré comme ceci:
+\begin{lstlisting}
+  int t1 [n][m];
+\end{lstlisting}
+sera en fait alloué en mémoire exactement comme le tableau \lstinline!t2! déclaré comme cela:
+\begin{lstlisting}
+  int t2 [n*m];
+\end{lstlisting}
+En revanche on n'accède pas aux cases de la même manière. Pour accéder aux cases de \lstinline!t1! il faut donner deux indices. Par exemple pour accéder à la treizième case on écrit:
+\begin{lstlisting}
+  t2[1][2]
+\end{lstlisting}
+qui est transformé par le compilateur en:
+\begin{lstlisting}
+  t2[1*m+2]
+\end{lstlisting}
+c'est-à-dire \lstinline!t2[12]! qui correspond bien à la 13$^e$ case de
+\lstinline!t!.
+
+\bigskip
+
+\emph{Le tableau est donc \og découpé\fg{} en tranche de m  cases}. En général, on décide que le tableau à double entrée représente donc une matrice : chaque \og tranche\fg{} représente une \og ligne\fg{}. Pour accéder à la j$^e$ case de la i$^e$ ligne on écrit \lstinline!t2[i][j]!, autrement dit le premier indice
+représente le numéro de la ligne et le deuxième le numéro de la colonne.
+
+\bigskip
+Attention en C, lorsqu'on transmet un tableau à plusieurs dimensions en paramètre d'une fonction (ou procédure)on fait comme pour les tableaux à une dimension, sauf que \textit{seule la dimension la plus à gauche peut être omise dans le prototype de la fonction.}
+
+
+
+\subsection{Exercices}
+\begin{exo}[Fonctions manipulant un tableau à 2 dimensions]~\\
+Programmez et testez les fonctions et procédures ci-dessous.
+
+\begin{enumerate}
+\item \lstinline!void affiche(int t[][3], int nblignes)!  Affichage du tableau \lstinline!t! de taille
+  $3\times$\lstinline!nblignes!. Par exemple:
+\begin{verbatim}
+1 2 3 
+4 5 6 
+7 8 9 
+\end{verbatim}
+\item \lstinline!void affichenTranspose(int t[][3], int nblignes)!
+  Affichage du tableau \lstinline!t! de taille   $3\times$\lstinline!nblignes! en renversant les lignes et les
+  colonnes.
+\item \lstinline!void afficheDiagonale(int t[][3], int nblignes)!  Affichage de la diagonale (haut gauche vers bas droit) du tableau \lstinline!t! de taille $3\times$\lstinline!nblignes!.
+\item \lstinline!void afficheDiagonale2(int t[][3], int nblignes)!  Affichage de la diagonale (haut droit vers bas gauche) du tableau  \lstinline!t! de taille $3\times$\lstinline!nblignes!.
+\item
+  \lstinline!void affichecolonne(int t[][3], int nblignes, int ncol)!
+  Affichage de la colonne \lstinline!col! du tableau \lstinline!t! de
+  taille $3\times$\lstinline!nblignes!.
+\item \lstinline!BOOL estPresent(int t[][3],int nblignes, int x)! qui teste si un entier \texttt{x} est dans le tableau \texttt{T} de taille $3\times$\lstinline!nblignes!.
+ 
+\item
+  \lstinline!BOOL testColonneZeros(int t[][3], int nblignes, int ncol)!
+  qui retourne \lstinline!TRUE! si la colonne \lstinline!ncol! du
+  tableau \lstinline!t! est composée uniquement de zéros.Testez cette
+  fonction dans un \lstinline!if! de la forme:
+
+  \lstinline!if (testColonneZeros(t,5,2)) { ... ] else { ... }!
+
+    Remarque: la fonction \lstinline!testColonneZeros! doit
+    \emph{retourner} \lstinline!BOOL!, pas l'afficher.
+  \item  \lstinline!int sommeColonne(int t[][3], int nblignes, int ncol)!
+  qui retourne la somme des éléments de la colonne \lstinline!ncol! du
+  tableau \lstinline!t! de taille $3\times$\lstinline!nblignes!.
+\end{enumerate}
+\begin{correction}  \lstinputlisting{../corriges/tp3_exo2.c}   \end{correction}
+\end{exo}
+
+\subsection{Menu}
+
+\maketitle 
+\begin{abstract}
+  On écrit des boucle \lstinline!while! et on utilise des tableaux
+  pour programmer le morpion de manière plus simple et plus souple.
+\end{abstract}
+
+\section{Rappels}
+
+La bibliothèque d'entrée-sortie:
+\href{http://deptinfo.cnam.fr/~courtiep/inout/inout.h}{inout.h} et
+\href{http://deptinfo.cnam.fr/~courtiep/inout/inout.c}{inout.c} et
+mettez les dans un répertoire \texttt{tp2}. Pour cela vous pouvez
+faire les commandes suivantes (une seule fois) dans un terminal (menu
+pricipal: \texttt{terminal/Konsole}):
+\begin{lstlisting}[language=bash,literate={}]
+mkdir tp2 # si tp2 pas deja cree
+cd tp2
+wget "http://deptinfo.cnam.fr/~courtiep/inout/inout.h"
+wget "http://deptinfo.cnam.fr/~courtiep/inout/inout.c"
+\end{lstlisting}
+
+\paragraph{\texttt{BOOL}:} Continuez à utiliser un pseudo type
+\lstinline!BOOL! à la place de \lstinline!int!:
+
+\begin{lstlisting}
+#define BOOL int
+#define TRUE 1
+#define FALSE 0
+\end{lstlisting}
+
+\paragraph{\texttt{BOOL} toujours:} Attention Ne faites
+\emph{\textbf{jamais}} \lstinline!if (xxx == TRUE)! mais
+\lstinline!if (XXX)!. Symétriquement ne faites pas
+\lstinline!if (xxx==FALSE)! mais \lstinline+if (!XXX)+.
+
+
+Programmez et tester ces fonctions \emph{une par une} (testez une
+fonction dès que vous pensez qu'elle est finie). Pour tester une
+fonction \lstinline!f! on programme un ou plusieurs appels à cette
+procédure dans une procédure \lstinline!test_f! de la manière vue en
+cours: on test le résultat obtenu par rapport au résultat attendu et
+on affiche un message d'erreur si ils ne sont pas égaux.
+
+\section{Fin TP 2}
+
+Ceux qui n'ont pas fini le TP 2 (le morpion sans test de victoire),
+finissez le rapidement.
+
+\section{Morpion avec un tableau fixe de taille 9}
+
+Dans un nouveau fichier, reprogrammez le morpion en changeant votre
+structure de donnée: enlevez les 9 variable
+\lstinline!c1!...\lstinline!c9! et remplacez les par un tableau de 9
+caractères.
+
+\begin{lstlisting}
+char t[] = { '_' , '_' , '_' , '_' , '_' , '_' , '_' , '_' , '_' };
+\end{lstlisting}
+
+Cette ligne crée un tableau de 9 caractère et initialise le tableau
+avec les caractère écrit entre les accolades. Le nombre de caractères
+donnés détermine la taille du tableau.
+
+Remarquez que si vous 
+\begin{enumerate}
+\item remplacez \lstinline!c1! par \lstinline!c[0]!\dots
+  \lstinline!c9! par \lstinline!c[8]! dans le programme principal
+  (fonction \lstinline!main!) uniquement. Votre programme devrait
+  fonctionner à nouveau.
+\item Remplacez la fonction%
+  \lstinline!afficheGrille(char a1, char a2 ..., char a9)! par la
+  fonction qui prend seulement un tableau de caractères en paramètre:
+\begin{lstlisting}
+void afficheGrille(char tc[]){
+  ...
+}
+\end{lstlisting}
+\item Simplifiez le code de votre fonction \lstinline!main!, en effet
+  les 9 cas traités séparément peuvent maintenant être traité en un
+  seul \lstinline!if! sur le caractère tapé par l'utilisateur. Il faut
+  tester si l'entier correspond bien à une case et si cette case est
+  vide.
+\end{enumerate}
+
+\section{Morpion à taille variable}
+
+Il s'agit maintenant de faire évoluer votre code (dans le
+\lstinline!main! et dans \lstinline!afficheGrille!) pour supporter
+plusieurs tailles de grille. La taille de la grille sera fixée avant
+de compiler en modifiant la valeur d'une variable
+(\lstinline!largeurGrille! voir ci-dessous) au début du main.
+
+
+\begin{enumerate}
+\item Changez la déclaration du tableau \lstinline!t! de la manière
+  suivante (il se peut que l'option \lstinline!-std=c99! soit nécessaire):
+\begin{lstlisting}
+  const int largeurGrille = 4;
+  char t[largeurGrille*largeurGrille];
+\end{lstlisting}
+  L'idée est que pour changer de taille de grille il vous suffit de
+  modifier le \og \lstinline!4!\fg{} ci-dessous par une autre taille
+  pour que tout marche correctement. Il n'est pas demandé de
+  programmer le test de victoire (mais vous pouvez essayé si tout le
+  reste est fini).
+\item Reprogrammez l'initialisation de la grille (toutes les cases
+  mises à \lstinline!'_'!) pour qu'elle s'adapte à la largeur
+  \lstinline!largeurGrille!.
+\item Ajouter un argument \lstinline!int larg! à la procédure
+  \lstinline!afficheGrille!. Cet argument représente le nombre de
+  lignes (et de colonnes) de la grille. Adaptez le code de la
+  procédure pour qu'elle s'adapte à la largeur passée en paramètre.
+
+  Remarques: Voir dans l'appendice comment relier la position dans la
+  grille et le numéro de la case dans le tableau.
+\end{enumerate}
+
+
+\subsection{Amélioration}
+
+\begin{enumerate}
+\item Définissez une fonction \lstinline!lireCoupMorpion! de lecture
+  d'un entier au clavier qui redemande un coup tant que celui-ci est
+  invalide. Quels arguments doit prendre cette fonction? Que doit-elle
+  retourner?
+
+  Pour redemander la lecture vous pouvez soit utiliser une boucle
+  \lstinline!while! (voir ci-dessous) soit simplement rappeler la
+  fonction \lstinline!lireCoupMorpion!.
+\item Programmez la fonction %
+  \verb!BOOL testpasGagne(char tc[], int larg){ .. }! %
+  qui retouren \lstinline!FALSE! si le tableau \lstinline!tc!, de
+  taille \lstinline!larg!$\times$\lstinline!larg!, contient une grille
+  de morpion dans laquelle un joueur a gagné (3 cases aligné avec la
+  même coche, et \lstinline!TRUE! sinon.
+
+\end{enumerate}
+\subsection{Exercice Supplémentaire: Puissance 4}
+
+Si, et seulement si, vous avez programmé toutes les améliorations
+ci-dessus (morpion à taille variable + test de victoire, protection
+contre les coups invalides), programmez le puissance 4 en utilisant le
+même genre de technique (tableau de taille 42 puis variable) ou un
+tableau à 2 dimensions si vous connaissez déjà cette technique.
+
+\appendix
+
+\section{Traduction position dans la grill (x,y) $\Rightarrow$ position dans le tableau (i)}
+
+  \setlength{\cellw}{2.7em}
+  \setlength{\cellh}{1.5em}
+
+  Considérons la grille 4x4 (\texttt{larg=4}) suivante, numérotée pour
+  l'utilisateur (à partir de 1) et la case (4,3) (4$^e$ colonne, 3$^e$
+  ligne):\medskip
+
+  \begin{tabular}{cc|c|c|c|c|}
+   & \multicolumn{1}{c}{} & \multicolumn{1}{c}{\scriptsize 1}
+    & \multicolumn{1}{c}{\scriptsize 2}
+    & \multicolumn{1}{c}{\scriptsize 3} & \multicolumn{1}{c}{\scriptsize 4}\\\cline{3-6}
+    \cline{3-6}
+    \multirow{3}{*}{\rotatebox[origin=c]{90}{
+    \makebox[\totalheightof{
+    \begin{tabular}{|l|}
+      \hline '\_'\\\hline
+      'x'\\\hline
+    \end{tabular}}]
+    {$\overbrace{\makebox[\totalheightof{
+    \begin{tabular}{|l|}
+      \hline '\_'\\\hline
+      ''x\\\hline
+    \end{tabular}}]{}
+    }^{\rotatebox[origin=c]{-90}{\textnormal{\parbox{2cm}{\centering 2 lignes complètes}}}}$}}}
+ & \scriptsize 1 & '\_' & 'x'& '\_'& 'o'\\\cline{3-6}
+ & \scriptsize 2 & 'x' & 'o'& '\_'& '\_'\\\cline{3-6}
+ & \scriptsize 3 & '\_' & 'x'& '\_'&  \cellcolor{blue!25}'o'\\\cline{3-6}
+ & \scriptsize 4 & 'x' & 'o'& '\_'& '\_'\\\cline{3-6}
+  \end{tabular}\medskip
+
+  Cette grille est représentée en mémoire par un tableau à 16 cases:\medskip
+
+  \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+    \multicolumn{1}{c}{\scriptsize 0} & \multicolumn{1}{c}{\scriptsize 1} &
+    \multicolumn{1}{c}{\scriptsize 2} & \multicolumn{1}{c}{\scriptsize 3} &
+    \multicolumn{1}{c}{\scriptsize 4} & \multicolumn{1}{c}{\scriptsize 5} &
+    \multicolumn{1}{c}{\scriptsize 6} & \multicolumn{1}{c}{\scriptsize 7} &
+    \multicolumn{1}{c}{\scriptsize 8} & \multicolumn{1}{c}{\scriptsize 9} &
+    \multicolumn{1}{c}{\scriptsize 10} & \multicolumn{1}{c}{\scriptsize 11} &
+    \multicolumn{1}{c}{\scriptsize 12} & \multicolumn{1}{c}{\scriptsize 13} &
+    \multicolumn{1}{c}{\scriptsize 14} & \multicolumn{1}{c}{\scriptsize 15} \\\hline
+    \_ & 'x' & '\_' & 'o' & 'x' & 'o' & '\_' & '\_' & '\_' & 'x' & '\_' & \cellcolor{blue!25}'o' & 'x' & 'o' & '\_' & '\_' \\\hline
+  \end{tabular}\medskip
+  
+  la 4$^e$ case de la 3$^e$ ligne se situe dans le tableau à la case
+  $(2 \times \mathtt{larg} + 3)$. Plus généralement la case $(n,m)$
+  (colonne $n$ , ligne $m$) se situe à la case
+  $(n-1)\times \mathtt{larg} + m-1$.
+\begin{abstract}
+  On écrit des boucles \lstinline!while! imbriquées et on utilise des
+  tableaux de chaînes de caractères
+
+\end{abstract}
+
+\section{Rappels}
+
+\paragraph{\texttt{inout.c/h}:}~
+
+\begin{lstlisting}[language=bash,literate={}]
+wget "http://deptinfo.cnam.fr/~courtiep/inout/inout.h"
+wget "http://deptinfo.cnam.fr/~courtiep/inout/inout.c"
+\end{lstlisting}
+
+\paragraph{\texttt{BOOL}:} Continuez à utiliser un pseudo type
+\lstinline!BOOL! à la place de \lstinline!int!:
+
+\begin{lstlisting}
+#define BOOL int
+#define TRUE 1
+#define FALSE 0
+\end{lstlisting}
+
+\paragraph{\texttt{BOOL} toujours:} Attention Ne faites
+\emph{\textbf{jamais}} \lstinline!if (xxx == TRUE)! mais
+\lstinline!if (XXX)!. Symétriquement ne faites pas
+\lstinline!if (xxx==FALSE)! mais \lstinline+if (!XXX)+.
+
+\section{Programmer le jeu de puissance 4 avec un tableau à double
+  entrée}
+
+Si vous ne l'avez pas déjà fait, programmez le morpion avec une grille
+10x10 représentée en mémoire par un tableau de caractères à double
+entrée. Si vous l'avez déjà fait ou si vous préférez vous pouvez faire
+les exercices de la section suivante.
+
+\section{Exercices sur les tableaux de chaînes de caractères.}
+
+Pour cet exercice il vous faut télécharger la dernière version de
+\texttt{inout.h} et \texttt{inout.c}.
+
+\subsection{La fonction de lecture dans un fichier, documentation}
+
+Vous disposez de la fonctions %
+\begin{lstlisting}
+char ** lireFichierParMots(char * nomFicher, int* nombreMots);
+\end{lstlisting}
+Cette fonction se comporte de la manière suivante:
+
+\begin{itemize}
+\item Elle prend en paramètre
+  \begin{itemize}
+  \item un nom de fichier (chaîne de caractère) \lstinline!nomFicher!
+  \item \emph{l'adresse} \lstinline!nombreMots! d'un entier . Vous
+    pouvez lui passer un tableau d'entier de taille 1, ou bien vous
+    pouvez lui passer une variable entière en faisant précéder son nom
+    de l'opérateur \lstinline!&! qui signifie \og adresse de\fg{}.
+  \end{itemize}
+\item Elle effectue deux choses:
+  \begin{itemize}
+  \item Elle retourne un tableau de chaînes de caractères
+    (\lstinline!char **!) qui contient tous les mots contenus dans le
+    fichiers.
+  \item Elle \emph{modifie} l'entier passé en paramètre (plus
+    exactement: dont l'adresse est passé en paramètre) afin qu'il
+    contienne la taille du tableau retourné.
+  \end{itemize}
+\end{itemize}
+
+Autrement dit un appel possible à la fonction pourrait être (en
+utilisant un tableau d'entier de taille 1 pour le deuxième paramètre):
+\begin{lstlisting}
+  int x[1];
+  char ** t = lireFichierParMots("toto.txt",x);
+\end{lstlisting}
+Après cet appel, \lstinline!t! est un tableau contenant tous les mots
+du fichier \lstinline!"toto.txt"!, et \lstinline!x[0]! contient la
+taille de ce tableau.
+
+Autre exemple en utilisant l'opérateur \lstinline!&x!, on déclare un
+entier \lstinline!x! cette fois:
+\begin{lstlisting}
+  int x;
+  char ** t = lireFichierParMots("toto.txt",&x);
+\end{lstlisting}
+Après cet appel, \lstinline!t! est un tableau contenant tous les mots
+du fichier \lstinline!"toto.txt"!, et \lstinline!x! contient la taille
+de ce tableau.
+
+\subsection{Les tableaux de chaînes}
+
+
+En mémoire un tableau de chaine de caractère (\lstinline!char **t! ou
+\lstinline!char *t[]!) est un tableau dont chaque case est l'adresse
+d'un tableau de caractères (chacun ayant un dernier caractère
+\lstinline!'\0'!).\bigskip
+
+  \begin{tikzpicture}
+    \setlength{\cellh}{3.5ex}
+    \setlength{\cellw}{8ex}
+    \tab{addr1,addr2,addr3,addr4,addr5,addr6}
+    \coordinate (addr1) at (0\cellw,0);
+    \coordinate (addr2) at (1\cellw,0);
+    \coordinate (addr3) at (2\cellw,0);
+    \coordinate (addr4) at (3\cellw,0);
+    \coordinate (addr5) at (4\cellw,0);
+    \coordinate (addr6) at (5\cellw,0);
+
+    \setlength{\cellw}{6ex}
+    \begin{scope}[xshift=-4.5cm,yshift=-16ex]
+      \coordinate (string1);
+      \small\tt\tab{'L','o','n','g','t','e','m','p','s','\textbackslash{}0'};
+    \end{scope}
+    \begin{scope}[xshift=+4.5cm,yshift=+16ex]
+      \coordinate (string2);
+      \small\tt\tab{'j','e','\textbackslash{}0'};
+    \end{scope}
+    \begin{scope}[xshift=-2cm,yshift=+10ex]
+      \coordinate (string3);
+      \small\tt\tab{'m','e','\textbackslash{}0'};
+    \end{scope}
+    \begin{scope}[xshift=+6cm,yshift=-16ex]
+      \coordinate (string4);
+      \small\tt\tab{'s','u','i','s','\textbackslash{}0'};
+    \end{scope}
+    \begin{scope}[xshift=+8cm,yshift=-7ex]
+      \coordinate (string5);
+      \small\tt\tab{'l','e','v','é','\textbackslash{}0'};
+    \end{scope}
+    \begin{scope}[xshift=+8cm,yshift=+8ex]
+      \coordinate (string6);
+      \small\tt\tab{'t','a','r','d','\textbackslash{}0'};
+    \end{scope}
+    \draw[red>,opacity=.6,shorten <=1ex,shorten >=3ex] (addr1) to [out=-110,in=90] (string1);
+    \draw[red>,opacity=.6,shorten <=1ex,shorten >=3ex] (addr2) to [out=90,in=170] (string2);
+    \draw[red>,opacity=.6,shorten <=1ex,shorten >=3ex] (addr3) to [out=90,in=-90] (string3);
+    \draw[red>,opacity=.6,shorten <=1ex,shorten >=3ex] (addr4) to [out=-90,in=90] (string4);
+    \draw[red>,opacity=.6,shorten <=1ex,shorten >=3ex] (addr5) to [out=-90,in=180] (string5);
+    \draw[red>,opacity=.6,shorten <=1ex,shorten >=3ex] (addr6) to [out=90,in=180] (string6);
+  \end{tikzpicture}
+  \bigskip
+
+
+Pour se simplifier les idées on se le représente bien \og rangé\fg{}\bigskip:
+
+  \begin{tikzpicture}
+    \setlength{\cellh}{3.5ex}
+    \setlength{\cellw}{8ex}
+    \tabv{addr1,addr2,addr3,addr4,addr5,addr6}
+    \coordinate (addr1) at (0,0\cellh);
+    \coordinate (addr2) at (0,-1\cellh);
+    \coordinate (addr3) at (0,-2\cellh);
+    \coordinate (addr4) at (0,-3\cellh);
+    \coordinate (addr5) at (0,-4\cellh);
+    \coordinate (addr6) at (0,-5\cellh);
+
+    \setlength{\cellw}{6ex}
+    \begin{scope}[xshift=+4.5cm,yshift=0\cellh]
+      \coordinate (string1);
+      \small\tt\tab{'L','o','n','g','t','e','m','p','s','\textbackslash{}0'};
+    \end{scope}
+    \begin{scope}[xshift=+4.5cm,yshift=-1\cellh]
+      \coordinate (string2);
+      \small\tt\tab{'j','e','\textbackslash{}0'};
+    \end{scope}
+    \begin{scope}[xshift=4.5cm,yshift=-2\cellh]
+      \coordinate (string3);
+      \small\tt\tab{'m','e','\textbackslash{}0'};
+    \end{scope}
+    \begin{scope}[xshift=4.5cm,yshift=-3\cellh]
+      \coordinate (string4);
+      \small\tt\tab{'s','u','i','s','\textbackslash{}0'};
+    \end{scope}
+    \begin{scope}[xshift=4.5cm,yshift=-4\cellh]
+      \coordinate (string5);
+      \small\tt\tab{'l','e','v','é','\textbackslash{}0'};
+    \end{scope}
+    \begin{scope}[xshift=4.5cm,yshift=-5\cellh]
+      \coordinate (string6);
+      \small\tt\tab{'t','a','r','d','\textbackslash{}0'};
+    \end{scope}
+    \draw[red>,opacity=.6,shorten <=3ex,shorten >=3ex] (addr1) to [out=0,in=180] (string1);
+    \draw[red>,opacity=.6,shorten <=3ex,shorten >=3ex] (addr2) to [out=0,in=180] (string2);
+    \draw[red>,opacity=.6,shorten <=3ex,shorten >=3ex] (addr3) to [out=0,in=180] (string3);
+    \draw[red>,opacity=.6,shorten <=3ex,shorten >=3ex] (addr4) to [out=0,in=180] (string4);
+    \draw[red>,opacity=.6,shorten <=3ex,shorten >=3ex] (addr5) to [out=0,in=180] (string5);
+    \draw[red>,opacity=.6,shorten <=3ex,shorten >=3ex] (addr6) to [out=0,in=180] (string6);
+  \end{tikzpicture}
+  \bigskip
+
+  Pour accéder aux lettres des mots on utilise la même syntaxe que
+  pour les tableaux à double entrée (mais il doit être évident
+  maintenant que ça ne fait pas la même chose):
+
+\begin{lstlisting}
+char c = t[3][1];  // donne le caractère u de "suis"
+\end{lstlisting}
+
+  Cette fois les deux indice doivent être compris comme ceci:
+  \lstinline!t[3]! est un tableau de caractère, on peut donc demander
+  sa case n$^o$1.
+
+
+\subsection{Exercices}
+
+Implantez les différentes fonctions du
+\href{http://deptinfo.cnam.fr/~courtiep/downloads/dut1_c/dut1_c_tp4.c}{squelette} fourni sur le site du
+cours.
+
+Le squelette permet de passer un nom de fichier en paramètre du
+programme comme ceci (en admettant que vous avez appelé l'exécutable
+\texttt{tp4}):
+
+\begin{lstlisting}[language=bash]
+tp4 toto.txt
+\end{lstlisting}
+
+\subsection{Le jeu du pendu}
+
+En utilisant ce que vous savez sur les chaîne, programmez le jeu du
+pendu.
+
+Le jeu du pendu consiste à deviner un mot (dont on connaît la taille
+au départ) avec le moins de \emph{coups} possible. Une tentative
+consiste à demander si une lettre apparaît dans le mot à deviner. Si
+oui l'arbitre (ici le programme) doit donner toutes les positions
+auxquelles la lettre apparaît. Après chaque \emph{coup} le joueur peut
+proposer un mot. Attention si la proposition est fausse il perd
+instantanément.
+
+Le mot à deviner devra être tiré au hasard dans un fichier
+\lstinline!Liste_mots.txt! obtenu avec cette
+commande:
+
+%wget "https://www.freelang.com/download/misc/liste_francais.zip"
+%http://step.ipgp.fr/images/9/99/Liste_mots.txt
+\begin{lstlisting}[language=bash,basicstyle=\scriptsize\tt]
+wget "http://deptinfo.cnam.fr/Enseignement/CycleA/APA/nfa031/docs/dico_nfa031.txt"
+\end{lstlisting}
+
+Les mots n'ont pas d'accent et sont en majuscule, pour simplifier le
+jeu se joue donc entièrement en majuscule. Voici un exemple de déroulé
+d'un partie que doit permettre votre programme:
+
+\begin{verbatim}
+------
+Quelles lettre proposez vous?
+E
+E---E-
+Quelles lettre proposez vous?
+L
+E---E-
+Quelles lettre proposez vous?
+p
+e---e-
+Quelles lettre proposez vous?
+M
+E--ME-
+Quelles lettre proposez vous?
+X
+EX-ME-
+Quelles lettre proposez vous?
+N
+EX-MEN
+Quelles lettre proposez vous?
+EXAMEN
+Gagné en 6 coups!
+\end{verbatim}
+
+Voici un squelette de programme qui commence par tirer un mot au
+hasard dans le fichiers \lstinline!dico_nfa031.txt! (que vous aurez
+préalablement téléchargé (voir ci-dessus):
+\begin{lstlisting}[language=C]
+#include"inout.h"
+#include<time.h>
+#include<stdlib.h>
+#define BOOL int
+#define TRUE 1
+#define FALSE 0
+int main() {
+  int nbMots;
+  int nombre_aleatoire = 0;
+  srand(time(NULL)); // initialisation de rand
+  char **mot = lireFichierParMots("dico_nfa031.txt",&nbMots);
+  printf("mot 0 : %s\n",mot[0]);
+  printf("mot 1 : %s\n",mot[99957]); /* le dernier */
+  nombre_aleatoire = rand()%99958; /* entre 0 et 99957 */
+  // Plus généralement pour tirer dans l'intervale [a,b[ (b exclu
+  // donc) on fait:
+  // nombre_aleatoire = rand()%(99958-a)+a; /* entre a et b-1 */
+  printf("mot %d : %s\n",nombre_aleatoire,mot[nombre_aleatoire]); /* le dernier */
+  // Voilà le mot est choisi vous pouvez programmer le pendu ci-dessous.
+
+}
+\end{lstlisting}
+
+
+\end{document}

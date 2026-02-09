@@ -1,0 +1,1649 @@
+\makeatletter\let\ifGm@compatii\relax\makeatother 
+\documentclass[xcolor=dvipsnames, handout=show]{beamer}
+
+\usepackage[frenchb]{babel}
+\usepackage{wasysym}
+
+\usepackage{beamerthemesplit}
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{mathrsfs}
+\usepackage{latexsym}
+\usepackage{graphicx}
+\usepackage{enumerate}
+\usepackage{multirow}
+\usepackage[dvipsnames]{xcolor}
+
+\usepackage{listings}
+\lstset{language=Java,columns=fullflexible,mathescape=true}
+
+\usepackage{multirow}
+
+\usepackage{amsmath}
+\usepackage{euscript}
+\usepackage{array}
+
+\usetheme{Boadilla}
+\setbeamercolor{normal text}{Dolphin}
+
+\setbeamercolor{background canvas}{parent=normal text}
+
+\title[]{Java et Objet}
+
+\author[Amélie Lambert]{Amélie Lambert}
+
+
+\date{2014-2015}
+
+
+
+\begin{document}
+
+\frame{
+
+\titlepage
+}
+
+
+
+
+\frame
+{
+ 
+\begin{center} {\huge \textbf{\textcolor{Blue}{Chapitre 6 }}} \end{center}
+\vspace{0.7cm}
+\begin{center} {\huge \textbf{\textcolor{Blue}{Collections et Tables de hachage}}}\end{center}
+}
+
+
+\frame
+{
+ \frametitle{Plan du cours}
+ \begin{itemize}
+\item Interfaces des \texttt{\textcolor{Blue}{Collection}}
+\vspace{0.5cm}
+\item Implantations des \texttt{\textcolor{Blue}{Collection}}
+\vspace{0.5cm}
+\item Les tables de hachage
+\end{itemize}
+}
+
+\frame
+{
+ \begin{center} {\huge \textbf{\textcolor{Blue}{Interfaces des \texttt{Collection}}}} \end{center}
+\begin{itemize}
+\item Définition des \texttt{\textcolor{Blue}{Collection}} et des \textcolor{Blue}{itérateurs}
+\vspace{0.5cm}
+\item Hiérarchie des \texttt{\textcolor{Blue}{Collection}}
+\vspace{0.5cm}
+\item Interface des \texttt{\textcolor{Blue}{Collection}}
+\end{itemize}
+}
+
+
+
+
+\begin{frame}[fragile]
+ \frametitle{Définition}
+\begin{itemize}
+\item Une \textbf{\textcolor{Blue}{collection est une structure de données qui rassemble des objets en une seule unité}}
+\vspace{0.5cm}
+\item  Il existe trois catégories de collections :
+ \begin{itemize}
+\item les \textbf{\textcolor{Blue}{listes}} (\texttt{\textcolor{Blue}{List}}) sont une \textbf{\textcolor{Blue}{séquence ordonnée d'objets}}. On peut trouver \textbf{\textcolor{Blue}{plusieurs exemplaires}} du même objet dans une liste. Chaque élément peut être accédé par un \textbf{\textcolor{Blue}{index}}.
+\vspace{0.2cm}
+\item  les \textbf{\textcolor{Blue}{ensembles}} (\texttt{\textcolor{Blue}{Set}}) rassemblent des éléments \textbf{\textcolor{Blue}{sans ordre}} particulier. On ne peut pas y trouver plus d'un exemplaire d'un même objet. Les éléments ne sont pas accédés par un index.
+\vspace{0.2cm}
+\item les \textbf{\textcolor{Blue}{files}} (\texttt{\textcolor{Blue}{Queue}}) sont les collections accessibles en mode FIFO (First In First Out).
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+ \frametitle{Hierarchie des interfaces de \texttt{Collection}}
+\begin{center}
+\includegraphics[width=8cm]{interface.jpg}
+\end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]
+ \frametitle{Propriétés générales des collections}
+\begin{itemize}
+\item Toute collection est de type \texttt{\textcolor{Blue}{Collection<E>}}
+ \vspace{0.3cm}
+\item Toute collection possède :
+  \begin{itemize}
+\item \textcolor{Blue}{Une interface} (son Type Abstrait de Données).
+\vspace{0.2cm}
+ \item \textcolor{Blue}{Une implantation} (classe qui implante le Type Abstrait de Données).
+\vspace{0.2cm}
+\item \textcolor{Blue}{Des algorithmes} utiles sur ces structures de données (tris, recherche, etc...).
+\end{itemize}
+\vspace{0.5cm}
+\item  \textbf{\textcolor{Blue}{Propriétés}}
+ \begin{itemize}
+\item Toutes les collections possèdent la même interface.
+\vspace{0.2cm}
+\item Certaines collections possèdent en plus des opérations propres.
+\vspace{0.2cm}
+\item Seule l'implantation des opérations change, elle dépend du type de la structure de données.
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+ \frametitle{Interface \texttt{Collection<E>} (1/2)}
+
+\textbf{\textcolor{Blue}{Méthodes non optionnelles :}}
+
+\begin{scriptsize}
+\begin{tabular}{|p{5.4cm}|p{5.9cm}|}
+        \hline
+  \texttt{\textcolor{Blue}{int size()}} & Retourne le nombre d'éléments de la collection. \\ \hline
+  \texttt{\textcolor{Blue}{boolean isEmpty()}} & Retourne un booléen qui précise si la collection est vide. \\\hline
+  \texttt{\textcolor{Blue}{boolean contains(Object element)}}  & Retourne un booléen qui précise si \texttt{\textcolor{Blue}{element}} est présent dans la collection. \\\hline
+  \texttt{\textcolor{Blue}{Iterator<E> iterator()}} & Retourne un \texttt{\textcolor{Blue}{Iterator}} qui permet le parcours des éléments de la collection. \\\hline
+  \texttt{\textcolor{Blue}{boolean containsAll(Collection<?> c)}} & Retourne un booléen qui précise si tous les éléments de \texttt{\textcolor{Blue}{c}} sont présents dans la collection. \\ \hline 
+  \texttt{\textcolor{Blue}{Object[] toArray()}} &Retourne un tableau contenant tous les éléments de la collection. \\\hline
+  \texttt{\textcolor{Blue}{<T>T[] toArray(T[] a)}}  &Retourne un tableau typé de tous les éléments de la collection. \\ \hline
+
+\end{tabular}
+\end{scriptsize}
+\end{frame}
+
+\begin{frame}[fragile]
+ \frametitle{Interface \texttt{Collection<E>} (2/2)}
+ \textbf{\textcolor{Blue}{Méthodes optionnelles :}} certaines implantations peuvent ne pas définir 
+certaines méthodes. Dans ce cas, si une telle méthode est invoquée, l'exception \texttt{\textcolor{Blue}{UnsupportedOperationException}} est levée. \\
+\vspace{0.3cm}
+\begin{scriptsize}
+
+\begin{tabular}{|p{6.2cm}|p{5cm}|}
+        \hline
+
+\texttt{\textcolor{Blue}{boolean add(E o) }}	&Ajoute \texttt{\textcolor{Blue}{o}} à la collection.\\ \hline
+\texttt{\textcolor{Blue}{boolean remove(Object element)}}  &Supprime \texttt{\textcolor{Blue}{element}} de la collection s'il est présent. \\ \hline
+
+
+\texttt{\textcolor{Blue}{boolean addAll(Collection<? extends E> c)} }&Ajoute les éléments de la \texttt{\textcolor{Blue}{c}} dans la collection. \\ \hline
+\texttt{\textcolor{Blue}{boolean removeAll(Collection<?> c) }}	 & Supprime les éléments de \texttt{\textcolor{Blue}{c}} de la collection s'ils sont présents. \\ \hline
+\texttt{\textcolor{Blue}{boolean retainAll(Collection<?> c) }}	&  Ne laisse dans la collection que les éléments de \texttt{\textcolor{Blue}{c}}. Elle renvoie un booléen qui précise si le contenu de la collection a été modifié. \\ \hline
+\texttt{\textcolor{Blue}{void clear() }}	&Supprime tous les éléments de la collection.\\ \hline
+\end{tabular}
+\end{scriptsize}
+\end{frame}
+
+\begin{frame}[fragile]
+ \frametitle{Les itérateurs}
+ \texttt{\textcolor{Blue}{Iterator<E>}} est une interface qui propose des méthodes permettant de parcourir une collection :\\
+\vspace{0.4cm}
+\begin{tabular}{|p{3.4cm}|p{7.9cm}|}\hline
+
+ \texttt{\textcolor{Blue}{boolean hasNext()}} & Retourne \texttt{\textcolor{Blue}{true}} si l'itération a encore des éléments. \\ \hline
+
+ \texttt{\textcolor{Blue}{E next()}} & Retourne l'élément suivant dans l'itération \\ \hline
+ 
+ \texttt{\textcolor{Blue}{void remove()}}& Supprime le dernier élément retourné par l'itérateur (opération optionnelle) \\ \hline
+\end{tabular}
+\end{frame}
+
+\begin{frame}[fragile]
+ \frametitle{Exemple d'utilisation}
+\begin{small}
+\begin{lstlisting}
+void filtre (Collection c){
+  Iterator i = c.iterator();
+    while ( i.hasNext() ){
+      Object element = i.next();
+      System.out.print(element + " ");
+    }
+}
+\end{lstlisting}
+\end{small}
+\end{frame}
+
+
+\frame
+{
+ \begin{center} {\huge \textbf{\textcolor{Blue}{Collections : les listes}}} \end{center}
+\begin{itemize}
+\item L'interface \texttt{\textcolor{Blue}{List<E>}}
+\end{itemize}}
+
+
+
+\begin{frame}[fragile]
+ \frametitle{Interface \texttt{List<E>} (1/2)}
+\begin{itemize}
+\item Une \textbf{\textcolor{Blue}{liste est une collection ordonnée}} (séquence) :\\
+\texttt{\textcolor{Blue}{public interface List<E> extends Collection<E>}}
+\item Elle peut contenir des éléments dupliqués.
+\item En plus des opérations héritées de l'interface \texttt{\textcolor{Blue}{Collection}}, elle inclut des opérations propres :\\
+\end{itemize}
+\begin{scriptsize}
+\begin{tabular}{|p{5.4cm}|p{5.9cm}|}\hline
+\texttt{\textcolor{Blue}{E get( int index )}}& 	Retourne l'élément de la position \texttt{\textcolor{Blue}{index}}. \\ \hline
+\texttt{\textcolor{Blue}{int indexOf( Object o )}} &Retourne la première position dans la liste de \texttt{\textcolor{Blue}{o}}. Elle renvoie \texttt{\textcolor{Blue}{-1}} si \texttt{\textcolor{Blue}{o}} n'est pas trouvé.\\ \hline
+\texttt{\textcolor{Blue}{int lastIndexOf( Object o )}}&Retourne la dernière position dans la liste de \texttt{\textcolor{Blue}{o}}. Elle renvoie \texttt{\textcolor{Blue}{-1}} si \texttt{\textcolor{Blue}{o}} n'est pas trouvé. \\ \hline
+\texttt{\textcolor{Blue}{ListIterator<E> listIterator()}}& Retourne un \texttt{\textcolor{Blue}{Iterator}} positionné sur le premier élément de la liste.\\ \hline
+\texttt{\textcolor{Blue}{ListIterator<E> listIterator( int index )}} &Retourne un \texttt{\textcolor{Blue}{Iterator}} positionné sur l'élément dont la position est \texttt{\textcolor{Blue}{index}}.\\ \hline
+\texttt{\textcolor{Blue}{List<E> subList( int from, int to )}}& Retourne une liste partielle de la collection contenant les éléments compris entre les index \texttt{\textcolor{Blue}{from}} inclus et \texttt{\textcolor{Blue}{to}} exclus.
+\\ \hline
+\end{tabular}
+\end{scriptsize}
+
+\end{frame}
+
+\begin{frame}[fragile]
+ \frametitle{Interface \texttt{List<E>} (2/2)}
+L'interface \texttt{\textcolor{Blue}{List<E>}} inclut les opérations optionnelles :\\
+\vspace{0.2cm}
+\begin{small}
+\begin{tabular}{|p{5.4cm}|p{5.9cm}|}\hline
+\texttt{\textcolor{Blue}{E set( int index, E element )}} & Remplace \texttt{\textcolor{Blue}{element}} à la position \texttt{\textcolor{Blue}{index}}.\\ \hline
+\texttt{\textcolor{Blue}{void add( int index, E element )}}&Ajoute \texttt{\textcolor{Blue}{element}} à la position \texttt{\textcolor{Blue}{index}}.\\ \hline
+\texttt{\textcolor{Blue}{E remove( int index )}}&Supprime l'élément de la position \texttt{\textcolor{Blue}{index}}.\\ \hline
+\texttt{\textcolor{Blue}{boolean addAll(int index, Collection<? extends E> c)}}&Ajoute des éléments de \texttt{\textcolor{Blue}{c}} à la position \texttt{\textcolor{Blue}{index}}.\\ \hline
+\end{tabular}
+\end{small}
+\end{frame}
+
+\begin{frame}[fragile]
+ \frametitle{Propriétés générales des listes}
+\begin{itemize}
+\item On trouve une méthode pour accéder un élément par son index :\\
+\texttt{\textcolor{Blue}{list<String> l= new List<String>();}}\\
+\texttt{\textcolor{Blue}{l.add(5,new String( "Java" ));}}\\
+\texttt{\textcolor{Blue}{String s = l.get(5);}}
+\vspace{0.5cm}
+\item  Pour modifier une partie de liste :\\
+\texttt{\textcolor{Blue}{l.subList(3,8).clear();}}\\
+\texttt{// suppression des éléments de l'indice 3 à l'indice 7}
+\vspace{0.5cm}
+\item  Un itérateur spécifique : \texttt{\textcolor{Blue}{ListIterator<E>()}} avec des méthodes supplémentaires :\\
+\texttt{\textcolor{Blue}{previous(), hasPrevious(),}} ...
+
+\end{itemize}
+\end{frame}
+
+
+
+
+\frame
+{
+ \begin{center} {\huge \textbf{\textcolor{Blue}{Collections : les ensembles}}} \end{center}
+\begin{itemize}
+\item L'interface \texttt{\textcolor{Blue}{Set<E>}}
+\vspace{0.5cm}
+\item  L'interface \texttt{\textcolor{Blue}{SortedSet<E>}}
+
+\end{itemize}
+}
+
+
+
+
+\begin{frame}[fragile]
+ \frametitle{Collections : les ensembles, l'interface \texttt{Set<E>}} 
+
+\begin{itemize}
+\item  Un \textbf{\textcolor{Blue}{ensemble est une collection qui ne peut pas contenir d'élément en double.}}
+\vspace{0.5cm}
+\item   Ses méthodes sont exactement celles de l'interface \texttt{\textcolor{Blue}{Collection}}.\\
+\vspace{0.5cm}
+\item  La sémantique de certaines méthodes est différente : la méthode \texttt{\textcolor{Blue}{add}} doit vérifier que l'élément ajouté n'est pas déjà présent dans l'ensemble.
+
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+ \frametitle{Les ensembles triés, l'interface \texttt{SortedSet<E>}} :\\
+
+
+\begin{tabular}{|p{5.8cm}|p{5.4cm}|}\hline
+ \texttt{\textcolor{Blue}{E first() }} & Retourne le plus petit élément. \\ \hline
+\texttt{\textcolor{Blue}{SortedSet<E> headSet(E toElement) }}& Retourne les éléments strictement inférieurs à \texttt{\textcolor{Blue}{toElement}}.\\ \hline
+ \texttt{\textcolor{Blue}{E last() }}& Retourne le plus grand élément.\\ \hline
+ \texttt{\textcolor{Blue}{SortedSet<E> subSet(E fromElement, E toElement) }} & Retourne les éléments compris entre  \texttt{\textcolor{Blue}{fromElement}}, inclus, et  \texttt{\textcolor{Blue}{toElement}}, exclus. \\ \hline
+\texttt{\textcolor{Blue}{SortedSet<E> tailSet(E fromElement)}}& Retourne les éléments plus grands ou égal à  \texttt{\textcolor{Blue}{fromElement}}. \\ \hline
+
+\end{tabular}
+\end{frame}
+
+
+\frame
+{
+ \begin{center} {\huge \textbf{\textcolor{Blue}{Collections : les files}}} \end{center}
+\begin{itemize}
+\item L'interface \texttt{\textcolor{Blue}{Queue<E>}}
+\end{itemize}
+}
+
+\begin{frame}[fragile]
+ \frametitle{L'interface \texttt{Queue<E>}}
+\begin{itemize}
+\item Elle dérive de  \texttt{\textcolor{Blue}{Collection<E>}}
+\vspace{0.5cm}
+\item Elle fournit des opérations supplémentaires : \\
+\end{itemize}
+\begin{tabular}{|p{4cm}|p{7.2cm}|}\hline
+  \texttt{\textcolor{Blue}{E element} }& Retourne, sans supprimer, la tête de la file\\ \hline
+  \texttt{\textcolor{Blue}{boolean offer( E o )} }& Insère l'élément \texttt{\textcolor{Blue}{o}}  dans la file, si possible\\ \hline
+  \texttt{\textcolor{Blue}{E peek()} }& Retourne, sans supprimer, la tête de la file, retourne \texttt{\textcolor{Blue}{null}} si la file est vide\\ \hline
+ \texttt{\textcolor{Blue}{E poll()} } & Retourne et supprime la tête de la file, ou \texttt{\textcolor{Blue}{null}} si la file est vide\\ \hline
+ \texttt{\textcolor{Blue}{E remove()}}& Retourne et supprime la tête de la file  \\ \hline
+
+\end{tabular}
+
+\end{frame}
+
+\frame
+{
+ \begin{center} {\huge \textbf{\textcolor{Blue}{Implantations}}} \end{center}
+\begin{itemize}
+\item Les listes : \texttt{\textcolor{Blue}{ArrayList,Vector,LinkedList}}
+ \vspace{0.5cm}
+\item Les ensembles : \texttt{\textcolor{Blue}{HashSet,TreeSet}}
+\vspace{0.5cm}
+\item Les files : \texttt{\textcolor{Blue}{PriorityQueue,LinkedList}}
+\vspace{0.5cm}
+\item Les piles : \texttt{\textcolor{Blue}{Stack}}
+
+
+\end{itemize}
+}
+
+
+\begin{frame}[fragile]
+ \frametitle{Implantation des collections : 
+les classes }
+\begin{center}
+\includegraphics[width=8cm]{collec_implantation.jpg}
+\end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]
+ \frametitle{Classes et constructeurs}
+Elles ont toutes  (au moins) 2 constructeurs :\\
+\vspace{0.2cm}
+Constructeur par défaut : \\
+\texttt{\textcolor{Blue}{HashSet<String> = new HashSet<String>();}} \\
+\vspace{0.2cm}
+Création d'une collection par copie d'une autre collection :\\
+\texttt{\textcolor{Blue}{LinkedList<String> l = new LinkedList<String>( h );}} \\
+\texttt{\textcolor{Blue}{ArrayList<String> a = new ArrayList<String>( h );}} \\
+\texttt{\textcolor{Blue}{TreeSet<String> t = new TreeSet<String>( a );}}
+\end{frame}
+
+\frame
+{
+ \begin{center} {\huge \textbf{\textcolor{Blue}{Implantations des listes}}} \end{center}
+\begin{itemize}
+\item Représentation séquentielle
+\vspace{0.5cm}
+\item  Représentation chaînée
+\end{itemize}
+}
+
+\begin{frame}[fragile]
+ \frametitle{Listes : représentation séquentielle, la classe \texttt{\textcolor{Blue}{ArrayList}} }
+\begin{itemize}
+\item Les éléments de la séquence sont contigus en mémoire. \\
+\vspace{0.2cm}
+La classe \texttt{\textcolor{Blue}{ArrayList<E>}} implante un tableau capable de s'accroître dynamiquement.
+
+\vspace{0.5cm}
+\item L'\textbf{\textcolor{Blue}{insertion}} ou la \textbf{\textcolor{Blue}{suppression}} d'un élément impose des manipulations lourdes sur le tableau pour maintenir la contiguïté des éléments (\textsc{O(n)} inefficace). 
+
+\vspace{0.5cm}
+\item \textcolor{Blue}{Intérêt :} Pour la \textbf{\textcolor{Blue}{sélection}} ou le \textbf{\textcolor{Blue}{remplacement}} d'un i-ème élément, on utilise directement l'indexation du tableau (\textsc{O(1)}).
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+ \frametitle{Listes : représentation séquentielle, la classe \texttt{Vector<E>}}
+\begin{itemize}
+\item Elle appartient au package \texttt{java.util}
+\vspace{0.2cm}
+\item Elle stocke des références à des objets\\
+\texttt{Vector<E> v = new Vector<E>();}
+\vspace{0.2cm}
+\item \textcolor{Blue}{Quelques méthodes :}
+\end{itemize}
+
+\begin{small}
+\begin{tabular}{|p{5.2cm}|p{6.2cm}|}\hline
+
+\texttt{\textcolor{Blue}{addElement( E o )}} & Ajoute \texttt{\textcolor{Blue}{o}} en queue et augmente la taille si nécessaire.\\ \hline
+\texttt{\textcolor{Blue}{removeElement( Object o )}}& enlève l'élément  \texttt{\textcolor{Blue}{o}}. \\ \hline
+\texttt{\textcolor{Blue}{boolean isEmpty()}}& Retourne \texttt{\textcolor{Blue}{true}} si le vecteur est vide. \\ \hline
+\texttt{\textcolor{Blue}{boolean contains( Object o )}}& Retourne \texttt{\textcolor{Blue}{true}} si le vecteur contient \texttt{\textcolor{Blue}{o}}. \\ \hline
+\texttt{\textcolor{Blue}{E firstElement()}} & Retourne le premier élément du vecteur. \\ \hline
+
+ \texttt{\textcolor{Blue}{E lastElement()}}& Retourne le dernier élément du vecteur. \\ \hline
+\texttt{\textcolor{Blue}{int size()}}& Retourne le nombre d'éléments courant.\\ \hline
+\texttt{\textcolor{Blue}{int capacity()}}& Retourne le nombre d'éléments potentiels.\\ \hline
+\end{tabular}
+\end{small}
+
+\end{frame}
+
+\begin{frame}[fragile]
+ \frametitle{Exemple d'utilisation de la classe \texttt{Vector} (1/2)}
+\begin{scriptsize}
+\begin{lstlisting}
+import java.util.*;
+public class VecteurClient{
+  public static void main(String[] args){
+    Integer i1 = new Integer(1);
+    Integer i2 = new Integer(2);
+    Integer i3 = new Integer(3);
+    Vector<Integer> v = new Vector<Integer>();
+    for (int i=0;i<5;i++)
+      v.addElement(new Integer(i));
+    v.addElement(i1);
+    v.addElement(i2);
+    v.addElement(i3);
+    if (v.contains(i2))
+      System.out.println("v contient i2");
+    if (v.contains(new Integer(4)))
+      System.out.println("v contient 4");
+    else
+      System.out.println("v ne contient pas 4");
+    for(Integer i : v)
+      System.out.print(i+"  ");
+  }
+}
+\end{lstlisting}
+\end{scriptsize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Exemple d'utilisation de la classe \texttt{Vector} (2/2)}
+\begin{center} \texttt{v contient i2} \end{center}
+
+\begin{center} \texttt{ contient 4} \end{center}
+
+\begin{center}\texttt{ 0  1  2  3  4  1  2  3 } \end{center}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+ \frametitle{Listes : représentation chaînée, la classe \texttt{LinkedList<E>}}
+\begin{center}
+\includegraphics[width=8cm]{liste_chainee.jpg}
+\end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]
+ \frametitle{Listes : représentation chaînée, la classe \texttt{LinkedList<E>}}
+\begin{itemize}
+\item Les listes chaînées sont implantées par la classe \texttt{\textcolor{Blue}{LinkedList<E>}}
+\vspace{0.5cm}
+\item \textbf{\textcolor{Blue}{Inconvénient :}}\\ 
+Accéder au i-ème élément suppose le parcours de la liste à partir de la tête de liste.
+\vspace{0.5cm}
+\item   \textbf{\textcolor{Blue}{Evaluation du coût :}}\\
+Si on a autant de chances d'accéder à chacun des éléments, alors le nombre de noeuds visités est : 
+$(1+2+...+i)/n = (n+1)*n/2n=n/2+1/2$ $\Rightarrow$ \textsc{O(n)} 
+\vspace{0.5cm}
+\item En séquentiel, le coût est : \textsc{O(1)}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+ \frametitle{Exercice 1 (1/3)}
+\begin{itemize}
+\item La classe \texttt{\textcolor{Blue}{Color}} (package \texttt{java.awt} ) possède les constantes : \texttt{blue,yellow,cyan,orange,pink,black,green,red, ...}
+
+\vspace{0.5cm}
+\item Ecrire un programme qui forme 2 listes chaînées contenant : 
+\begin{itemize}
+\item l'une les 4 premières couleurs
+\item l'autre les 4 suivantes
+\end{itemize} 
+Ce programme concatène la seconde liste à la première et l'affiche.
+
+\vspace{0.5cm}
+\item 2 méthodes supplémentaires de la classe \texttt{\textcolor{Blue}{LinkedList<E>}} sont nécessaires :\\
+\texttt{\textcolor{Blue}{boolean add(Object o)}}\\
+\texttt{\textcolor{Blue}{boolean addAll(Collection c)}}
+ 
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+ \frametitle{Exercice 1 (2/3)}
+\begin{scriptsize}
+\begin{lstlisting}
+import java.util.*; import java.awt.*;
+public class Exercice1{
+  private static final Color[] C1={Color.blue,Color.yellow,Color.cyan,Color.orange};
+  private static final Color[] C2={Color.pink,Color.black,Color.green,Color.red};
+  public Exercice1(){
+    LinkedList<Color> liste1 = new LinkedList<Color>();
+    LinkedList<Color> liste2 = new LinkedList<Color>();
+    for ( int i=0;i<C1.length;i++ ){  	
+      liste1.add(C1[i]); 
+      liste2.add(C2[i]);  
+     }
+    liste1.addAll(liste2);
+    this.print(liste1);
+  }
+  public void print( LinkedList<Color> liste ){
+    for(Color obj : liste)
+      System.out.println( obj+" ");
+  }
+  public static void main(String[] args){ 
+    new Exercice1(); 
+  }
+}
+\end{lstlisting}
+\end{scriptsize}
+\end{frame}
+
+\begin{frame}[fragile]
+ \frametitle{Exercice 1 (3/3)}
+\begin{center} \texttt{java.awt.Color[r=0,g=0,b=255] } \end{center}
+
+\begin{center} \texttt{java.awt.Color[r=255,g=255,b=0]}\end{center}
+
+\begin{center} \texttt{java.awt.Color[r=0,g=255,b=255] }\end{center}
+
+\begin{center} \texttt{java.awt.Color[r=255,g=200,b=0] }\end{center}
+
+\begin{center} \texttt{java.awt.Color[r=255,g=175,b=175] }\end{center}
+
+\begin{center} \texttt{java.awt.Color[r=0,g=0,b=0] }\end{center}
+
+\begin{center} \texttt{java.awt.Color[r=0,g=255,b=0] }\end{center}
+
+\begin{center} \texttt{java.awt.Color[r=255,g=0,b=0] }\end{center}
+
+\end{frame}
+
+\begin{frame}[fragile]
+ \frametitle{Complexité des opérations}
+\begin{center}
+\begin{tabular}{|p{4cm}|p{2.5cm}|p{2.5cm}|}
+\hline
+Opérations & représentation séquentielle & représentation chaînée \\ \hline
+\texttt{Calcul de la longueur} & \textsc{O(1)} & \textsc{O(n)}\\ \hline
+\texttt{Insertion d'un nouveau premier élément} &\textsc{O(n)}&\textsc{O(1)}\\ \hline
+\texttt{Suppression du dernier élément} & \textsc{O(1)}&\textsc{O(1)}\\ \hline
+\texttt{Remplacement} & \textsc{O(1)}&\textsc{O(n)}\\ \hline
+\end{tabular}
+\end{center}
+\end{frame}
+
+\begin{frame}[fragile]
+ \frametitle{Coût en espace}
+\begin{itemize}
+\item Pour les listes chaînées, la représentation du pointeur est nécessaire. Sa taille devient significative lorsqu'elle est proche de la taille de l'élément. 
+\vspace{0.2cm}
+\item  \textbf{\textcolor{Blue}{Exemple :}} 8 octets pour les pointeurs + 4 octets pour l'élément = 12 octets pour chaque noeud alors que la représentation séquentielle ne demande que 4 octets. 
+\vspace{0.2cm}
+\item  Pour la représentation séquentielle, la place perdue pour la partie non utilisée peut être importante. 
+\vspace{0.2cm}
+\item Il s'agit de trouver un juste équilibre, il vaut mieux utiliser un tableau si on remplit plus que le tiers de la taille totale de la structure de donnée.
+
+
+\end{itemize}
+\end{frame}
+
+\frame
+{
+ \begin{center} {\huge \textbf{\textcolor{Blue}{Implantations des ensembles}}} \end{center}
+\begin{itemize}
+\item Ensembles triés
+\vspace{0.5cm}
+\item Comparaison d'objets
+\vspace{0.5cm}
+\item Ensembles non triés
+\end{itemize}
+}
+
+\begin{frame}[fragile]
+ \frametitle{Implantations des ensembles}
+
+Il faut choisir entre 2 implantations \texttt{\textcolor{Blue}{HashSet<E>}} et \texttt{\textcolor{Blue}{TreeSet<E>}} :
+
+\vspace{0.5cm}
+\begin{itemize}
+\item \texttt{\textcolor{Blue}{HashSet<E>}} stocke ses éléments dans une table de hachage.\\
+\vspace{0.2cm}
+plus efficace (opérations en temps constant) mais ne considère pas d'ordre sur les éléments.
+
+\vspace{0.5cm}
+\item \texttt{\textcolor{Blue}{TreeSet<E>}} stocke ses éléments dans un arbre.\\
+\vspace{0.2cm}
+opérations en temps logarithmique mais on peut itérer selon l'ordre ascendant des éléments.
+ 
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+ \frametitle{Exemple (1/2)}
+\begin{scriptsize}
+\begin{lstlisting}
+import java.util.*; 
+public class Ensembles{
+  private static final String[] couleurs={"blue","yellow","cyan","orange","green","red"
+                                          ,"pink","black","green","red","cyan"};
+
+  public static void printNonDupliquees (Collection<String> c){
+    Set<String> ensemble= new HashSet<String>(c);
+    Iterator<String> iter = ensemble.iterator();
+    while(iter.hasNext())
+      System.out.print(iter.next() + "  ");
+     System.out.println();
+  }
+
+  public static void main (String[] args){
+    List<String> liste =  new ArrayList<String>(Arrays.asList(couleurs));
+    printNonDupliquees(liste);  
+}
+\end{lstlisting}
+\end{scriptsize}
+\end{frame}
+
+\begin{frame}[fragile]
+
+ \frametitle{Exemple (2/2)}
+\begin{itemize}
+\item \texttt{green  red  cyan  orange  pink  blue  yellow  black }
+\vspace{0.5cm}
+\item Si on remplacer \texttt{HashSet} par \texttt{TreeSet} :
+\vspace{0.5cm}
+\item \texttt{black  blue  cyan  green  orange  pink  red  yellow } 
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+ \frametitle{Comparaison d'objets (1/2)}
+\begin{itemize}
+\item L'interface \texttt{\textcolor{Blue}{Comparable}} spécifie la méthode :\\
+\texttt{\textcolor{Blue}{public int compareTo( Object obj )}}
+
+\vspace{0.5cm}
+\item Les classes qui implante cette méthode se base sur un ordre naturel de leurs éléments :\\
+\texttt{Integer, Float, Double, ..., String, Date}
+
+\vspace{0.5cm}
+\item \textbf{\textcolor{Blue}{Exemple :}} soit \texttt{x} et \texttt{y} deux instances de la classe \texttt{Date} ou \texttt{String} ou toute autre classe numérique\\
+\texttt{int i = x.compareTo( y );}\\
+\texttt{i<0 => x<y}\\
+\texttt{i=0 => x=y}\\
+\texttt{i>0 => x>y}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+ \frametitle{Comparaison d'objets (2/2)}
+
+Il faut redéfinir la méthode \texttt{\textcolor{Blue}{compareTo}} pour tout autre Classe \\
+\vspace{0.5cm}
+\textbf{\textcolor{Blue}{Exemple :}}
+\begin{scriptsize}
+\begin{lstlisting}
+class Rectangle implements Comparable{
+  private double longueur;
+  private double largeur;
+  ...
+  public int compareTo( Rectangle r){
+    if (r.longueur*r.largeur>this.longueur*this.largeur)
+       return -1;
+    else if (r.longueur*r.largeur<this.longueur*this.largeur)
+            return 1;
+         else 
+            return 0;
+   }
+}
+\end{lstlisting}
+\end{scriptsize}
+\end{frame}
+
+\begin{frame}[fragile]
+ \frametitle{Implantation des ensembles triés, la classe \texttt{TreeSet}} 
+L'interface \texttt{\textcolor{Blue}{SortedSet}} implantée par la classe \texttt{\textcolor{Blue}{TreeSet}} :\\
+\vspace{0.3cm}
+\begin{tabular}{|p{5.8cm}|p{5.4cm}|}\hline
+\texttt{\textcolor{Blue}{E first()} }&Retourne le plus petit élément.\\\hline
+ \texttt{\textcolor{Blue}{SortedSet<E> headSet(E toElement) }}&Retourne les éléments strictement inférieurs à \texttt{\textcolor{Blue}{toElement}}.\\\hline
+\texttt{\textcolor{Blue}{E last() }}&Retourne le plus grand élément.\\\hline
+ \texttt{\textcolor{Blue}{SortedSet<E> subSet(E fromElement, E toElement) }}&Retourne les éléments compris entre \texttt{\textcolor{Blue}{fromElement}}, inclus, et \texttt{\textcolor{Blue}{toElement}}, exclus.\\\hline 
+ \texttt{\textcolor{Blue}{SortedSet<E> tailSet(E fromElement) }}&Retourne les éléments plus grands ou égal à \texttt{\textcolor{Blue}{fromElement}}.\\\hline 
+ 
+\end{tabular}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Exemple d'utilisation des \texttt{SortedSet} (1/2)}
+\begin{scriptsize}
+\begin{lstlisting}
+import java.util.*; 
+public class Ensembles{
+  private static final String[] couleurs={"blue","yellow","cyan","orange","green","red",
+                                          "pink","black","green","red","cyan"};
+   
+  public static  void printSet( Collection<String> c ){       
+    SortedSet<String> ensemble = new TreeSet<String>( c );    
+    Iterator<String> iter = ensemble.iterator();    
+    while( iter.hasNext() )        
+      System.out.print( iter.next() + "  " );     
+    System.out.println();  
+  }   
+ 
+  public static void main(String[] args){    
+    SortedSet<String> l= new TreeSet<String>(Arrays.asList(couleurs));    
+    printSet(l);   
+    System.out.println("avant \"orange\"");    
+    printSet(l.headSet("orange"));    
+    System.out.println("après \"orange\"");    
+    printSet(l.tailSet("orange")); 
+  }
+}
+\end{lstlisting}
+\end{scriptsize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exemple d'utilisation des \texttt{SortedSet} (2/2)}
+\begin{center} \texttt{black  blue  cyan  green  orange  pink  red  yellow } \end{center}
+
+\begin{center} \texttt{avant "orange"} \end{center}
+
+\begin{center} \texttt{black  blue  cyan  green  } \end{center}
+
+\begin{center} \texttt{après "orange"} \end{center}
+
+\begin{center} \texttt{orange  pink  red  yellow  } \end{center}
+\end{frame}
+
+\frame
+{
+ \begin{center} {\huge \textbf{\textcolor{Blue}{Implantations des piles}}} \end{center}
+\begin{itemize}
+\item La classe \texttt{\textcolor{Blue}{Stack<E>}}
+ \vspace{0.5cm}
+%\item Exemples d'utilisation
+
+\end{itemize}
+}
+
+\begin{frame}[fragile]
+ \frametitle{Implantation des piles, la classe \texttt{Stack<E>}}
+Une structure de pile diffère d'une structure de liste par ses opérations :
+\vspace{0.5cm}
+\begin{itemize}
+\item Construire une pile vide.
+\vspace{0.5cm}
+\item Déterminer si une pile est vide.
+\vspace{0.5cm}
+\item Empiler un composant au sommet de la pile.
+\vspace{0.5cm}
+\item Dépiler un composant à partir du sommet de la pile.
+\vspace{0.5cm}
+\item Faire une copie du composant situé au sommet.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Implantation des piles, la classe \texttt{Stack<E>}}
+La classe \texttt{\textcolor{Blue}{Stack<E>}} est une sous-classe de la classe \texttt{\textcolor{Blue}{Vector<E>}}.\\
+
+\vspace{0.5cm}
+\begin{tabular}{|p{3.7cm}|p{7.2cm}|}\hline
+\texttt{\textcolor{Blue}{boolean empty()}}& Teste si la pile est vide. \\ \hline
+ \texttt{\textcolor{Blue}{E peek() }}&Retourne l'objet situé au sommet de la pile sans l'enlever. \\ \hline
+ \texttt{\textcolor{Blue}{E pop() }}&Retourne et supprime l'objet situé au sommet de la pile. \\ \hline
+ \texttt{\textcolor{Blue}{E push(E item)}} &Place l'objet \texttt{\textcolor{Blue}{item}} au sommet de la pile. \\ \hline
+
+\end{tabular}
+\end{frame}
+
+%% \begin{frame}[fragile]
+%%  \frametitle{Piles : exemple d'utilisation 1 (1/2)}
+%% Vérifier qu'une expression algébrique est correctement parenthésée
+%% \begin{small}
+%% \begin{verbatim}
+%% Algorithme :
+
+%% début
+%%   construire une pile vide;
+%%   faire
+%%     analyser l'expression en :
+%%     - empilant chaque parenthèse ouvrante
+%%     - dépilant lorsque l'on trouve une parenthèse 
+%%         fermante;
+%%   tant que la pile n'est pas vide ;
+%% fin.
+%% \end{verbatim}
+%% \end{small}
+%% \end{frame}
+
+%% \begin{frame}[fragile]
+%%  \frametitle{Piles : exemple d'utilisation 1 (2/2)}
+%% \begin{scriptsize}
+%% \begin{lstlisting}
+%% ((4+x)*(y/2)-3) => 
+
+%% empiler (; 
+%% empiler (; 
+%% dépiler ; 
+%% empiler (;
+%% dépiler ; 
+%% dépiler; 
+%% pile vide
+%% \end{lstlisting}
+%% \end{scriptsize}
+%% \textbf{\textcolor{Blue}{Question :}} aurait-on pu utiliser une file ? expliquer. 
+
+%% \end{frame}
+
+%% \begin{frame}[fragile]
+%%  \frametitle{Piles : exemple d'utilisation 2 }
+%% Vérifier qu'une expression algébrique est correctement parenthésée, en utilisant cette fois 3 types de parenthèses \texttt{(, [, \{} pour faire apparaître clairement les sous-expressions.\\ 
+%% \vspace{0.3cm}
+%% L'intérêt de cette modification est que l'on peut, cette fois, faire apparaître les erreurs de parenthésage : $([(x+y\}*2]+\{[z*(a+b)]-6\})$ 
+%% \begin{scriptsize}
+%% \begin{verbatim}
+%% Algorithme : en considérant que l'expression est bien formée  
+
+%% début
+%%   Construire une pile vide; 
+%% faire 
+%%   Analyser l'expression en :
+%%    - empilant chaque parenthèse ouvrante;
+%%    - dépilant lorsque l'on trouve une parenthèse fermante de même type sinon erreur;
+%% tant que la pile n'est pas vide ;
+%% fin.
+%% \end{verbatim}
+%% \end{scriptsize}
+
+%% \end{frame}
+
+
+%% \begin{frame}[fragile]
+%%  \frametitle{Piles : exemple d'utilisation 3 (1/3)}
+%% \textbf{\textcolor{Blue}{Evaluation d'expressions algébriques}} 
+%% \begin{itemize}
+%% \item 3 notations sont utilisables pour les expressions algébriques :\\ 
+%% \begin{itemize}
+%% \item infixe: $(x+y)*2$
+%% \vspace{0.2cm}
+%% \item préfixe: $*+xy2$
+%% \vspace{0.2cm}
+%% \item postfixe: $xy+2*$ 
+%% \end{itemize}
+%% \vspace{0.5cm}
+%% \item Les parenthèses ne sont pas nécessaires dans les notations infixe et postfixe. La notation postfixée est la mieux adaptée pour une évaluation de l'expression.\\ 
+%% \vspace{0.2cm}
+%% (la machine virtuelle Java utilise la notation postfixée pour évaluer les opérations arithmétiques : instruction \texttt{iadd}). 
+
+%% \end{itemize}
+%% \end{frame}
+
+%% \begin{frame}[fragile]
+%%  \frametitle{Piles : exemple d'utilisation 3 (2/3)}
+%% \textbf{\textcolor{Blue}{Evaluation de l'expression $xy+2*$}} 
+%% \begin{center}
+%% \begin{tabular}{|p{5cm}|p{6cm}|}
+%% \hline
+%% \texttt{traitement du symbole x} & \texttt{empiler x} \\ \hline
+%% \texttt{traitement du symbole y} & \texttt{empiler y} \\ \hline
+%% \multirow{4}{*}{\texttt{traitement du symbole +}} &\texttt{dépiler la première opérande} \\
+%% &\texttt{dépiler la seconde opérande}\\
+%% &\texttt{sommer les deux opérandes}\\
+%% & \texttt{empiler le résultat}\\\hline
+%% \texttt{traitement du symbole 2} &\texttt{empiler 2} \\ \hline
+%% \texttt{traitement du symbole *} &\texttt{empiler *} \\ \hline
+%% \end{tabular}
+%% \end{center}
+%% \end{frame}
+
+%% \begin{frame}[fragile]
+%%  \frametitle{Piles : exemple d'utilisation 3 (3/3)}
+%% \begin{itemize}
+%% \item Lorsque tous les symboles de l'expression ont été traités, le résultat de l'évaluation figure au sommet de la pile. 
+
+%% \vspace{0.5cm}
+%% \item C'est le seul élément de la pile. 
+
+%% \vspace{0.5cm}
+%% \item \textbf{\textcolor{Blue}{Question :}} que se passe-t-il si l'expression est mal formée ? 
+
+%% \vspace{0.5cm}
+%% \item \textbf{\textcolor{Blue}{Question :}} l'évaluation est-elle possible avec une file ? 
+
+%% \vspace{0.5cm}
+%% \item \textbf{\textcolor{Blue}{Question :}} Quel est l'intérêt de la pile ? 
+ 
+%% \end{itemize}
+%% \end{frame}
+
+
+%% \begin{frame}[fragile]
+%%  \frametitle{Piles : implantation d'appels récursifs en java}
+%% \begin{itemize}
+%% \item L'exécution d'instructions bytecode Java utilise une pile d'exécution. 
+
+%% \vspace{0.5cm}
+%% \item Chaque thread actif possède sa propre pile d'exécution. 
+
+%% \vspace{0.5cm}
+%% \item Chaque invocation de méthode provoque la construction d'un contexte d'exécution construit sur le modèle suivant : 
+%% \begin{itemize}
+%% \item variables locales à la méthode
+%% \item paramètres effectifs
+%% \item valeur de retour
+%% \item adresse de retour (dans le bytecode)
+%% \item pointeur sur l'élément précédent dans la pile de contexte 
+
+%% \end{itemize}
+%% Ce contexte est empilé sur la pile d'exécution. 
+%% \vspace{0.5cm}
+%% \item Ce mécanisme est bien adapté à l'exécution de méthodes récursives : 
+%% \begin{itemize}
+%% \item A chaque appel récursif, le contexte d'exécution est empilé
+%% \item A chaque retour, le contexte est dépilé.
+%% \end{itemize} 
+%% \end{itemize}
+%% \end{frame}
+
+
+%% \begin{frame}[fragile]
+%%  \frametitle{Application}
+%% Soit la fonction de calcul de la factorielle d'un nombre entier naturel :
+%% \vspace{0.5cm}
+%% \begin{scriptsize}
+%% \begin{lstlisting}
+%% // n : entier naturel, n>=0
+%% int fact(int n)
+%% { 
+%%   if (n==0) return 1;
+%%   else return n*fact(n-1); 
+%% }
+%% \end{lstlisting}
+%% \end{scriptsize}
+%% Considérons l'invocation : \texttt{fact(3)} \\
+%% \vspace{0.5cm}
+%% \textbf{\textcolor{Blue}{Question :}} que se passe-t-il si le programme boucle ?
+%% \end{frame}
+
+
+%% \begin{frame}[fragile]
+%% \begin{center}
+%% \includegraphics[width=10cm]{application_pile.jpg}
+%% \end{center}
+%% \end{frame}
+
+
+%% \begin{frame}[fragile]
+%%  \frametitle{Exemple}
+%% \begin{itemize}
+%% \item Inversion d'une phrase d'une longueur quelconque, mot par mot
+
+%% \vspace{1cm}
+%% \item L'utilisation d'une pile rend l'algorithme très simple
+
+%% \end{itemize}
+%% \end{frame}
+
+
+%% \begin{frame}[fragile]
+%% \begin{scriptsize}
+%% \begin{lstlisting}
+%% import java.io.*;
+%% import java.util.Stack;
+%% import java.util.Scanner;
+%% import static java.lang.System.*;
+%% public class Inversion {  
+%%   public static void main (String args []) throws IOException {
+%%     new Inversion(); 
+%%   }
+%%   public Inversion () throws IOException {
+%%     Scanner in = new Scanner ( System.in );
+%%     Stack<String> pile = new Stack<String>();
+%%     out.print("Taper une phrase, un mot par ligne "); 
+%%     out.println( "et terminer par stop" );
+%%     out.println( "La phrase originale est: " );
+%%     String mot = ""; 
+%%     while ( !mot.equals( "stop" ) ) {
+%%       mot = in.next();
+%%       pile.push( mot );
+%%      } 
+%%     out.println( "La phrase inversée est:" );
+%%     while ( !pile.empty() )  
+%%       out.print ( pile.pop() + " " ); 
+%%     out.println();  
+%%   }
+%% }
+%% \end{lstlisting}
+%% \end{scriptsize}
+%% \end{frame}
+
+
+\frame
+{
+ \begin{center} {\huge \textbf{\textcolor{Blue}{Implantations des files}}} \end{center}
+\begin{itemize}
+\item Avec \texttt{\textcolor{Blue}{LinkedList<E>}}
+ \vspace{0.5cm}
+%\item Exemples d'utilisation
+
+\end{itemize}
+}
+
+\begin{frame}[fragile]
+ \frametitle{Implantation des piles, la classe \texttt{LinkedList<E>}}
+Les opérations sur les Files sont :
+\vspace{0.5cm}
+\begin{itemize}
+\item Construire une file vide.
+\vspace{0.5cm}
+\item Déterminer si une file est vide.
+\vspace{0.5cm}
+\item Ajouter un composant en queue de file.
+\vspace{0.5cm}
+\item Retirer le composant de tête de la file (si elle n'est pas vide). 
+
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+ \frametitle{Implantation d'une file }
+\begin{itemize}
+\item La classe \texttt{\textcolor{Blue}{LinkedList<E>}} fournit une implantation des méthodes propres aux files spécifiées dans l'interface \texttt{\textcolor{Blue}{Queue<E>}}.
+
+\vspace{0.5cm}
+\item La méthode \texttt{\textcolor{Blue}{offer}} diffère de la méthode \texttt{\textcolor{Blue}{add}} (de \texttt{Collection}).\\
+Elle insère un élément si et seulement si c'est possible. \\
+Elle renvoie \texttt{\textcolor{Blue}{false}} sinon contrairement à la méthode \texttt{\textcolor{Blue}{add}} qui lève une exception dans ce cas.
+
+\vspace{0.5cm}
+\item Comment utiliser une file d'entiers (par exemple) :\\
+\texttt{Queue<Integer> file = new LinkedList<Integer>();}\\
+\texttt{file.offer( 67 );}\\
+\texttt{System.out.println(" tete="+file.peek() );}
+ 
+\end{itemize}
+\end{frame}
+
+%% \begin{frame}[fragile]
+%%  \frametitle{Files : exemple d'application 1}
+%% Tampon de synchronisation
+%% \vspace{0.5cm}
+%% \begin{itemize}
+%% \item Le buffer contient des lignes d'impression. Le processus CPU ajoute des lignes en fin de file 
+%% \vspace{0.5cm}
+%% \item Le processus de gestion de l'imprimante les consomme à partir de la tête de file 
+%% \vspace{0.5cm}
+%% \item Si la file est pleine, le CPU attend. Ainsi les 2 processus s'exécutent en concurrence. Lorsqu'un accès a lieu, l'autre processus est bloqué. A la fin d'un accès, les autres sont débloqués. 
+%% \vspace{0.5cm}
+%% \item Ce problème de synchronisation est appelé problème de producteur/consommateur. 
+
+%% \vspace{0.5cm}
+%% \item   \textbf{\textcolor{Blue}{Inconvénient :}} le CPU attend si l'imprimante est lente. 
+
+%% \end{itemize}
+%% \end{frame}
+
+%% \begin{frame}[fragile]
+%%  \frametitle{Autres exemples d'applications}
+%% Serveur d'impression partagé (réseau)
+%% \vspace{0.5cm}
+%% \begin{itemize}
+%% \item Le fichier à imprimer est transféré par le réseau vers un serveur d'impression et est servi sur un mode \textbf{\textcolor{Blue}{FIFO (First In First Out)}}
+%% \vspace{0.5cm}
+%% \item \textbf{\textcolor{Blue}{Avantage :}} le CPU n'a pas à être bloqué en attente d'une fin d'impression 
+
+%% \vspace{0.5cm}
+%% \item Gestion de la mémoire virtuelle dans un système d'exploitation (OS) à temps partagé
+
+%% \vspace{0.5cm}
+%% \item Les pages à échanger (swapper) sont rangées dans des files et transférées en mode FIFO de la mémoire centrale à la mémoire secondaire.   
+ 
+%% \end{itemize}
+%% \end{frame}
+
+\frame
+{
+ \begin{center} {\huge \textbf{\textcolor{Blue}{Les tables de hachage}}} \end{center}
+\begin{itemize}
+\item Les techniques de hachage
+\vspace{0.5cm}
+\item  Avec \texttt{\textcolor{Blue}{Hashtable, TreeMap}}
+ \vspace{0.5cm}
+\item Avec \texttt{\textcolor{Blue}{HashMap}}
+\end{itemize}
+}
+
+
+\begin{frame}[fragile]
+ \frametitle{Techniques de hachage}
+\begin{itemize}
+\item L'intérêt des techniques de hachage est de fournir \textbf{\textcolor{Blue}{des algorithmes de recherche en temps constant}}, c'est à dire indépendants du nombre d'éléments.
+
+\vspace{0.5cm}
+\item Si l'on représente un ensemble d'éléments (\texttt{\textcolor{Blue}{<clé,valeur>}}) sous la forme d'un tableau, tout élément de l'ensemble sera enregistré à un indice du tableau que l'on pourrait calculer à  partir de sa clé à condition de posséder une fonction :\\
+{\centerline \texttt{\textcolor{Blue}{h : Clé -> [1..n]}}}
+
+\vspace{0.5cm}
+\item L'idéal serait que pour toute clé \texttt{c} et \texttt{c'}\\
+{\centerline \texttt{\textcolor{Blue}{h(c)}} $\textcolor{Blue}{\neq}$ \texttt{\textcolor{Blue}{h(c')}}}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+ \frametitle{Exemple}
+\begin{itemize}
+\item Les numéros de téléphones portables associés à leur position géographique. Ils constituent des clés uniques représentées sur 10 chiffres (5 tranches de 2 chiffres). 
+
+\vspace{0.5cm}
+\item  Les 4 dernières tranches offrent un potentiel de 100 millions de clés. Le nombre d'abonnés réels tournant autour de 48 millions, le taux de clés réellement utilisées est de $48\%$.
+
+\vspace{0.5cm}
+\item  Si l'on représente cet ensemble d'éléments sous la forme d'un tableau, tout élément de l'ensemble sera enregistré à un indice du tableau que l'on pourrait calculer à  partir de sa clé à condition de posséder une fonction de hachage.
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+ \frametitle{Collisions}
+\begin{itemize}
+\item Le nombre de clés possibles étant largement supérieur au nombre d'adresses du tableau, on sera inévitablement confronté à des situations où deux clés \texttt{c} et \texttt{c'} seront telles que : \\
+\texttt{\textcolor{Blue}{h(c) = h(c')}} $\textcolor{Blue}{\Rightarrow}$ \textbf{\textcolor{Blue}{collision}}
+
+\vspace{0.5cm}
+\item Il existe une collection de clés qui correspondent à un même indice.
+\vspace{0.5cm}
+\item On peut dire que l'ensemble des clés est "haché".\\
+ La fonction \texttt{\textcolor{Blue}{h}} \textcolor{Blue}{est appelée fonction de hachage}.
+ 
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+ \frametitle{Tables de hachage, facteur de charge}
+\begin{itemize}
+%\item Pour imposer une adresse unique en correspondance à chaque clé il faut introduire une stratégie de résolution des collisions. Plusieurs stratégies existent.
+\vspace{0.5cm}
+\item On désigne par "facteur de charge" (\texttt{\textcolor{Blue}{fc}}) le ratio entre le nombre d'entrées \texttt{\textcolor{Blue}{N}} effectivement occupées et la taille du tableau \texttt{\textcolor{Blue}{S}}.\\
+{\centerline \texttt{\textcolor{Blue}{fc = N / S}}}
+
+\vspace{0.5cm}
+\item \texttt{\textcolor{Blue}{fc}} est toujours compris entre 0 et 1. Plus \texttt{\textcolor{Blue}{fc}} se rapproche de 1 plus le tableau est proche de la saturation et plus les performances des méthodes de hachage se dégradent.
+
+\end{itemize}
+\end{frame}
+
+%% \begin{frame}[fragile]
+%%  \frametitle{Exemple}
+%% \begin{itemize}
+%% \item Soit un ensemble de clés \\
+%% \texttt{Ec = \{A1,B2,C3,...,R18,...,Z26\}}\\
+%%  où chaque lettre est indicée par sa position dans l'alphabet. A chacune de ces clés est associée une information utile dont nous ne tiendrons pas compte.
+%% \vspace{0.5cm}
+%% \item Soit un tableau \texttt{T} de taille 7 (\texttt{S}=7) implantant la table précédente.
+%% \vspace{0.5cm}
+%% \item On choisit une fonction de hachage \texttt{h} telle que : quels que soit \texttt{x} dans \texttt{\{A,B,C,...,R,...,Z\}}, \texttt{n} dans \texttt{[1..26]}, \texttt{h(xn) = n} $\%$ \texttt{7}\\
+%% \vspace{0.1cm}
+%% d'où,\\
+%% \texttt{h(J10) = 10} $\%$ \texttt{7 = 3}\\
+%% \texttt{h(B2) = 2} $\%$ \texttt{7 = 2}\\
+%% \texttt{h(S19) = 19} $\%$ \texttt{7 = 5}\\
+%% ...
+%% \end{itemize}
+%% \end{frame}
+
+%% \begin{frame}[fragile]
+%% \begin{center}
+%% \includegraphics[width=10cm]{hachage.jpg}
+%% \end{center}
+%% \end{frame}
+
+
+\begin{frame}[fragile]
+ \frametitle{La classe \texttt{HashMap<K,V>}}
+\texttt{\textcolor{Blue}{HashMap}} n'est pas synchronisée (thread) :
+\vspace{0.2cm}
+\begin{tabular}{|p{5.8cm}|p{5.4cm}|}\hline
+ \texttt{\textcolor{Blue}{HashMap()}}& Construit une \texttt{\textcolor{Blue}{HashMap}} vide avec une capacité initiale (16) et un fc par défaut (0.75). \\ \hline
+\texttt{\textcolor{Blue}{HashMap(int initialCapacity)}} &Construit une \texttt{\textcolor{Blue}{HashMap}} vide de capacité initiale (\texttt{\textcolor{Blue}{initialCapacity}}) et de fc par défaut (0.75). \\ \hline
+ \texttt{\textcolor{Blue}{HashMap(int initialCapacity, float loadFactor)}} & Construit une \texttt{\textcolor{Blue}{HashMap}} vide de capacité initiale 
+(\texttt{\textcolor{Blue}{initialCapacity}}) et de fc (\texttt{\textcolor{Blue}{loadFactor}})\\ \hline
+ \texttt{\textcolor{Blue}{HashMap(Map m)}} & Construit une \texttt{\textcolor{Blue}{HashMap}} à partir de la table \texttt{\textcolor{Blue}{m}}\\ \hline
+
+\end{tabular}
+\end{frame}
+
+
+\begin{frame}[fragile]
+ \frametitle{Quelques méthodes de \texttt{Hashtable<K,V>}}
+ \texttt{\textcolor{Blue}{Hashtable}} est synchronisée (thread) :
+
+\begin{tabular}{|p{5.8cm}|p{5.4cm}|}\hline
+ \texttt{\textcolor{Blue}{boolean contains(Object value)}} & Teste s'il existe une clé qui correspond à \texttt{\textcolor{Blue}{value}}. \\ \hline 
+  \texttt{\textcolor{Blue}{boolean containsKey(Object key)}} &Teste si  \texttt{\textcolor{Blue}{key}} est une clé pour la \texttt{\textcolor{Blue}{Hashtable}}. \\ \hline
+ \texttt{\textcolor{Blue}{Enumeration<V> elements()}} & Retourne une énumération des valeurs de la \texttt{\textcolor{Blue}{Hashtable}}.\\ \hline
+ \texttt{\textcolor{Blue}{V get(Object key)}} & Retourne la valeur associée à \texttt{\textcolor{Blue}{Key}}.\\ \hline
+\texttt{\textcolor{Blue}{Object put(Object key, Object value)}} &Ajoute un couple  \texttt{\textcolor{Blue}{<clé, valeur>}} à la  \texttt{\textcolor{Blue}{Hashtable}}. \\ \hline
+ \texttt{\textcolor{Blue}{V remove(Object key)}} & Supprime une entrée connaissant \texttt{\textcolor{Blue}{key}}.\\ \hline
+ \texttt{\textcolor{Blue}{Enumeration<K> keys()}} & Retourne une énumération des clés de la  \texttt{\textcolor{Blue}{Hashtable}}. \\ \hline   
+
+\end{tabular}
+\end{frame}
+
+\begin{frame}[fragile]
+ \frametitle{Exercice 2 (1/4)}
+Ecrire un programme qui :
+\vspace{0.2cm}
+\begin{itemize}
+\item insère dans une table de hachage les couples (clé, valeur) suivants :\\
+(MEX,Mexico), (GLA,Glasgow), (NRT,Narita), (BRU,Brunei), (JFK,Kennedy), (ORY,Orly)
+\vspace{0.2cm}
+\item affiche les valeurs associées aux clés FRK et NRT si elles existent (un message d'erreur sinon)
+\vspace{0.2cm}
+\item affiche la liste de toutes les valeurs de la table
+\vspace{0.2cm}
+\item affiche la liste de toutes les clés
+\vspace{0.2cm}
+\item remplace la valeur Orly par Orly sud et l'affiche  
+\vspace{0.2cm}
+\item supprime le couple (JFK,Kennedy)
+
+
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exercice 2 (2/4)}
+\begin{scriptsize}
+\begin{lstlisting}
+public class Exercice2{
+  public static void main(String[] args){
+    Hashtable<String,String> hash=new Hashtable<String,String>();
+    hash.put("MEX","Mexico");
+    hash.put("GLA","Glasgow");
+    hash.put("NRT","Narita");
+    hash.put("BRU","Brunei");
+    hash.put("JFK","Kennedy");
+    hash.put("ORY","Orly");
+    if (hash.containsKey("FRK")) 
+      System.out.println(hash.get("FRK"));
+    else 
+      System.out.println("FRK : clé inconnue");
+    if (hash.containsKey("NRT"))
+      System.out.println(hash.get("NRT"));
+    else 
+      System.out.println("NRT : clé inconnue");
+\end{lstlisting}
+\end{scriptsize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Exercice 2 (3/4)}
+\begin{scriptsize}
+\begin{lstlisting}
+    Enumeration<String> e=hash.elements();
+    String s;
+    while(e.hasMoreElements()){
+      s=e.nextElement();
+      System.out.println(s);
+    }
+    e=hash.keys();
+    while(e.hasMoreElements()){
+      s=e.nextElement();
+      System.out.println(s);
+    }
+    hash.put("ORY","Orly Sud");
+    hash.remove("JFK");
+    e=hash.elements();
+    while(e.hasMoreElements()){
+      s=e.nextElement();
+      System.out.println(s);
+    }
+  }
+}
+\end{lstlisting}
+\end{scriptsize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Exercice 2 (4/4)}
+\begin{scriptsize}
+\begin{lstlisting}
+FRK : clé inconnue
+Narita
+Orly
+Glasgow
+Brunei
+Mexico
+Narita
+Kennedy
+ORY
+GLA
+BRU
+MEX
+NRT
+JFK
+Orly Sud
+Glasgow
+Brunei
+Mexico
+Narita
+\end{lstlisting}
+\end{scriptsize}
+\end{frame}
+
+
+
+%% \frame
+%% {
+%%  \begin{center} {\huge \textbf{\textcolor{Blue}{Généricité}}} \end{center}
+%% \begin{itemize}
+%% \item Interfaces génériques
+%%  \vspace{0.5cm}
+%% \item Généricité et sous-typage
+%%  \vspace{0.5cm}
+%% \item Types joker
+%%  \vspace{0.5cm}
+%% \item Méthodes génériques
+ 
+
+%% \end{itemize}
+%% }
+
+%% \begin{frame}[fragile]
+%%  \frametitle{Paramétrage par les types}
+%% \begin{itemize}
+%% \item En Java 1.4, utilisation du "cast"\\
+%% \texttt{List liste = new LinkedList();}\\
+%% \texttt{liste.add( new Integer(0) );}\\
+%% \texttt{Iterator iter = liste.iterator();}\\
+%% \texttt{Integer x = (Integer)iter.next();}\\
+%% \vspace{0.5cm}
+%% \item \textbf{\textcolor{Blue}{Problèmes :}}\\
+%% le compilateur ne garantit que le retour d'un élément de type \texttt{\textcolor{Blue}{Object}}\\
+%% pourtant le programmeur sait quel est le type de données ajouté à la liste
+%% \end{itemize}
+%% \end{frame}
+
+
+%% \begin{frame}[fragile]
+%%  \frametitle{Version générique}
+%% \begin{itemize}
+%% \item \textbf{\textcolor{Blue}{Idée :}} afficher l'intention du programmeur dès la déclaration de l'objet, ainsi le compilateur en aura connaissance et pourra effectuer la vérification de type\\
+%% \texttt{List<Integer> liste = new LinkedList<Integer>();}\\
+%% \texttt{liste.add( new Integer(0) );}\\
+%% \texttt{Iterator<Integer> iter = liste.iterator();}\\
+%% \texttt{Integer x = iter.next();}\\
+%% \vspace{0.5cm}
+%% \item \textcolor{Blue}{\texttt{List} est une interface qui prend un type en paramètre }
+%% \end{itemize}
+%% \end{frame}
+
+%% \begin{frame}[fragile]
+%%  \frametitle{Interfaces génériques }
+%% \begin{itemize}
+%% \item \textbf{\textcolor{Blue}{exemples :}}
+%% \begin{scriptsize}
+%% \begin{lstlisting}
+%% public interface List<E>{
+%%   void add( E x );
+%%   Iterator<E> iterator();
+%% }
+%% public interface Iterator<E>{
+%%   E next();
+%%   boolean hasNext();
+%% }
+%% \end{lstlisting}
+%% \end{scriptsize}
+%% \vspace{0.5cm}
+%% \item \texttt{E} est un paramètre formel générique de type\\
+%%  \texttt{List<Integer>} est un type paramétré\\
+%%  \texttt{Integer} est un paramètre effectif de type
+%% \end{itemize}
+%% \end{frame}
+
+%% \begin{frame}[fragile]
+%%  \frametitle{Généricité : C++ vs Java}
+%% \begin{itemize}
+%% \item En C++, la généricité (templates) donne lieu à une expansion de code (code source pour chaque interface paramétrée)\\
+%% \begin{scriptsize}
+%% \begin{lstlisting}
+%% public interface ListInteger{
+%%   void add(Integer x);
+%%   Iterator<Integer> iterator();
+%% }
+%% \end{lstlisting}
+%% \end{scriptsize}
+%% \vspace{0.5cm}
+%% \item En Java, le type générique est compilé une fois pour toute. Les paramètres génériques sont remplacés par les paramètres effectifs au moment de l'invocation d'une méthode. Ensuite, le corps de la méthode est évalué.
+
+%% \end{itemize}
+%% \end{frame}
+
+%% \begin{frame}[fragile]
+%%  \frametitle{Généricité et sous-typage}
+%% \begin{itemize}
+%% \item Le code suivant est-il légal ?\\
+%% \texttt{List<String> ls = new ArrayList<String>();}\\
+%% \texttt{List<Object> lo = ls;}\\
+%% \vspace{0.5cm}
+%% \item \textbf{\textcolor{Blue}{Question :}} une liste de "\texttt{String}" est-elle une liste d'"\texttt{Object}" ?\\
+%% \texttt{lo.add( new Object() );}\\
+%% \texttt{String s = lo.get(0);}\\
+%% \vspace{0.5cm}
+%% \item \textbf{\textcolor{Blue}{Commentaires :}}
+%% type de \texttt{lo : List<Object>}, or on ajoute une instance d'\texttt{Object} donc \textbf{\textcolor{Blue}{pas de problème}}
+%% \texttt{lo} possède un premier élément de type \texttt{Object} que l'on affecte à une String, donc \textbf{\textcolor{Blue}{Erreur!}}
+
+%% \end{itemize}
+%% \end{frame}
+
+%% \begin{frame}[fragile]
+%%  \frametitle{Généricité et sous-typage}
+%% \begin{itemize}
+%% \item Le compilateur détectera cette erreur à la ligne\\
+
+%% \texttt{List<Object> lo = ls;}
+
+
+%% \vspace{0.5cm}
+%% \item \textbf{\textcolor{Blue}{Conclusion :}}
+%% \begin{center}
+%% \includegraphics[width=8cm]{genericite.jpg}
+%% \end{center}
+%% \end{itemize}
+%% \end{frame}
+
+
+%% \begin{frame}[fragile]
+%% \frametitle{Type générique "joker" (1/2)}
+%% \begin{itemize}
+%% \item En java 1.4 \\
+%% \begin{scriptsize}
+%% \begin{lstlisting}
+%% void printCollection(Collection c){
+%%   Iterator i = c.iterator();
+%%   for( int k=0;k<c.size();k++ )
+%%     System.out.println(i.next());
+%% }
+%% \end{lstlisting}
+%% \end{scriptsize}
+%% \vspace{0.2cm}
+%% \item En utilisant la généricité et la nouvelle boucle \texttt{for} \\
+%% \begin{scriptsize}
+%% \begin{lstlisting}
+%% void printCollection(Collection<Object> c){
+%%   for( Object e : c )
+%%     System.out.println( e );
+%% }
+%% \end{lstlisting}
+%% \end{scriptsize}
+%% \vspace{0.2cm}
+%% \item \textbf{\textcolor{Blue}{Effort louable mais qui entraîne une erreur!}}
+
+
+%% \end{itemize}
+%% \end{frame}
+
+
+
+%% \begin{frame}[fragile]
+%% \frametitle{Type générique "joker" (2/2)}
+%% \begin{itemize}
+%% \item \textbf{\textcolor{Blue}{Problème :}}\\
+%% \texttt{Collection<Object>}, à cause du problème de sous-typage entre type générique, n'est pas le super type de toutes les sortes de collections.\\
+%% On ne pourra donc pas appeler cette méthode avec n'importe quelle sorte de collection en paramètre.
+
+%% \item \textbf{\textcolor{Blue}{Solution :}} \\
+%% \begin{scriptsize}
+%% \begin{lstlisting}
+%% void printCollection(Collection<?> c){
+%%   for( Object e : c )
+%%     System.out.println( e );
+%% }
+%% \end{lstlisting}
+%% \end{scriptsize}
+%% Quel que soit le paramètre générique effectif, la collection contient des objets donc donc la boucle for est valide
+
+
+%% \end{itemize}
+%% \end{frame}
+
+%% \begin{frame}[fragile]
+%%  \frametitle{Utilisation du type Joker}
+%% \begin{itemize}
+%% \item \texttt{Collection<?> c = new ArrayList<String>();}\\
+%% \texttt{c.add( new Object() );}\\
+%% Produit une \textbf{\textcolor{Blue}{ ERREUR de COMPILATION}}
+%% \vspace{0.5cm}
+%% \item  \textbf{\textcolor{Blue}{Problème :}} \\
+%% La collection contient des objets de type inconnu, il est donc improbable que l'objet ajouté à \texttt{c} soit du même type ou d'un sous-type
+%% \vspace{0.5cm}
+%% \item  \textbf{\textcolor{Blue}{Mais}} \\
+%% \texttt{List<?> c = new ArrayList<String>();} \\
+%% \texttt{Object o = c.get();} \\
+%% est valide car quel que soit le type des objets de la liste, ils sont aussi du type \texttt{Object}
+
+%% \end{itemize}
+%% \end{frame}
+
+%% \begin{frame}[fragile]
+
+%% \begin{center}
+%% \begin{tabular}{p{6cm}p{4.5cm}}  \begin{minipage}{0.66\linewidth}
+%% \begin{scriptsize}
+%% \begin{lstlisting}
+%% public class Canvas{
+%%   public void drawAll(List<Shape> ls){
+%%     for( Shape s : ls )
+%%       s.draw(this);
+%%   }
+%% }
+%% \end{lstlisting}
+%% \end{scriptsize}
+%%  \end{minipage} & \begin{minipage}{0.33\linewidth}
+%% \includegraphics[width=4cm]{joker.jpg} 
+%% \end{minipage} \end{tabular} 
+%% \end{center}
+%% \begin{itemize}
+%% \item \textbf{\textcolor{Blue}{Rappel :}} une \texttt{List<Shape>} n'est pas super classe de, par exemple, 
+%% \texttt{List<Circle>,drawAll} ne considère donc que des listes constituées d'objets strictement du type \texttt{Shape}.
+%% \vspace{0.2cm}
+%% \item  \textbf{\textcolor{Blue}{Solution :}}\\
+%% \texttt{public void drawAll(List<? extends Shape> ls){...}}
+%% \end{itemize}
+%% \end{frame}
+
+
+%% \begin{frame}[fragile]
+%% \frametitle{Type joker contraint : utilisation}
+%% \begin{scriptsize}
+%% \begin{lstlisting}
+%% public void addRectangle(List<? extends Shape> ls){
+%%   ls.add(0,new Rectangle());
+%% }
+%% \end{lstlisting}
+%% \end{scriptsize}
+%% \textbf{\textcolor{Blue}{ATTENTION !}}\\
+%% Le type du paramètre générique effectif associé à \texttt{?} est un sous type de \texttt{Shape}, on ne sait pas si \texttt{Rectangle} en est un sous-type. 
+%% \end{frame}
+
+
+%% \begin{frame}[fragile]
+%% \frametitle{Méthodes génériques}
+%% \begin{scriptsize}
+%% \begin{lstlisting}
+%% void arrayToCollection(Object[] a,Collection<?> c){
+%%   for( Object o : a )
+%%     c.add(o);
+%% }
+%% \end{lstlisting}
+%% \end{scriptsize}
+%% \begin{itemize}
+%% \item \textbf{\textcolor{Blue}{ERREUR à la compilation}}\\
+%% On ne peut pas placer des éléments de type \texttt{Object} dans une collection dont on ne connaît pas le type
+%% \vspace{0.5cm}
+%% \item  \textbf{\textcolor{Blue}{Solution :}} méthodes génériques
+%% \begin{scriptsize}
+%% \begin{lstlisting}
+%% <T>void arrayToCollection(T[] a,Collection<T> c){
+%%   for( T o : a )
+%%     c.add(o);
+%% }
+%% \end{lstlisting}
+%% \end{scriptsize}
+%% \end{itemize}
+%% \end{frame}
+
+
+
+%% \begin{frame}[fragile]
+%%  \frametitle{Inférence de type}
+%% Le compilateur opère par inférence de type
+%% \vspace{0.5cm}
+%% \begin{itemize}
+%% \item \textbf{\textcolor{Blue}{Exemple 1 :}}\\
+%% \begin{scriptsize}
+%% \begin{lstlisting}
+%% Object[] oa = new Object[20];}
+%% Collection<Object> oc = new ArrayList<Object>();
+%% arrayToCollection(oa,oc)
+%% \end{lstlisting}
+%% \end{scriptsize}
+%% $\Rightarrow$ \texttt{Object} est inféré à partir de \texttt{T}\\
+%% \vspace{0.5cm}
+%% \item \textbf{\textcolor{Blue}{Exemple 2 :}}\\
+%% \begin{scriptsize}
+%% \begin{lstlisting}
+%% String[] oa = new String[20];
+%% Collection<String> oc = new ArrayList<String>();
+%% arrayToCollection(oa,oc)
+%% \end{lstlisting}
+%% \end{scriptsize}
+%% $\Rightarrow$ \texttt{String} est inféré à partir de \texttt{T}
+%% \end{itemize}
+%% \end{frame}
+
+
+
+
+\end{document}

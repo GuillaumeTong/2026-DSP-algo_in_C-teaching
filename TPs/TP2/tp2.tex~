@@ -1,0 +1,342 @@
+\documentclass{../enonce}
+\usepackage{enumerate}
+\usepackage{listings}
+\usepackage{graphicx}
+\lstset{language=C}
+\lstset{%
+  %escapeinside={(*@}{@*)},%
+  %morecomment=*[n][\it\ttfamily]{/\\*\\*}{\\*/},% reconnaît mots-clés, commentaires...
+  %moredelim=[is][\it]{/*}{*/},% éviter keyword style in comment
+  flexiblecolumns=false,%
+  %mathescape=true,%
+  basicstyle=\tt\small,%
+  keywordstyle=\bf\ttfamily,%
+  commentstyle=\it\ttfamily,%
+  frame=tblr,% top + bottom
+  morekeywords={String},%
+  rangeprefix=/*@,rangesuffix=@*/,%
+  includerangemarker=true,% false Plante avec l'utf8
+  % backgroundcolor=\color{grey2},%
+  % Astuce pour masquer qd meme les range:
+  literate={/*@debutexo1@*/}{{\ }}1{/*@finexo1@*/}{{\ }}1{/*@debutexo2@*/}{{\ }}1{/*@finexo2@*/}{{\ }}1%
+  {à}{{\`a}}1{è}{{\`e}}1{ê}{{\^e}}1{é}{{\'e}}1{ù}{{\`u}}1{ç}{{\,c}}1{î}{{\^i}}1{À}{{\`A}}1{È}{{\`E}}1{Ê}{{\^E}}1{É}{{\'E}}1{Ù}{{\`U}}1{Ç}{{\,C}}1{Î}{{\^I}}1,%
+  showstringspaces=false,%
+}
+\usepackage{tikz,pgf}
+
+\usetikzlibrary{shapes,arrows,decorations.markings,calc,positioning}
+\tikzstyle{oval}=[ellipse,thick,inner sep=2pt,minimum height=1.3em,draw=red]
+\pgfsetxvec{\pgfpoint{0.5cm}{0cm}}
+\pgfsetyvec{\pgfpoint{0cm}{0.5cm}}
+\tikzset{
+  red>/.style={->,ultra thick,color=red}
+}
+
+\usepackage{etoolbox}% http://ctan.org/pkg/etoolbox
+\newlength{\cellw}
+\newlength{\cellh}
+\setlength{\cellh}{3ex}
+\setlength{\cellw}{3ex}
+\newcommand{\case}[2][]{
+  \node[rectangle=1pt,draw=black,minimum width=\cellw,minimum height=\cellh] at (#2\cellw,0) {#1};
+}
+\newcommand{\casev}[2][]{
+  \node[rectangle=1pt,draw=black,minimum width=\cellw,minimum height=\cellh] at (0,-#2\cellh) {#1};
+}
+\newcommand{\caseb}[2][]{
+  \node[rectangle=1pt,very thick,draw=black,minimum width=\cellw,minimum height=\cellh] at (#2\cellw,0) {#1};
+}
+
+\newcounter{tabcnt}
+\newcommand{\tab}[1]{%
+  \setcounter{tabcnt}{0}
+  \def\nextitem{\def\nextitem{}}% Separator
+  \renewcommand*{\do}[1]{\nextitem\case[##1]{\value{tabcnt}}\stepcounter{tabcnt}}% How to process each item
+    \docsvlist{#1}% Process list
+}
+
+
+% latex2html
+%\usepackage{html,makeidx,color}
+
+%\let\emph\relax % there's no \RedeclareTextFontCommand
+%\DeclareTextFontCommand{\emph}{\it}
+\renewcommand{\emph}[1]{{\it #1}}
+
+\usepackage[colorlinks,urlcolor=blue,linkcolor=blue]{hyperref}
+
+
+
+\title{TP2 Fonctions et conditionnelle en C}
+\author{Algo et JavaScript}
+\date{}
+
+
+\begin{document}
+\excludecomment{correction}
+
+\noindent~
+\begin{minipage}{9cm}
+CNAM\\
+DSP Informatique - Réseau de la Réussite Vincent Merle
+%IFIPS Informatique 1ère année
+\end{minipage}
+%\hfill Année 2018--2019 ~
+
+%\title{IUT-L1 - USAL22}
+%\author{Les Exceptions}
+
+\vspace{1mm}
+
+\noindent ~\hrulefill~
+
+\vspace{2mm}
+
+\noindent
+\begin{minipage}{9cm}
+Algo/JavaScript -- USAL34\\
+%Votre nom :
+\end{minipage}
+
+\bigskip
+
+%\vspace{1cm}
+
+\begin{center}
+\bf {\Large TP2 Fonctions et conditionnelle en C}\\
+%\bf {\Large Interrogation écrite}\\
+%31 mai 2019
+\end{center}
+%\bigskip
+\vspace{0.5cm}
+\noindent \textbf{Objectifs du TP}
+ \begin{itemize}
+ \item Apprendre à utiliser la conditionnelle.
+ \item Ecrire des fonctions simples sans puis avec paramètres.
+ \item Tester les retours produits par ces fonctions.
+ 
+ \end{itemize}
+
+
+\section{Rappels : bibliothèque et compilation}
+La bibliothèque d'entrée-sortie:
+\href{http://deptinfo.cnam.fr/~courtiep/inout/inout.h}{inout.h} et
+\href{http://deptinfo.cnam.fr/~courtiep/inout/inout.c}{inout.c} et
+mettez les dans un répertoire \texttt{tp2}. Pour cela vous pouvez
+faire les commandes suivantes (une seule fois) dans un terminal (menu
+pricipal: \texttt{terminal/Konsole}):
+\begin{lstlisting}{bash,literate={}}
+mkdir tp2
+cd tp2
+wget "http://deptinfo.cnam.fr/~courtiep/inout/inout.h"
+wget "http://deptinfo.cnam.fr/~courtiep/inout/inout.c"
+\end{lstlisting}
+Programmez et tester ces fonctions \emph{une par une} (testez une
+fonction dès que vous pensez qu'elle est finie). Pour tester une
+fonction \lstinline!f! on programme un ou plusieurs appels à cette procédure dans
+une procédure \lstinline!test_f! : on test
+le résultat obtenu par rapport au résultat attendu et on affiche un
+message d'erreur si ils ne sont pas égaux.
+
+
+\section{La conditionelle \texttt{if}}
+\label{sec:conditionnelle}
+
+Il est possible dans un programme de définir deux séquences d'instructions
+différentes en fonction du résultat d'un test à l'exécution.
+L'instruction conditionnelle comporte trois morceaux: le test, la
+partie à exécuter si le test est vrai à l'exécution (\og then\fg) et
+la partie à exécuter si le test est faux à l'exécution (\og
+\lstinline!else!\fg). Cette dernière partie (\lstinline!else!) est
+facultative. \\
+
+
+Voici la syntaxe de la conditionnelle en C (et java).
+\begin{lstlisting}
+if (test) {
+  ... // instructions si test vrai
+}
+else {
+  ... // instructions si test faux
+}
+\end{lstlisting}
+
+\noindent \textbf{Exemple d'utilisation}
+
+\begin{lstlisting}[numbers=left,numberstyle=\tiny]
+int x;
+x = lireInt();
+if (x >=0) {
+  ecrireString("nombre positif ou nul.");
+}
+else {
+  ecrireString("nombre strictement négatif.");
+}
+ecrireString("\n");
+\end{lstlisting}
+
+À l'exécution ce programme se comporte comme suit:\medskip
+\begin{itemize}
+\item \textit{ligne 2.} attend que l'utilisateur tape un entier au clavier et
+  le stocke dans la variable \lstinline!x!; puis:
+\item \textit{lignes 3 à 8.} si \lstinline!x! est plus grand ou égal à zéro
+  (\lstinline!x>=0!) \begin{itemize}
+\item \textit{ligne 4.}
+  alors le texte \og \texttt{nombre positif ou nul.}\fg{} est affiché à l'écran;
+ \item \textit{ligne 7.} sinon  le texte  \og \texttt{nombre strictement négatif.}\fg{} est affiché;
+\end{itemize}
+ \item \textit{ligne 9.}: Enfin quoiqu'il arrive un saut de ligne est affiché.
+\end{itemize}
+
+\bigskip
+
+Dans ce TP, nous utiliserons les expressions de tests suivantes, où \lstinline!e1! et \lstinline!e2! doivent être des expressions entière (\lstinline!12!, \lstinline!x!,
+\lstinline!x+3!, etc):
+
+\begin{itemize}
+\item \lstinline!e1 == e2!\ et\ \  \lstinline?e1 != e2?
+\item \lstinline!e1 <= e2! et\ \ \lstinline!e1 >= e2!
+\item \lstinline!e1 < e2! et\ \ \lstinline!e1 > e2!
+\end{itemize}
+
+
+\begin{exo}[Procédures avec conditionnelles]~\\
+Programmez et tester ces procédures \emph{une par une} (testez une procédure dès que vous pensez qu'elle est finie). Pour tester une procédure, il faut programmer un ou plusieurs appels à cette procédure dans le \texttt{main} et on observe les affichage.
+
+\begin{enumerate}
+\item \lstinline!void ecritMax(int x, int y)! qui écrit à l'écran le
+  plus grand de deux entiers passés en paramètres (si ils sont égaux,
+  on en écrit un).
+\item \lstinline!void ecritTestPlusGrandEq(int x, int y)! qui affiche
+  le text \og <x> \texttt{plus grand que} <y> \fg{} si le premier
+  argument est plus grand ou égal que le deuxième et \og <valeur de
+  l'arg 1> \texttt{pas plus grand que} <valeur de l'arg 2>\fg{} sinon.
+  <x> et <y> étant remplacés par les valeur réelles des arguments à
+  l'exécution.
+
+  Par exemple: \lstinline!ecritTestPlusGrandEq(12,13)! doit afficher
+  \og \texttt{12 n'est pas plus grand que 13}\fg{}.
+\item \lstinline!void ecritTestPlusPetit(int x, int y)! qui se
+  comporte comme \lstinline!ecritTestPlusGrandEq! mais en inversant le
+  test (premier argument strictement plus petit).
+\item \lstinline!void ecritTrie3(int x, int y, int z)! qui affiche \og
+  \texttt{<x>, <y>, <z> triés}\fg{} si les trois arguments sont
+  ordonnés par ordre croissant. On tolère les arguments consécutifs
+  égaux. Écrire \og \texttt{<x>, <y>, <z> pas triés}\fg{}sinon.
+\item \lstinline!void ecritMax3(int x, int y, int z)! qui écrit à
+  l'écran le plus grand des trois arguments.
+%\item \lstinline!void ecritMax4(int x, int y, int z, int t)! qui écrit   à l'écran le plus grand des quatre arguments.   Contrainte: N'utilisez que 3 \lstinline!if!.
+\item \lstinline!void ecritTestDeuxEgaux(int x, int y, int z, int t)!  qui qui affiche \og
+  \texttt{2 paramètres égaux}\fg{} si parmi les 4 arguments au moins deux sont égaux.
+\item \lstinline!void ecritPlusSommeProd(int z, int t)! écrit à
+  l'écran le plus grand entier entre la somme et le produit des deux
+  arguments.
+\end{enumerate}
+%% \begin{correction}
+%%     \lstinputlisting{../corriges/tp2_exo1.c}
+%%     \end{correction}
+\end{exo}
+
+
+\begin{exo}[Menu]~\\
+
+Écrivez un programme dans la fonction \lstinline!main! qui propose les
+différentes fonctionnalités des procédures de la section précédente.
+
+Le déroulement du programme doit être le suivant:
+
+\begin{enumerate}
+\item Affichage des opérations disponibles avec un numéro pour chaque.
+\item l'utilisateur tape un entier (+ \og entrée\fg)
+\item invitation à taper le premier argument de la procédure
+\item invitation à taper le deuxième argument de la procédure
+\item etc
+\item lancement de la procédure
+\item Saut de ligne et fin de programme.
+\end{enumerate}
+
+%Si vous avez le temps imaginez un moyen que le programme recommence à l'étape 1 après l'étape 7 plutôt que de s'arrêter.
+
+%% \begin{correction}
+%%     \lstinputlisting{../corriges/tp2_exo2.c}
+%%     \end{correction}
+\end{exo}
+
+\section{Les fonctions}
+
+\begin{exo}[Fonctions retournant une valeur entière]~\\
+Programmez et tester ces fonctions \emph{une par une} (testez une fonction dès que vous pensez qu'elle est finie). 
+\begin{enumerate}
+\item \lstinline!int SommeTroisInt(int x, int y, int z)! qui retourne
+  la somme des trois entiers passés en paramètres.
+\item \lstinline!int max2(int x, int y)! qui retourne le plus grand des
+  deux entiers passés en paramètres (si ils sont égaux, on en retourne
+  un).
+\item \lstinline!int max3(int x, int y, int z)! qui retourne le plus
+  grand des trois entiers passés en paramètres (si 2 ou plus sont
+  égaux, on retourne l'un des plus grand).
+\item \lstinline!int PlusSommeProd(int z, int t)! qui retourne le plus grand entier entre la somme et le produit des deux arguments.
+\end{enumerate}
+%% \begin{correction}
+%%     \lstinputlisting{../corriges/tp2_exo3.c}
+%%     \end{correction}
+\end{exo}
+
+
+\begin{exo}[Fonction retournant une valeur booléenne (test)]~\\
+
+Une fonction de test doit retourner une valeur utilisable comme
+condition dans un \lstinline!if (condition) ...!. Elle doit donc
+retourner l'entier $0$ pour signifier que le test est faux, et un
+entier non nul ($1$ de préférence) si le test est vrai.
+
+Pour plus de clarté on utilisera les synonymes suivants:
+
+\begin{lstlisting}
+#define BOOL int
+#define TRUE 1
+#define FALSE 0
+\end{lstlisting}
+
+
+Programmez et tester ces fonctions \emph{une par une} (testez une fonction dès que vous pensez qu'elle est finie). 
+
+\begin{enumerate}
+\item \lstinline!BOOL testPlusGrandEq(int x, int y)! qui teste si le
+  premier paramètre est plus grand ou égal au deuxième.
+
+  Pour tester la fonction faites:
+
+\begin{lstlisting}
+if (testPlusGrandEq(10,8)) {
+  ecrireString("test testPlusGrandEq réussi: 10 >= 8");
+} else {
+  ecrireString("test testPlusGrandEq échoué: 10 < 8");
+}
+
+if (testPlusGrandEq(8,8)) {
+  ecrireString("test testPlusGrandEq réussi: 8 >= 8");
+} else {
+  ecrireString("test testPlusGrandEq échoué: 8 < 8");
+}
+etc
+\end{lstlisting}
+
+
+\item \lstinline!BOOL testPlusPetit(int x, int y)! qui se comporte
+  comme \lstinline!testPlusGrandEq! mais en inversant le test (premier
+  argument strictement plus petit).
+\item \lstinline!BOOL testTrie3(int x, int y, int z)! qui teste si les
+  trois arguments sont ordonnés par ordre croissant. On tolère les
+  arguments consécutifs égaux.
+\item \lstinline!BOOL testDeuxEgaux(int x, int y, int z, int t)! qui
+  teste si parmi les 4 arguments au moins deux sont égaux.
+\end{enumerate}
+%% \begin{correction}
+%%     \lstinputlisting{../corriges/tp2_exo4.c}
+%%     \end{correction}
+\end{exo}
+
+
+
+\end{document}

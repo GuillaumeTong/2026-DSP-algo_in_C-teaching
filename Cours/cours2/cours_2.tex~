@@ -1,0 +1,930 @@
+\makeatletter\let\ifGm@compatii\relax\makeatother 
+\documentclass[xcolor=dvipsnames,svgnames, handout=show]{beamer}
+
+\usepackage[frenchb]{babel}
+\usepackage{wasysym}
+\usepackage[makeroom]{cancel}
+
+\usepackage{beamerthemesplit}
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{mathrsfs}
+\usepackage{latexsym}
+\usepackage{graphicx}
+\usepackage{enumerate}
+\usepackage{multirow}
+\usepackage[dvipsnames]{xcolor}
+\definecolor{commentgreen}{RGB}{2,112,10}
+\definecolor{eminence}{RGB}{108,48,130}
+\definecolor{weborange}{RGB}{255,165,0}
+\definecolor{frenchplum}{RGB}{129,20,83}                
+
+%\lstset{language=Java,columns=fullflexible,mathescape=true}
+\usepackage{textcomp}
+
+
+\newcommand{\danger}{
+  \begin{minipage}{0.1\linewidth}
+    \includegraphics[scale=.3]{danger}
+  \end{minipage}
+}
+
+\usepackage{calc}
+\newlength{\lstwiiidth}
+
+\usepackage{tikz,pgf}
+\usetikzlibrary{shapes,arrows,decorations.markings,calc,positioning}
+%\tikzstyle{oval}=[ellipse,thick,inner sep=2pt,minimum height=1.3em,draw=red]
+
+\tikzstyle{every picture}+=[baseline=-.25em,remember picture,>=stealth,thick,line width=.3pt,cap=round,join=round]
+\tikzstyle{annot}=[red,font=\normalfont]
+\tikzset{red>/.style={->,ultra thick,color=red,opacity=.5}}
+\tikzstyle{annottransp}=[annot,opacity=.35]
+\tikzstyle{oval}=[ellipse,minimum height=1ex,draw=red,fill=red]
+\tikzstyle{ovalise}=[annottransp,oval,%
+  xshift={#1/2},%
+  text width={#1/1.35},%
+  minimum height={1em+5pt},%
+]
+\tikzstyle{annotfleche}=[->,annottransp,line width=.05cm,opacity=.5]
+\tikzstyle{Annotfleche}=[->,annottransp,line width=.08cm,opacity=.5]
+
+% #1 is best if given by width("text") where
+% text is the text in the node (where
+% punctuation is replaced by letter for
+% correct width computation)
+\tikzset{bigovalise/.style 2 args={annottransp,oval,very thick,text width={#1/1.3},text height={#2}}}
+
+
+
+
+
+\pgfsetxvec{\pgfpoint{0.5cm}{0cm}}
+\pgfsetyvec{\pgfpoint{0cm}{0.5cm}}
+\makeatletter
+% Stuff for calc compatiability.
+\let\real=\pgfmath@calc@real
+\let\minof=\pgfmath@calc@minof
+\let\maxof=\pgfmath@calc@maxof
+\let\ratio=\pgfmath@calc@ratio
+\let\widthof=\pgfmath@calc@widthof
+\let\heightof=\pgfmath@calc@heightof
+\let\depthof=\pgfmath@calc@depthof
+\makeatother
+
+
+%\pgfarrowsdeclare{:}{:}{}{}
+
+
+\tikzstyle{outil}=[rectangle,draw=black] %,inner sep=2.5mm
+\tikzstyle{autreoutil}=[rectangle,draw=black] %,inner sep=2.5mm
+
+\tikzset{onslide/.code args={<#1>#2}{%
+  \only<#1>{\pgfkeysalso{#2}} % \pgfkeysalso doesn't change the path
+}}
+\tikzset{temporal/.code args={<#1>#2#3#4}{%
+  \temporal<#1>{\pgfkeysalso{#2}}{\pgfkeysalso{#3}}{\pgfkeysalso{#4}} % \pgfkeysalso doesn't change the path
+}}
+
+\tikzstyle{highlight}=[red,ultra thick]
+
+\usepackage{etoolbox}% http://ctan.org/pkg/etoolbox
+\newlength{\cellw}
+\newlength{\cellh}
+\setlength{\cellh}{3ex}
+\setlength{\cellw}{3ex}
+\newcommand{\case}[2][]{
+  \node[rectangle=1pt,draw=black,minimum width=\cellw,minimum height=\cellh] at (#2\cellw,0) {#1};
+}
+\newcommand{\casev}[2][]{
+  \node[rectangle=1pt,draw=black,minimum width=\cellw,minimum height=\cellh] at (0,-#2\cellh) {#1};
+}
+\newcommand{\caseb}[2][]{
+  \node[rectangle=1pt,very thick,draw=black,minimum width=\cellw,minimum height=\cellh] at (#2\cellw,0) {#1};
+}
+
+
+\newcounter{tabcnt}
+\newcommand{\tab}[1]{%
+  \setcounter{tabcnt}{0}
+  \def\nextitem{\def\nextitem{}}% Separator
+  \renewcommand*{\do}[1]{\nextitem\case[##1]{\value{tabcnt}}\stepcounter{tabcnt}}% How to process each item
+    \docsvlist{#1}% Process list
+}
+\newcommand{\tabv}[1]{%
+  \setcounter{tabcnt}{0}
+  \def\nextitem{\def\nextitem{}}% Separator
+  \renewcommand*{\do}[1]{\nextitem\casev[##1]{\value{tabcnt}}\stepcounter{tabcnt}}% How to process each item
+    \docsvlist{#1}% Process list
+}
+
+\newcommand{\tabpict}[1]{%
+  \begin{tikzpicture}
+    \tab{#1}
+  \end{tikzpicture}
+}
+\newcommand{\tabvpict}[1]{%
+  \begin{tikzpicture}
+    \tab{#1}
+  \end{tikzpicture}
+}
+
+\usepackage{amsmath,amssymb}%,stmaryrd
+%\usepackage{colortbl}
+
+\definecolor{colorC}{rgb}{0.95,0.95,.98}
+\definecolor{colorSH}{rgb}{0.95,1,0.95}
+\definecolor{colorV}{rgb}{0.98,1,0.95}
+\definecolor{colorasm}{RGB}{255,250,240}
+\definecolor{kwcolor}{rgb}{0,0,1}
+\definecolor{kindcolor}{rgb}{0.1,0.5,.1}
+%\definecolor{commentcolor}{rgb}{.6,.05,.05}
+\definecolor{commentcolor}{rgb}{.4,.4,.6}
+
+\usepackage{listings,lstasm}
+%\def\lstlanguagefiles{lstasm.sty}
+
+\lstset{language=C}
+\lstset{literate={~}{{\ }}1}
+\lstset{morekeywords={FILE}}
+
+\lstdefinestyle{small}
+{
+  escapeinside={/*@}{@*/},  
+  basicstyle=\tt\small,
+  keywordstyle=\color{kwcolor},
+  commentstyle=\it\ttfamily\color{commentcolor},
+  keywordstyle=[2]\ttfamily\color{kindcolor},
+  %backgroundcolor=\color{colorCoq},
+  showstringspaces=false,
+  flexiblecolumns=false,mathescape=true,
+  rangeprefix=/*-,rangesuffix=-*/,includerangemarker=false,
+}
+
+
+\lstset{style=small}
+
+% Powerful boxing stuff, with a special listing interaction 
+\usepackage[many]{tcolorbox}
+%% Ne marche pas dans un \onslide
+\tcbuselibrary{listings,xparse}% this load listings if not already done
+
+% options abandonnées
+% spartan, frame empty, size=minimal,
+\def\commonlstenvoptions{
+   arc=4pt,outer arc=4pt,
+   boxsep=0pt, % unit (pt,mm) mandatory here
+   boxrule=.1px,
+   left=1mm,right=2mm,top=-2mm,bottom=-2mm,
+   listing only
+}
+
+\def\commonlstinlineoptions{
+  colupper=black,nobeforeafter,tcbox raise base,
+  arc=2pt,outer arc=2pt,
+  boxrule=.1px,
+  boxsep=0pt,left=1.5pt,right=1.5pt,top=3pt,bottom=2.8pt,
+}
+
+
+\newtcblisting{lstlistingC}[1][]
+ { colback=colorC,
+   code={\pgfkeysalsofrom{\commonlstenvoptions}},
+   listing options={ style=small, #1} }
+
+\newtcblisting{lstlistingsh}[1][]
+ { colback=colorSH,
+   code={\pgfkeysalsofrom{\commonlstenvoptions}},
+   listing options={style=small,#1 } }
+
+\newtcblisting{lstlistingv}[1][]
+ { colback=colorV,
+   code={\pgfkeysalsofrom{\commonlstenvoptions}},
+   listing options={style=small, #1} }
+
+
+% La même chose pour lstinputlisting
+\newtcbinputlisting{\lstinputlistingC}[2][]
+ {
+   listing engine=listings,
+   listing file={#2},
+   colback=colorC,
+   code={\pgfkeysalsofrom{\commonlstenvoptions}},
+   listing options={ style=small, #1 } }
+
+% La même chose pour lstinputlisting
+\newtcbinputlisting{\lstinputlistingasm}[2][]
+{
+   listing engine=listings,
+   listing file={#2},
+   colback=colorasm,
+   code={\pgfkeysalsofrom{\commonlstenvoptions}},
+   listing options={
+     style=small,
+     #1
+   },
+ }
+
+
+
+% \lstinlineCv{foo} ou bien \lstinlineCv!foo! etc
+% ATTENTION: si dans un argument de macro ça ne marche pas
+\NewTotalTCBox{\lstinlineCv}{ O{white} v}
+{ colback=colorC,
+  code={\pgfkeysalsofrom{\commonlstinlineoptions}},
+}
+{\lstinline§#2§}
+
+\NewTotalTCBox{\lstinlinesh}{ O{white} v}
+{ colback=colorSH,
+  code={\pgfkeysalsofrom{\commonlstinlineoptions}},
+}
+{\lstinline§#2§}
+
+% Version qui ne peut pas aller dans un argument de macro, on utilse
+% {} comme parenthésage MAIS ATTENTION le code est interprété
+\NewTotalTCBox{\lstinlineC}{ O{white} m}
+{ colback=colorC,
+  code={\pgfkeysalsofrom{\commonlstinlineoptions}},
+}
+{\lstinline§#2§}
+
+\NewTotalTCBox{\lstinlineshh}{ O{white} m}
+{ colback=colorSH,
+  code={\pgfkeysalsofrom{\commonlstinlineoptions}},
+}
+{\lstinline§#2§}
+
+
+\title{Algo/Prog -- DUT 1}
+\date{}
+
+% HACK pour avoir une TOC plus compacte: on recopie ce bout de code et on met vskip0.5 au lieu de vskip1.5 au bon endroit
+\makeatletter
+\def\sectionintoc{}
+\def\beamer@sectionintoc#1#2#3#4#5{%
+\ifnum\c@tocdepth>0%
+\ifnum#4=\beamer@showpartnumber%
+{
+  \beamer@saveanother%
+  \gdef\beamer@todo{}%
+  \beamer@slideinframe=#1\relax%
+  \expandafter\only\beamer@tocsections{\gdef\beamer@todo{%
+      \beamer@tempcount=#5\relax%
+      \advance\beamer@tempcount by\beamer@sectionadjust%
+      \edef\inserttocsectionnumber{\the\beamer@tempcount}%
+      \def\inserttocsection{\hyperlink{Navigation#3}{#2}}%
+      \beamer@tocifnothide{\ifnum\c@section=#1\beamer@toc@cs\else\beamer@toc@os\fi}%
+      {
+        \ifbeamer@pausesections\pause\fi%
+        \ifx\beamer@toc@ooss\beamer@hidetext
+          \vskip0.5em% <==============================ICI
+        \else
+          \vfill
+        \fi
+        {%
+          \hbox{\vbox{%
+              \def\beamer@breakhere{\\}%
+              \beamer@tocact{\ifnum\c@section=#1\beamer@toc@cs\else\beamer@toc@os\fi}    {section in toc}}}%
+         \par%
+        }%
+      }%
+    }
+  }%
+  \beamer@restoreanother%
+  }
+  \beamer@todo%
+  \fi\fi%
+}
+\makeatother
+%\lstset{language=Java,columns=fullflexible,mathescape=true}
+
+\usepackage{multirow}
+
+\usepackage{amsmath}
+\usepackage{euscript}
+\usepackage{array}
+
+\usetheme{Boadilla}
+%\setbeamercolor{normal text}{Dolphin}
+
+\setbeamercolor{background canvas}{parent=normal text}
+
+\title[Fonctions et structures de contrôle]{Fonctions et structures de contrôle}
+
+\author[A. Lambert/P. Courtieu]{A. Lambert/P. Courtieu}
+
+\date[Algo - Javascript / USAL 34]{DSP - USAL 34 }
+
+
+
+\begin{document}
+
+\frame{
+
+\titlepage
+}
+
+\frame
+{
+ 
+\begin{center} {\huge \textbf{\textcolor{NavyBlue}{Définition de procédures et fonctions}}} \end{center}
+}
+
+
+
+
+\subsection{Définition de procédures}
+
+\begin{frame}[fragile]\frametitle{Définir une procédure}
+
+  \begin{itemize}
+  \item Programmer = définir des procédures et fonctions
+  \item Programme = pyramide de fonctions avec \lstinlineCv!main! au
+    sommet
+  \item procédure définie $\rightarrow$ utilisable comme les autres
+  \item Aucune différence entre vos fonctions et celles des
+    bibliothèques (\lstinlineCv!lireInt()!, etc).
+  \end{itemize}
+\end{frame}
+
+
+
+\begin{frame}[fragile]\frametitle{Définir une procédure}
+  \begin{itemize}
+  \item[] Syntaxe:
+  \item<2-> mot clé \lstinlineCv!void!: déclare une procédure (fonction
+    sans résultat)
+  \item<3-> nom de la procédure
+  \item<4-> paramètres entre parenthèses (même si aucun)
+  \item<5-> corps de la fonction: instructions à réaliser à chaque
+    appel de la méthode
+  \end{itemize}
+
+  \begin{center}
+    \begin{minipage}{.5\linewidth}
+      \begin{lstlistingC}
+/*@\onslide<2->@*/void /*@\onslide<3->@*/proc/*@\onslide<4-5>@*/(paramètres)/*@\onslide<5->@*/ {
+
+  instructions
+
+}
+      \end{lstlistingC}
+    \end{minipage}
+  \end{center}
+
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Définir une procédure -- Exemple}
+
+  \begin{center}
+    Pas d'argument
+
+    \begin{minipage}{.5\linewidth}
+      \begin{lstlistingC}
+void proc/*@\onslide<1->@*/()/*@\onslide<1->@*/ {
+
+  ...
+
+}
+      \end{lstlistingC}
+    \end{minipage}
+  \end{center}
+
+  \begin{center}
+    Deux arguments
+
+    \begin{minipage}{.5\linewidth}
+      \begin{lstlistingC}
+void proc/*@\onslide<1->@*/(int /*@\tikz \coordinate (argx);@*/x, int /*@\tikz \coordinate (argy);@*/y)/*@\onslide<1->@*/ {
+
+  ... /*@\tikz \coordinate (argrx);@*/x ... /*@\tikz \coordinate (argry);@*/y ...
+
+}
+      \end{lstlistingC}
+    \end{minipage}
+  \end{center}
+\begin{tikzpicture}[remember picture, overlay]
+  \small\tt%so that width computes the correct size
+  \node<all:2|handout:1>[ovalise=width("x")] (ovalargx) at (argx) {};
+  \node<all:2|handout:1>[ovalise=width("y")] (ovalargy) at (argy) {};
+  \node<all:2|handout:1>[xshift=10em] (textargx) at (ovalargy.east) {
+    \textnormal{\color{red} Arguments formels (decl.)}};
+
+  \node<all:2|handout:1>[ovalise=width("x")] (ovalargrx) at (argrx) {};
+  \node<all:2|handout:1>[ovalise=width("y")] (ovalargry) at (argry) {};
+  \node<all:2|handout:1>[xshift=8em] (textargrx) at (ovalargry.east) {
+    \textnormal{\color{red} Argument formel (util.)}};
+\end{tikzpicture}  
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Définir une procédure -- Exemple}
+
+  \begin{center}
+    \begin{minipage}{.5\linewidth}
+      \begin{lstlistingC}
+void ecrireAdd(int x, int y) {
+  ecrireInt(x);
+  ecrireString(" + ");
+  ecrireInt(y);
+  ecrireString(" = ");
+  ecrireInt(x+y);
+  ecrireSautDeLigne();
+}
+      \end{lstlistingC}
+    \end{minipage}
+  \end{center}
+P.S. Sans oublier le \lstinlineCv!#include"inout.h"!.
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Exemple de procédure + tests}
+  \begin{center}
+    \begin{minipage}{.6\linewidth}
+      \begin{lstlistingC}
+void ecrireAdd (/*@\tikz \coordinate (argform);@*/int x, int y) {
+  ecrireInt(x);
+  ecrireString(" + ");
+  ecrireInt(y);
+  ecrireString(" = ");
+  ecrireInt(x+y);
+  ecrireSautDeLigne();
+}
+
+void main() {
+  /*@\tikz \coordinate (debut);@*/ecrireString("Début\n");
+  /*@\tikz \coordinate (proc1);@*/ecrireAdd(/*@\tikz \coordinate (argsrreel);@*/8,6);
+  /*@\tikz \coordinate (proc2);@*/ecrireAdd(/*@\tikz \coordinate (argsrreel2);@*/7,13);
+  int a = /*@\tikz \coordinate (lireint);@*/lireInt(); 
+  int b = lireInt();
+  ecrireAdd(a,b);
+  ecrireString("Fin\n");
+}
+      \end{lstlistingC}
+    \end{minipage}
+  \end{center}
+\begin{tikzpicture}[remember picture, overlay]
+  \small\tt%so that width computes the correct size
+  \node<all:2-3|handout:1>[ovalise=width("ecrireAdd(8.6);")] (ovalproc1) at (proc1) {};
+  \node<all:3|handout:1>[ovalise=width("ecrireString(xDébutnnx);")] (ovaldebut) at (debut) {};
+  \node<all:3|handout:1>[ovalise=width("lireInt();")] (ovallireint) at (lireint) {};
+  \node<all:2-3|handout:1>[xshift=9em] (textproc1) at (ovalproc1.east) {\color{red} \textnormal{procédure définie ci-dessus}};
+  \node<all:3|handout:1>[xshift=6em] (textlireint) at (ovallireint.east) {\color{red} \textnormal{procédure externe}};
+  \node<all:3|handout:1>[xshift=6em] (textdebut) at (ovaldebut.east) {\color{red} \textnormal{procédure externe}};
+
+  \node<all:4-|handout:1>[ovalise=width("8.6")] (ovalargsrreel) at (argsrreel) {};
+  \node<all:4-|handout:1>[ovalise=width("7.13")] (ovalargsrreel2) at (argsrreel2) {};
+  \node<all:4-|handout:1>[xshift=6em,yshift=-2em] (textargsrreel) at
+  (ovalargsrreel.east) {\color{red} \textnormal{paramètres réels}};
+
+  \node<all:4-|handout:1>[ovalise=width("int x. int y")] (ovalargform) at (argform) {};
+  \node<all:4-|handout:1>[xshift=4em,yshift=-2em] (textargform) at
+  (ovalargform.east) {\color{red} \textnormal{paramètres formels}};
+
+
+\end{tikzpicture}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Exemple de procédure + test (mieux)}
+  \begin{center}
+    \begin{minipage}{.6\linewidth}
+      \begin{lstlistingC}[basicstyle=\scriptsize\tt]
+void ecrireAdd (int x, int y) {
+  ecrireInt(x);
+  ecrireString(" + ");
+  ecrireInt(y);
+  ecrireString(" = ");
+  ecrireInt(x+y);
+  ecrireSautDeLigne();
+}
+
+void testecrireAdd() {
+  /*@\tikz \coordinate (debut);@*/ecrireString("Début test ecrireAdd\n");
+  /*@\tikz \coordinate (proc1);@*/ecrireAdd(8,6);
+  /*@\tikz \coordinate (proc2);@*/ecrireAdd(7,13);
+  int a = /*@\tikz \coordinate (lireint);@*/lireInt();
+  int b = lireInt();
+  ecrireAdd(a,b);
+  ecrireString("Fin test ecrireAdd\n");
+}
+
+void main() {
+  testecrireAdd();
+}
+      \end{lstlistingC}
+    \end{minipage}
+  \end{center}
+\end{frame}
+
+
+\begin{frame}<handout:1>[fragile]\frametitle{Portée des variables}
+  \begin{center}
+    \begin{minipage}{.75\linewidth}
+      \begin{lstlistingC}
+void ecrireAdd/*@\onslide<1->@*/(int /*@\tikz \coordinate (argx);@*/x, int /*@\tikz \coordinate (argy);@*/y)/*@\onslide<1->@*/ {
+  ecrireInt(x);
+  ecrireString(" + ");
+  ecrireInt(y);
+  ecrireString(" = ");
+  ecrireInt(x+y);
+  ecrireSautDeLigne();
+}
+
+void testecrireAdd() {
+  ecrireString("Début test ecrireAdd\n");
+  ecrireAdd(8,6);
+  ecrireAdd(7,13);
+  /*@\tikz \coordinate (decla);@*/int a = lireInt();
+  /*@\tikz \coordinate (declb);@*/int b = lireInt();
+  ecrireAdd(a,b);
+  ecrireString("Fin test ecrireAdd\n");
+}
+      \end{lstlistingC}
+    \end{minipage}
+  \end{center}
+\begin{tikzpicture}[remember picture, overlay]
+  \small\tt%so that width computes the correct size
+  \node<all:2-|handout:1>[ovalise=width("int a")] (ovaldecla) at (decla) {};
+  \node<all:2-|handout:1>[ovalise=width("int b")] (ovaldeclb) at (declb) {};
+  \node<all:2-|handout:1>[yshift=.5em,xshift=12em] (textdeclb) at
+  (ovaldeclb.east) {\color{red} \textnormal{Déclarations \textbf{locale}}};
+
+  \node<all:2-|handout:1>[yshift=-5em,xshift=4em] (textnox) at
+  (argy) {\color{red}
+    \textnormal{\large \xcancel{a}
+      \xcancel{b} non visibles}};
+
+  \node<all:3>[ovalise=width("x")] (ovalargx) at (argx) {};
+  \node<all:3>[ovalise=width("y")] (ovalargy) at (argy) {};
+  \node<all:3-|handout:1>[yshift=-1em,xshift=5em] (textargy) at
+  (argy) {\color{red} \textnormal{paramètres \textbf{locaux}}};
+  \node<all:3-|handout:1>[yshift=2em,xshift=12em] (textnoa) at
+  (ovaldecla.east) {\color{red}
+    \textnormal{\large \xcancel{x}
+      \xcancel{y} non visibles}};
+  
+\end{tikzpicture}
+
+\end{frame}
+
+\begin{frame}<handout:1>[fragile]\frametitle{Portée des variables}
+  \begin{center}
+    \begin{minipage}{.75\linewidth}
+      \begin{lstlistingC}
+void ecrireAdd(int /*@\tikz \coordinate (argx);@*/x, int /*@\tikz \coordinate (argy);@*/y) {
+  ecrireInt(x);
+  ecrireString(" + ");
+  ecrireInt(y);
+  ecrireString(" = ");
+  ecrireInt(x+y);
+  ecrireSautDeLigne();
+}
+
+void testecrireAdd() {
+  ecrireString("Début test ecrireAdd\n");
+  int x = 5;
+  int y = 2;
+  ecrireAdd(/*@\tikz \coordinate (mainx);@*/x,/*@\tikz \coordinate (mainy);@*/y);
+  ecrireAdd(7,13);
+}
+      \end{lstlistingC}
+    \end{minipage}
+  \end{center}
+\begin{tikzpicture}[remember picture, overlay]
+  \small\tt%so that width computes the correct size
+  \node<all:1-|handout:1>[ovalise=width("x")] (ovalmainx) at (mainx) {};
+  \node<all:1-|handout:1>[ovalise=width("y")] (ovalmainy) at (mainy) {};
+  \node<all:1>[ovalise=width("x")] (ovalargx) at (argx) {};
+  \node<all:1>[ovalise=width("y")] (ovalargy) at (argy) {};
+
+  \node<all:1>[yshift=10em,xshift=3em] (textargy) at (ovalmainy-|argy)
+  {\textnormal{\color{red}Rien à voir!}};
+  \draw<all:1->[red>,dashed] (textargy) to (ovalargy);
+  \draw<all:1->[red>,dashed] (textargy) to (ovalmainy);
+
+\end{tikzpicture}
+
+\end{frame}
+
+\begin{frame}<handout:1>\frametitle{Portée des variables}
+  Règle générale très importante
+
+  \begin{center}\Large
+    Seules informations transmises à une procédure/fonction lors de
+    l'appel: \textbf{valeurs (\xcancel{noms})} des paramètres
+  \end{center}\vfill\vfill
+
+  
+  \visible<all:2-|handout:1>{P.S. Sauf
+    \only<all:2|handout:0>{variables
+      globales}\only<all:3-|handout:1>{\xcancel{variables globales}}
+    \visible<all:3-|handout:1>{mais {\color{red}\Huge c'est mal} (et
+      interdit ici)}}
+
+    \visible<all:4-|handout:1>{\color{red}\Huge Parce-que}
+\end{frame}
+
+
+
+\subsection{Définition de fonction}
+
+
+\begin{frame}[fragile]\frametitle{Définir une fonction}
+  \begin{itemize}
+  \item[] Syntaxe:
+  \item<2-> type de la valeur retournée (\xcancel{\texttt{\bf void}})
+  \item<3-> nom de la fonction
+  \item<4-> paramètres
+  \item<5-> corps de la fonction: instructions à réaliser à chaque
+    appel de la méthode \visible<6->{\textbf{+ Va\tikz \coordinate (retval);leur à retourner}}
+  \end{itemize}
+
+  \begin{center}
+    \begin{minipage}{.5\linewidth}
+      \begin{lstlistingC}
+/*@\onslide<2->@*/int /*@\onslide<3->@*/f/*@\onslide<4->@*/(paramètres)/*@\onslide<5->@*/ {
+
+  instructions
+  /*@\tikz \coordinate (return);@*/return ...;
+}
+      \end{lstlistingC}
+    \end{minipage}
+  \end{center}
+  \begin{tikzpicture}[remember picture, overlay]
+    \small\tt%so that width computes the correct size
+    \node<all:6-|handout:1>[ovalise=width("return ...")] (ovalreturn) at (return) {};
+    \node<all:6-|handout:1>[text height={1em}] (ovalreturn) (retvalpluslarge) at (retval) {};
+    \draw<all:6-|handout:1>[red>,dashed,out=-120,in=140]
+    (retvalpluslarge) to (ovalreturn.west);
+  \end{tikzpicture}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Définir une fonction}
+  \begin{center}
+    \begin{minipage}{.5\linewidth}
+      \begin{lstlistingC}
+/*@\tikz \coordinate (rettype);@*/int f(paramètres) {
+
+  instructions
+  return /*@\tikz \coordinate (return);@*/...;
+}
+      \end{lstlistingC}
+    \end{minipage}
+  \end{center}
+  \begin{tikzpicture}[remember picture, overlay]
+    \small\tt%so that width computes the correct size
+    \node<all:2-|handout:1>[ovalise=width("...")] (ovalreturn) at (return) {};
+    \node<all:2-|handout:1>[xshift=5em] (textreturn) at
+    (ovalreturn.east) {\color{red}\textnormal{doit être un }\bfseries int};
+    \node<all:2-|handout:1>[ovalise=width("int")] (ovalrettype) at (rettype) {};
+    \draw<all:2-|handout:1>[red>,dashed]
+    (ovalrettype) to (ovalreturn.west);
+  \end{tikzpicture}
+\end{frame}
+
+
+% Exemples
+% max
+% min
+% 
+
+\begin{frame}[fragile]\frametitle{Définir une fonction -- Exemples}
+  \begin{center}
+    \begin{minipage}{.65\linewidth}
+      \begin{lstlistingC}
+int oppose (int x) {
+  return -x;
+}
+\end{lstlistingC}
+
+% double est un mot-clé.
+      \begin{lstlistingC}
+int x2plus2xyplusy2 (int x,int y) {
+  return x*x + 2*x*y + y*y;
+}
+\end{lstlistingC}
+
+\begin{lstlistingC}
+int max (int x, int y) {
+  if (x>y) { return x; }
+  else { return y; }
+}
+\end{lstlistingC}
+\end{minipage}
+\end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Définir une fonction -- Exemples}
+  \begin{center}
+    \begin{minipage}{.65\linewidth}
+      \begin{lstlistingC}
+int somme3 (int x,int y,int z) {
+  int res = x;
+  res = res + y;
+  res = res + z;
+  return res;
+}
+
+void testsomme3 () {
+  ecrireInt(somme3(2,7,11));
+  int /*@\tikz \coordinate (return);@*/x = somme3(5,6,7);
+  ecrireInt(x);
+}
+void main() {
+  testsomme3();
+}
+\end{lstlistingC}
+\end{minipage}
+\end{center}
+\end{frame}
+
+
+
+
+\frame
+{
+ 
+\begin{center} {\huge \textbf{\textcolor{NavyBlue}{Conditionnelle}}} \end{center}
+}
+\begin{frame}[fragile]\frametitle{Conditionnelle}
+  Problème:
+  \begin{itemize}
+  \item spécifier différents cas possibles à l'exécution (\og conditions\fg{})
+  \item spécifier un comportement différent pour chaque cas
+  \item[$\Rightarrow$] tester une condition
+  \item deux séquences d'instructions différentes en fonction du
+    résultat du test
+  \end{itemize}
+
+  \begin{center}
+\begin{lstlistingC}
+if (cond) {
+  ... // instructions si test vrai
+}
+else {
+  ... // instructions si test faux
+}
+\end{lstlistingC}
+  \end{center}
+  \danger \og tester\fg{} une condition $\neq$ \og tester\fg{} une fonction
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Conditionnelle}
+  \begin{center}
+\begin{lstlistingC}
+if (cond) {
+  ... // instructions si test vrai
+}
+else {
+  ... // instructions si test faux
+}
+\end{lstlistingC}
+  \end{center}
+  \begin{itemize}
+  \item On peut omettre le \lstinlineCv!else! si séquence vide
+    d'instruction
+  \item Conseil: Mettez toujours les accolades
+  \end{itemize}
+\end{frame}
+
+
+
+\begin{frame}[fragile]\frametitle{Conditionnelle}
+\begin{lstlistingC}
+int x;
+x = lireInt();
+if (/*@\tikz \coordinate (cond);@*/x >= 0) {
+  /*@\tikz \coordinate (then);@*/ecrireString("nombre positif ou nul.");
+}
+else {
+  /*@\tikz \coordinate (else);@*/ecrireString("nombre strictement négatif.");
+}
+/*@\tikz \coordinate (suite);@*/ecrireString("\n");
+
+\end{lstlistingC}
+
+\begin{itemize}
+\item<2-> évaluation de la condition (\lstinlineCv!x~>=~0!).
+\item<3-> si condition \emph{vraie} premère séquence d'instructions
+\item<4-> sinon deuxième séance
+\item<5-> après 3. ou 4. on exécute de toute façon la suite
+\end{itemize}
+\begin{tikzpicture}[remember picture, overlay]
+  \small\tt
+  \node<all:2|handout:1>[ovalise=width("x xx 0")] (ovalcond) at (cond) {};
+  \node<all:3|handout:1>[ovalise=width("ecrireString(xnombre positif ou nul.x)")] (ovalthen) at (then) {};
+  \node<all:4|handout:1>[ovalise=width("ecrireString(xnombre strictement négatif.x)")] (ovalelse) at (else) {};
+  \node<all:5|handout:1>[ovalise=width("ecrireString(xxnx)")] (ovalsuite) at (suite) {};
+
+\end{tikzpicture}
+
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Test}
+  \begin{center}
+    \lstinlineCv!x <= 0!
+  \end{center}
+  \begin{itemize}
+  \item expression ($\neq$ instruction)
+  \item à l'exécution retourne une valeur
+  \item valeurs possibles? \og VRAI\fg{} ou \og FAUX\fg{}
+  \item n'existe pas en C ($\neq$ Java, C++, etc)
+  \item entier!
+  \item valeur $0$: FAUX
+  \item valeur $\neq 0$: VRAI
+  \end{itemize}
+  \begin{center}
+    \danger\danger\danger\danger\danger\danger\danger
+  \end{center}
+\end{frame}
+
+\begin{frame}<handout:1>[fragile]\frametitle{\danger typage des tests}
+  \begin{minipage}{.4\linewidth}
+\begin{lstlistingC}
+int x = 0;
+if (x = 0) {
+  ecrireString("Oui");
+} else {
+  ecrireString("Non");
+}
+\end{lstlistingC}
+    \onslide<2->{\og Non\fg{}}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{.4\linewidth}
+\begin{onlyenv}<all:3-|handout:1>
+\begin{lstlistingC}
+int x = 0;
+if (x /*@\tikz \coordinate (egal);@*/== 0) {
+  ecrireString("Oui");
+} else {
+  ecrireString("Non");
+}
+\end{lstlistingC}
+\og Oui\fg{}
+\end{onlyenv}
+\end{minipage}
+  
+  \begin{itemize}
+  \item<2-> \verb!x = 0! \xcancel{test} affectation!
+  \item<2-> En C: affectation retourne la valeur de droite
+  \item<2-> ici retourne $0$ reconnu comme FALSE
+  \item<2-> branche \lstinlineCv!else! exécutée
+  \end{itemize}
+
+\begin{tikzpicture}[remember picture, overlay]
+  \small\tt
+  \node<all:3-|handout:1>[ovalise=width("++")] (ovalegal) at (egal) {};
+\end{tikzpicture}
+
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Opérateurs de test}
+
+  \begin{itemize}
+  \item \lstinlineCv!e1 == e2!\ et\ \  \lstinlineCv+e1 != e2+
+  \item \lstinlineCv!e1 <= e2! et\ \ \lstinlineCv!e1 >= e2!
+  \item \lstinlineCv!e1 < e2! et\ \ \lstinlineCv!e1 > e2!
+  \item \lstinlineCv+!test+
+  \item \lstinlineCv!test1 && test2! et\ \ \lstinlineCv!test1 || test2!
+  \end{itemize}
+
+\end{frame}
+
+% TD: lire et évaluer sur papier des expression booléennes.
+
+% plusieurs return dans une fonction/procédure;
+% switch?
+
+\begin{frame}[fragile]\frametitle{Tester le résultat d'une fonction}
+  \begin{center}
+    \begin{minipage}{.6\linewidth}
+      \begin{lstlistingC}
+int add3(int x, int y, int z){
+  return x + y + z;
+}
+
+void testerAdd3 () {
+  int res = add3(2,3,4);
+  if (res != 9) {
+    ecrireString("Erreur sur add3!");
+    ecrireString("Attendu: 9");
+    ecrireString("Obtenu: ");
+    ecrireInt(res);
+    ecrireSautDeLigne();
+  }
+}
+
+void main() {
+  testerAdd3();
+}
+      \end{lstlistingC}
+    \end{minipage}
+  \end{center}
+\end{frame}
+
+
+
+\end{document}

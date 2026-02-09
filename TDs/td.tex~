@@ -1,0 +1,682 @@
+\documentclass{enonce}
+\usepackage{enumerate}
+\usepackage{listings}
+\usepackage{graphicx}
+\lstset{language=C}
+\lstset{%
+  %escapeinside={(*@}{@*)},%
+  %morecomment=*[n][\it\ttfamily]{/\\*\\*}{\\*/},% reconnaît mots-clés, commentaires...
+  %moredelim=[is][\it]{/*}{*/},% éviter keyword style in comment
+  flexiblecolumns=false,%
+  %mathescape=true,%
+  basicstyle=\tt\small,%
+  keywordstyle=\bf\ttfamily,%
+  commentstyle=\it\ttfamily,%
+  frame=tblr,% top + bottom
+  morekeywords={String},%
+  rangeprefix=/*@,rangesuffix=@*/,%
+  includerangemarker=true,% false Plante avec l'utf8
+  % backgroundcolor=\color{grey2},%
+  % Astuce pour masquer qd meme les range:
+  literate={/*@debutexo1@*/}{{\ }}1{/*@finexo1@*/}{{\ }}1{/*@debutexo2@*/}{{\ }}1{/*@finexo2@*/}{{\ }}1%
+  {à}{{\`a}}1{è}{{\`e}}1{ê}{{\^e}}1{é}{{\'e}}1{ù}{{\`u}}1{ç}{{\,c}}1{î}{{\^i}}1{À}{{\`A}}1{È}{{\`E}}1{Ê}{{\^E}}1{É}{{\'E}}1{Ù}{{\`U}}1{Ç}{{\,C}}1{Î}{{\^I}}1,%
+  showstringspaces=false,%
+}
+ 
+\usepackage[colorlinks,urlcolor=blue,linkcolor=blue]{hyperref}
+\title{TP1 Introduction au langage C}
+\author{Algo et JavaScript}
+\date{}
+
+
+\begin{document}
+%\excludecomment{correction}
+
+\noindent~
+\begin{minipage}{9cm}
+CNAM\\
+DSP Informatique - Réseau de la Réussite Vincent Merle
+%IFIPS Informatique 1ère année
+\end{minipage}
+%\hfill Année 2018--2019 ~
+
+%\title{IUT-L1 - USAL22}
+%\author{Les Exceptions}
+
+\vspace{1mm}
+
+\noindent ~\hrulefill~
+
+\vspace{2mm}
+
+\noindent
+\begin{minipage}{9cm}
+Algo/JavaScript -- USAL34\\
+%Votre nom :
+\end{minipage}
+
+\bigskip
+
+%\vspace{1cm}
+
+\begin{center}
+\bf {\Large Exercices de TD}\\
+%\bf {\Large Interrogation écrite}\\
+%31 mai 2019
+\end{center}
+%\bigskip
+
+
+%\bigskip
+
+\vspace{0.5cm}
+\noindent {\large \textbf{1. Conception de programmes}}\\
+
+\vspace{0.2cm}
+
+\noindent Pour écrire un programme il faut suivre les étapes suivantes :
+\begin{enumerate}
+\item Déterminer les Entrées du programme
+\item Déterminer les sorties du programme
+\item Concevoir l'algorithme qui à partir des données produira la sortie
+\item Traduire l'algorithme sous forme d'une fonction \texttt{C}
+\end{enumerate}
+
+Pour chacuns des problèmes suivants détaillez les étapes de conception décrites ci-dessus.
+
+\begin{exo}
+  ~\\
+ 
+Ecrire un programme demandant à l'utilisateur d'entrer son âge, et l'année courante, et qui affiche ensuite à l'écran l'année de sa naissance et le nombre de jours vécus.
+
+  \begin{correction}
+    \begin{lstlisting}
+void main( ){
+  ecrireString("Entrez votre âge\n");
+  int age = lireInt();
+  ecrireString("Entrez l'année\n");
+  int annee = lireInt();
+  int naissance = annee - age;
+  ecrireString("Votre annee de naissance est ");
+  ecrireInt(naissance);
+  ecrireChar('\n');
+  int nb_jour= age*365;
+  ecrireString("Vous avez vécu ");
+  ecrireInt(nb_jours);
+  ecrireChar(' jours\n');
+}
+  \end{lstlisting}
+    \end{correction}
+\end{exo}
+
+\begin{exo}[Moyenne et Somme] ~
+ Écrivez un programme \texttt{Moyenne} qui lit trois notes et
+affiche leur somme et leur moyenne.  
+\end{enumerate}
+\begin{correction}
+\begin{lstlisting}
+     void main( ) {
+       double sum=0;
+        int nb_int=3; 
+        double temp;
+        ecrireString("Entrez la première note :");
+        temp=lireDouble(); 
+        sum=sum+temp;
+        ecrireString("Entrez la deuxième note :");
+        temp=lireDouble(); 
+        sum=sum+temp;
+        ecrireString("Entrez la troisième note :");
+        temp=lireDouble(); 
+        sum=sum+temp;
+        ecrireString("La somme est :");
+        ecrireInt(sum);
+        ecrireString("La moyenne est :");
+        ecrireInt(sum/nb_int);
+    }
+\end{lstlisting}
+\end{correction}
+\end{exo}
+
+\begin{exo}[Cercle] ~\\
+Écrivez un programme \texttt{Cercle} qui demande le rayon d'un
+cercle et affiche son périmètre et sa surface.  Vous pourrez vous
+servir de la constante $\pi$ dont la valeur est une $3.1416$.
+\begin{correction}
+\begin{lstlisting}
+    void main() {
+        double rayon;
+        ecrireString("Entrez le rayon du cercle :");
+        rayon=lireDouble(); 
+        ecrireString("Le périmètre est :");
+        ecrireDouble(2*Math.PI*rayon);
+        ecrireString("La surface est :");
+        ecrireDouble(3.1416*(rayon*rayon));
+    }
+\end{lstlisting}
+\end{correction}
+\end{exo}
+\begin{exo}[Conversion]~\\
+Écrivez un programme \texttt{Conversion} qui demande une
+température en degrés Celsius et la convertit en degrés Farenheit. On
+rappelle la formule \[ f = \frac{9 c}{5}+32 \] où $f$ est la température en degrés Farenheit et $c$ en degrés Celsius.  (Pensez au type des variables --- ce ne sont pas forcément des entiers.)
+\begin{correction}
+\begin{lstlisting}
+     void main( ) {
+        double temp;
+        ecrireString("Entrez la température en degrés Celsius :");
+        temp=lireDouble(); 
+        ecrireString("La température en degré Farenheit est :");
+        ecrireDouble((9*temp)/5 +32);
+    }
+\end{lstlisting}
+\end{correction}
+\end{exo}
+
+\begin{exo}[TTC]~\\
+ Écrivez un programme \texttt{TTC} qui à partir d'un prix hors
+taxes et d'un taux de TVA calcule le prix toutes taxes comprises
+correspondant.
+\begin{correction}
+\begin{lstlisting}
+     void main( ) {
+        double taux;
+        double prix;
+        ecrireString("Entrez le taux de tva :");
+        taux=lireDouble(); 
+        ecrireString("Entrez le prix :");
+        prix=lireDouble(); 
+        ecrireString("Le prix TTC est :");
+        ecrireDouble(1.196*prix);
+    }
+}
+\end{lstlisting}
+\end{correction}
+\end{exo}
+
+\begin{exo}
+  ~\\
+  Ecrire un programme qui permute deux valeurs entières. Ces valeurs seront lues au clavier. Même question pour deux caractères.
+
+  \begin{correction}
+    \begin{lstlisting}
+void main( ){
+  int a = lireInt();
+  int b= lireInt();
+  int temp =a;
+  a = b;
+  b = temp;
+}
+
+void main( ){
+  char a = lireChar();
+  char b= lireChar();
+  char temp =a;
+  a = b;
+  b = temp;
+}
+    \end{lstlisting}
+    \end{correction}
+\end{exo}
+
+\section{conditionnelle}
+
+\begin{exo}
+~\\
+Concevoir le programme qui calcule la note finale d'une unité d'enseignement étant données la note du partiel et celle de
+l'examen et sachant que :
+\begin{itemize}
+\item une note inférieure à 7 à l'examen est éliminatoire
+\item si la note d'examen est supérieure à 7, la note finale est la moyenne des deux notes si elle
+avantage l'étudiant. Sinon, la note finale est la note d'examen.
+\end{itemize}
+\begin{correction}
+
+
+\begin{enumerate}
+\item Entrées : la note d'examen \texttt{ne} et celle du partiel \texttt{np}
+\item Sorties : la note finale  \texttt{nf}
+\item Algorithme : 
+\begin{verbatim}
+Si (ne < 7) alors 
+  nf = ne
+Sinon 
+  moy = moyenne de ne et np
+  si (moy > ne) alors 
+    nf = moy
+  sinon 
+    nf = ne
+\end{verbatim}
+\item Java :
+\begin{lstlisting}
+double calculNote(double ne, double nf ){
+  double nf,moy;
+  if (ne < 7) {
+    nf = ne;
+  }
+  else { 
+    moy = (ne + np)/2;
+    if (moy > ne){
+      nf = moy;
+    }
+    else {
+     nf = ne;
+    }
+  }
+  return nf;
+}
+\end{lstlisting}
+
+\end{enumerate}
+  
+
+\end{correction}
+\end{exo}
+
+
+\begin{exo}
+~\\
+Concevoir le programme qui teste si un entier appartient à l'intervalle donné par deux nombres entiers.
+\begin{correction}
+
+
+\begin{enumerate}
+\item Entrées : un entier \texttt{e}, un intervalle \texttt{$[a,b]$}
+\item Sorties : un booléen \texttt{appartient} 
+\item Algorithme :
+\begin{verbatim}
+ Si (e < a) ou (e > b) alors 
+   appartient = false 
+ sinon 
+   appartient = true
+\end{verbatim}
+\item Java :
+\begin{lstlisting}
+ boolean appartient(int e, int a, int b){
+  boolean appartient; 
+  if ((e < a) || (e > b)) 
+    appartient = false;
+  else
+    appartient = true;   
+  return appartient;
+}
+\end{lstlisting}
+
+\end{enumerate}
+  
+
+\end{correction}
+\end{exo}
+
+
+
+\begin{exo}
+~\\
+Concevoir le programme qui teste si une année est bissextile. On sait qu'une année divisible par 4 est bissextile sauf si elle
+est divisible par 100, cependant les années divisibles par 400 sont également bissextiles.
+\begin{correction}
+
+\begin{enumerate}
+\item Entrées : une année \texttt{annee}
+\item Sorties : un booléen \texttt{bissextile}
+\item Algorithme : 
+\begin{verbatim}
+si (annee divisible par 4) alors 
+  si (annee divisible par 100) alors 
+    si (annee divisible par 400) alors 
+      bissextile = true
+    sinon 
+      bissextile = false
+  sinon 
+    bissextile = true
+sinon 
+  bissextile = false
+\end{verbatim}
+\item Java :
+\begin{lstlisting}
+ boolean bissextile(int annee){
+  boolean bissextile;
+  if (annee \% 4 == 0){
+    if (annee \% 100){
+      if (annee \% 400)
+        bissextile = true;
+      else 
+        bissextile = false
+    }
+    else 
+      bissextile = true
+  }
+  else
+    bissextile = false
+  return bissextile;    
+}
+\end{lstlisting}
+
+\end{enumerate}
+
+  
+
+\end{correction}
+\end{exo}
+
+
+\begin{exo}
+~\\
+Concevoir le programme qui qui détermine et renvoie le plus grand parmi trois nombres entiers.
+\begin{correction}
+
+\begin{enumerate}
+\item Entrées : 3 entiers \texttt{a},  \texttt{b} et  \texttt{c}.
+\item Sorties : un entier \texttt{max}
+\item Algorithme :
+\begin{verbatim}
+Si (a > b) alors 
+  max = a 
+sinon 
+  max =b
+Si (c > max) alors 
+  max =c
+\end{verbatim}
+\item Java :
+\begin{lstlisting}
+ int max(int a, int b , int c ){
+  int max;
+  if (a > b)
+    max = a;  
+  else
+    max =b;
+  if (c > max)
+    max =c;
+  return max;
+}
+\end{lstlisting}
+
+\end{enumerate}
+
+  
+
+\end{correction}
+\end{exo}
+
+
+\begin{exo}
+~\\
+ Concevoir le programme calcule la valeur absolue d'un entier.
+\begin{correction}
+\begin{enumerate}
+\item Entrées : un entier \texttt{a}
+\item Sorties : un entier \texttt{absolue}
+\item Algorithme :
+\begin{verbatim}
+si (a<0)
+  absolue = -a
+sinon
+  absolue = a;
+\end{verbatim}
+\item Java :
+\begin{lstlisting}
+ int valeurAbsolue(int a){
+  int absolue;
+  if (a<0)
+    absolue = -a;
+  else
+    absolue = a;
+  return absolue;    
+}
+\end{lstlisting}
+
+\end{enumerate}
+
+
+  
+
+\end{correction}
+\end{exo}
+
+\begin{exo}
+~\\
+Concevoir le programme qui, étant donné la date d'un jour, calcule la date du lendemain de ce jour.
+\begin{correction}
+\begin{enumerate}
+\item Entrées :
+\item Sorties :
+\item Algorithme :
+\begin{verbatim}
+si ((m est février et que j est 29 ou que j est 28 et que a est bissextile) ou 
+   (m est un mois de 31 jours et j est 31 ) ou
+   (m est un mois de 30 jours et j est 30)) alors
+     nj = 1 
+     si (m est décembre) alors
+       nm = 1
+     sinon
+       nm = m +1
+sinon 
+     nj=j+1
+     nm =m 
+si ( j est 31 et m est décembre) alors
+     na = a +1
+sinon
+     na = a
+\end{verbatim}
+\item Java :
+\begin{lstlisting}
+ void lendemain(int j, int m, int a){
+  int nj;
+  int nm;
+  int na;
+  if ( ((m ==2) && ((j == 29) || ((j==28) && !bissextile(a))))
+      || (((m==1) || (m==3) || (m == 5) || (m==7) || (m==8) || (m == 10)  || (m == 12)) && (j == 31))
+      || (((m==4) || (m==6) || (m == 9) || (m==11)) && (j == 30)))
+    nj = 1;
+    if (m==12)
+      nm = 1 ;
+    else
+      nm=m+1;
+  else 
+    nj=j+1;
+    nm = m;
+  if ( (j == 31) && (m ==12))
+    na = a +1;
+  else
+    na = a;
+}
+
+\end{lstlisting}
+
+\end{enumerate}
+
+
+  
+
+\end{correction}
+\end{exo}
+
+
+
+
+\begin{exo}[Conditionnelle]
+~\\
+L'instruction \texttt{System.out.println( String chaine )} permet d'afficher une chaîne de caractères sur un terminal. \\
+Supposons que la variable \texttt{age} contienne une valeur entière.\\
+Compléter la seule instruction \texttt{System.out.println(...)}, afin d'afficher le message "tarif réduit" si la valeur de \texttt{age} est inférieure ou égale à 26 ou le message "tarif normal" si elle est supérieure à 26.
+\begin{correction}
+
+\texttt{System.out.println((age<=26)? "tarif réduit" : "tarif normal");}
+\end{correction}
+\end{exo}
+\newpage
+
+\noindent {\large \textbf{2. Les types en Java}}\\
+%\vspace{0.2cm}
+\begin{exo}[Valeur  des expressions et des variables]
+~\\
+Quelle est la valeur des expressions suivantes ?
+\begin{enumerate}
+\item \texttt{53\%7+5*5-3}
+\item \texttt{12+53\%7*(4*3\%2)}
+\end{enumerate}
+
+Quelles sont les valeurs de b et c ?\\
+\texttt{int a=1;}\\
+\texttt{boolean b = !(a>0) \&\& (a>0);}\\
+\texttt{boolean c = (a!=1) == !(a==1);}\\
+
+\begin{correction}
+\begin{enumerate}
+\item \texttt{53\%7+5*5-3} : \textbf{26} 
+\item \texttt{12+53\%7*(4*3\%2)} : \textbf{12 }\end{enumerate}
+
+
+\texttt{int a=1;}\\
+\texttt{boolean b = !(a>0) \&\& (a>0);} : \textbf{false}\\
+\texttt{boolean c = (a!=1) == !(a==1);} : \textbf{true}\\
+
+
+
+\end{correction}
+\end{exo}
+
+
+\begin{exo}[Evaluation d'expressions]~
+
+\begin{enumerate}
+\item  Soient les déclarations de variables :\\
+\texttt{
+int a = 1 ;\\
+double d = 1.0 ;\\
+} 
+
+Déterminer mentalement le résultat de chacune de ces expressions prises isolément 
+
+\begin{enumerate}[a)]
+\item \texttt{a = 46/9 ;}
+\item \texttt{a = 46\%9+4*4-2 ;}
+\item \texttt{a = 45+43\%5*(11*3\%2) ;}
+\item \texttt{d = 4+d*d+4;}
+\end{enumerate}
+
+\item Quel est le type et la valeur de chacune des expressions suivantes ?\\
+\texttt{
+\begin{tabular}{l@{\qquad\qquad}l@{\qquad\qquad}l@{\qquad\qquad}l}
+4 / 3&(4 - 3) * 5&1.3 / 0&(int)2.7\\
+4 / 3.0&117 \% 7&(-1.3) / 0\\
+4 - 3 * 5&0.3 - 0.2&0 / 1.3\\
+4 - (3 * 5)&0.2 - 0.1&0 / 0
+\end{tabular}
+}
+\end{enumerate}
+\begin{correction}
+\begin{lstlisting}
+ void main(String[] args) {
+       int a =1;
+       double d=1.0;
+       a=46/9;
+       System.out.println("a = 46/9 = " + a);
+       a=46%9 +4*4 -2;
+       System.out.println("a = 46%9 +4*4 -2 = " + a);
+       a=45+43%5*(11*3%2);
+       System.out.println("a = 45+43%5*(11*3%2)= " + a);
+       d=4 + d*d+ 4;
+       System.out.println("d = 4 + d*d+ 4 = " + d);
+       System.out.println("4/3.0 = " + 4/3.0);
+       System.out.println("4-3*5 = " + (4-3*5));
+       System.out.println("4-(3*5) = " + (4-(3*5)));
+       System.out.println("(4-3)*5 = " + ((4-3)*5));
+       System.out.println("117%7 = " + 117%7);
+       System.out.println("0.3-0.2 = " + (0.3-0.2));
+       System.out.println("0.2-0.1 = " + (0.2-0.1));
+       //System.out.println("1.3/0 = " + 1.3/0);
+       //System.out.println("(-1.3)/0 = " + (-1.3/0));
+       System.out.println("0/1.3 = " + 0/1.3);
+       //System.out.println("0/0 = " + 0/0);
+       System.out.println("(int)2.7 = " + (int)2.7);
+           
+       
+    }
+}
+\end{lstlisting}
+\end{correction}
+\end{exo}
+
+
+
+\begin{exo}[Evaluation d'expressions booléennes]~
+\begin{enumerate} 
+\item Qu'est-ce qu'un booléen ?  Comment s'appelle en Java le type
+des booléens ?
+\item Quelles sont les valeurs des expressions booléennes suivantes ?\\
+\texttt{
+\begin{tabular}{l@{\qquad\qquad\qquad}l}
+10 > 5&false || (5 != 4)\\
+10 == 5&false \&\& (5 != 4)\\
+5 == 5&!(30 \% 3 == 0)\\
+5 == 11 - 6&0.3 - 0.2 == 0.2 - 0.1
+\end{tabular}
+}
+
+\end{enumerate}
+
+\begin{correction}
+\begin{lstlisting}
+public class Booleen {
+       void main(String[] args) {
+       System.out.println("10 > 5 " + (10 > 5));
+       System.out.println("10 == 5 " + (10 == 5));
+       System.out.println("5 == 5 " + (5 == 5));
+       System.out.println("5 == 11-6 " + (5 == 11-6));
+       System.out.println("false || (5 !=4) = " + (false || (5 !=4)));
+       System.out.println("false && (5 !=4) = " + (false && (5 !=4)));
+       System.out.println("!(30%3==0)" + !(30%3==0));
+       System.out.println("0.3 -0.2 == 0.2 - 0.1 = " + ((0.3 -0.2) == (0.2 - 0.1)));
+           
+      } 
+}
+\end{lstlisting}
+\end{correction}
+\end{exo}
+
+
+
+\vspace{0.5cm}
+
+\noindent {\large \textbf{3. Les chaînes de caractères}}\\
+
+\vspace{0.2cm}
+
+\begin{exo}
+Ecrire une méthode qui compare deux chaînes de caractères au regard de l'ordre lexicographique (l'ordre du dictionnaire pour les caractères non accentués). On n'utilisera pas la méthode \texttt{compareTo} mais on cherchera à produire des résultats identiques à ceux de cette méthode.
+
+\begin{correction}
+  
+rrr
+\end{correction}
+\end{exo}
+
+\begin{exo}
+Ecrire un programme qui demande à l'utilisateur un texte et une lettre, puis affiche le nombre d'occurrences de cette lettre dans le texte de départ.
+
+\begin{correction}
+    rrr
+
+\end{correction}
+\end{exo}
+
+
+\begin{exo}
+Ecrire un programme qui demande à l'utilisateur un texte et un mot, puis affiche pour chaque lettre du mot, le nombre d'occurrences de cette lettre dans le texte de départ.
+
+\begin{correction}
+    rrr
+
+\end{correction}
+\end{exo}
+
+
+
+
+
+
+
+
+
+
+\end{document}
