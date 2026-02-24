@@ -338,7 +338,8 @@
 	planning_dsp_2026-02.pdf
 } 
 \end{center}
-Supports de cours, TD et TP sur
+%Supports de cours, TD et TP sur
+Supports de cours et TP sur
  \hyperref{https://par.moodle.lecnam.net/course/view.php?id=28840}{}{}{\textcolor{blue}{\texttt{https://par.moodle.lecnam.net/course/view.php?id=28840}}}
 % \hyperref{https://lecnam.net}{}{}{\textcolor{blue}{\texttt{https://lecnam.net}}}
 % ou \hyperref{https://cedric.cnam.fr/~lamberta/enseignements/DSP/C}{}{}{\textcolor{blue}{\texttt{https://cedric.cnam.fr/$\sim$lamberta/enseignements/DSP/C}}}.
@@ -584,7 +585,7 @@ Il faut  \textbf{\textcolor{NavyBlue}{traduire}} le langage de haut niveau vers 
 
 
 \begin{frame}[fragile]\frametitle{Structure d'un programme en \texttt{C}}
-Un programme contient \texttt{C} au moins un fichier principal contenant une fonction \texttt{\textcolor{NavyBlue}{main}} qui recoit la suite d'instructions à exécuter.
+Un programme \texttt{C} contient au moins un fichier principal contenant une fonction \texttt{\textcolor{NavyBlue}{main}} qui recoit la suite d'instructions à exécuter.
 
 \vspace{1cm}
 
@@ -742,7 +743,7 @@ Considérons les fonctions :
 
 
 \begin{itemize}
-  \item \lstinlineCv!ecrireInt(lireInt()+lireInt())! fait 2 lectures clavier.
+  \item \lstinlineCv!ecrireInt(lireInt()+lireInt()*lireInt())! fait 3 lectures clavier.
   \item comment faire pour utiliser plusieurs fois le résultat du
     premier \lstinlineCv!lireInt()!?
    \end{itemize}
@@ -801,7 +802,7 @@ Les opérations possibles sur les variables sont :
     
     \begin{itemize}
     \item signe \og égal\fg{} (\lstinlineCv!=!) ne signifie pas
-      égalité (voir\lstinlineC!==!)
+      égalité (voir \lstinlineCv!==!)
     \item \lstinlineCv!x = 12;! signifie \og mettre la valeur 12
       dans la variable \texttt{\textcolor{NavyBlue}{x}}\fg.
     \end{itemize}\medskip
@@ -984,7 +985,7 @@ Type & Ensemble des valeurs & Taille \\\hline
 \vspace{0.5cm}
 \item \textbf{\textcolor{NavyBlue}{Opérateurs relationnels}}
 \begin{itemize}
-\item \texttt{<, >, <=, >=, ==, !=}
+\item \texttt{<, >, <=, >=, ==, !=, \&\&, ||}
 \vspace{0.2cm}
 \item Exemples : \texttt{5 > x, a == 'b', (a != 0) \&\& (a <= 100)}
 \end{itemize}
@@ -997,7 +998,7 @@ Les expressions composées de plusieurs opérateurs sont évaluées de la \textbf{\t
 \vspace{1cm}
 \begin{itemize}
 \item \texttt{2 + 3 * 4} $\Rightarrow$  équivaut à \texttt{2 +(3*4)} \\
-$\Rightarrow$ s'évalue en \texttt{14} et non pas en \texttt{20}
+$\Rightarrow$ s'évalue en \texttt{14} et non pas en \texttt{24}
 \vspace{0.5cm}
 \item \texttt{2 + 3 > 4} $\Rightarrow$ s'évalue en \texttt{vrai}
 \vspace{0.5cm}
@@ -1011,7 +1012,7 @@ De la plus haute à la plus basse priorité :
 \vspace{1cm}
 \begin{center}
 \begin{tabular}{c}
- \texttt{+,-} \\
+ % \texttt{+,-} \\
  \texttt{!}\\
 \texttt{* / \%} \\
 \texttt{+ -}\\
@@ -1126,7 +1127,8 @@ De la plus haute à la plus basse priorité :
   Une \emph{\textcolor{NavyBlue}{instruction}}
   \begin{itemize}
   \item morceau de programme/recette = morceau de texte,
-  \item se termine (en C, C++, \texttt{C}) par un point-virgule: \lstinlineCv!;!
+  %\item se termine (en C, C++, \texttt{C}) par un point-virgule: \lstinlineCv!;!
+  \item se termine (en C, C++) par un point-virgule: \lstinlineCv!;!
   \item opération \emph{réalisée} à l'exécution,
   \end{itemize}\vfill
 
@@ -1168,7 +1170,7 @@ De la plus haute à la plus basse priorité :
   \end{itemize}\vfill
 
   \begin{minipage}[t]{.3\linewidth}
-    Contre-exemples:
+  	Exemples:
     \begin{itemize}
     \item \og 2 oeufs\fg{}
     \item \lstinlineCv!"Toto\n"!
@@ -1177,7 +1179,7 @@ De la plus haute à la plus basse priorité :
     \end{itemize}
   \end{minipage}\hfill
   \begin{minipage}[t]{.5\linewidth}
-    Exemples:
+    Contre-exemples:
     \begin{itemize}
     \item \og battez 2 oeufs entiers\fg{}
     \item \lstinlineCv!ecrireString("Toto\n");!
